@@ -17,6 +17,11 @@ public class Tree extends Drawable {
 			swayx *= 0.5f;
 			swayz *= 0.5f;
 		}
+		else if (rand.nextFloat() < 0.03) {
+			leafColor = new Color(152,55,14);
+			swayx *= 0.75f;
+			swayz *= 0.75f;
+		}
 
 		//leaf1Offset = 100;//(float)(Math.random()*100)+80;//70
 		//leaf2Offset = -120;//-(float)(Math.random()*120)+80;//-120

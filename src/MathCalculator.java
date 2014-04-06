@@ -54,6 +54,7 @@ public class MathCalculator {
 	public static final float PIOVER2 = (float) (Math.PI / 2);
 	public static final float PI = (float) (Math.PI);
 	public static final float TWOPI = (float) (Math.PI * 2);
+	public static final float TWOPIINVERSE = (float) (1.0/(Math.PI * 2.0));
 
 	public static float lock(float v) {
 		if (v > 1)

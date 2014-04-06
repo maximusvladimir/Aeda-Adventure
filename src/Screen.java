@@ -41,11 +41,14 @@ public abstract class Screen {
 			wordsToColor.put("save", Color.blue);
 			wordsToColor.put("health", Color.magenta);
 			wordsToColor.put("score", Color.orange);
-			wordsToColor.put("lighting", Color.yellow);
-			wordsToColor.put("wireframe", Color.gray);
+			wordsToColor.put("lightning", Color.yellow.darker());
+			wordsToColor.put("wireframe", Color.gray);			
 			wordsToColor.put("help",Color.pink);
 			wordsToColor.put("teleport",Color.cyan);
 			wordsToColor.put("garrote",new Color(85,198,130));
+			wordsToColor.put("fog", new Color(91,107,117));
+			wordsToColor.put("antialias", new Color(120,150,255));
+			wordsToColor.put("modelmerger",new Color(45,100,200));
 			final Color numerics = Color.red;
 			wordsToColor.put("0",numerics);
 			wordsToColor.put("1",numerics);
@@ -332,8 +335,56 @@ public abstract class Screen {
 			else
 				consoleDisplay("Vignette turned off.");
 		}
+		else if (noSpace.equals("fog")) {
+			if (this instanceof Level) {
+				Level lev = (Level)this;
+				if (lev.getScene() != null) {
+					lev.getScene().setFogState(!lev.getScene().isFogEnabled());
+					if (lev.getScene().isFogEnabled())
+						consoleDisplay("Fog turned on.");
+					else
+						consoleDisplay("Fog turned off.");
+				}
+			}
+		}
+		else if (noSpace.equals("lightning")) {
+			if (this instanceof Level) {
+				Level lev = (Level)this;
+				if (lev.getScene() != null) {
+					lev.getScene().makeLightning();
+				}
+			}
+		}
+		else if (noSpace.equals("modelmerger")) {
+			if (!MainApplet.isApplet) {
+				ModelMerger mm = new ModelMerger();
+			}
+		}
+		else if (noSpace.equals("antialias")) {
+			Main.antialias = !Main.antialias;
+			if (Main.antialias) {
+				consoleDisplay("Antialiasing turned on.");
+			}
+			else
+				consoleDisplay("Antialiasing turned off.");
+		}
+		else if (noSpace.equals("wireframe")) {
+			if (this instanceof Level) {
+				Level lev = (Level)this;
+				if (lev.getScene() != null) {
+					lev.getScene().useThisMethodSparsingly().setUseWireframeWithShading(
+					!lev.getScene().useThisMethodSparsingly()
+							.getUseWireframeWithShader());
+					if (lev.getScene().useThisMethodSparsingly()
+							.getUseWireframeWithShader())
+						consoleDisplay("Wireframe turned on.");
+					else
+						consoleDisplay("Wireframe turned off.");
+				}
+			}
+		}
 		else if (noSpace.equals("help")) {
-			consoleDisplay("-Aeda Adventure Console-\nhealth - gets or sets health.\ngem - gets or sets number of gems.\nscore - gets or sets score.\nspeed - gets or sets player speed.\nvignette - enables or disables vignette.\nhelp - displays this message.\nmessages - displays any active messages.\nsave - force saves the game.\nteleport - teleports you to a location.\ngarrote - kills all enemies");
+			consoleDisplay("-Aeda Adventure Console-\nhealth - gets or sets health.\ngem - gets or sets number of gems.\nscore - gets or sets score.\nspeed - gets or sets player speed.\nvignette - enables or disables vignette.\nhelp - displays this message.\nmessages - displays any active messages.\nsave - force saves the game.\nteleport - teleports you to a location.\ngarrote - kills all enemies\nfog - toggles fog on or off.\nlightning - makes lightning.\nwireframe - toggles wireframe moded on or off.\nantialias - turns on or off antialiasing\nmodelmerger - Opens the model converting utility.");
 		}
 		else
 			consoleDisplay("Sorry, I didn't understand your command.\nType 'help' (no quotes) for help.");
@@ -345,7 +396,9 @@ public abstract class Screen {
 		if (consoleMode) {
 			consoleFlash += 0.05f;
 			int y = getMain().getHeight();
-			if (!isFullscreen())
+			if (MainApplet.isApplet)
+				y = getMain().getHeight() - 20;
+			else if (!isFullscreen())
 				y = y - 46;
 			else
 				y = y - 20;

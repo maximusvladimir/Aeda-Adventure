@@ -15,4 +15,8 @@ public interface IMain {
 	
 	public int getActiveScreen();
 	public Screen getScreen(int index);
+	
+	public boolean isPaused();
+	public void pause();
+	public void resume();
 }

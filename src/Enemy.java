@@ -75,8 +75,6 @@ private long timeSinceLastHit = 0;
 		else
 			tesselator.color(0, 200, 160);
 
-		if (isPersuingPlayer())
-			theta += 0.05f;
 		P3D toe1 = new P3D(-70, 0, -40);
 		P3D toe2 = new P3D(70, 0, -40);
 		float head = (float) (MathCalculator.sin(theta) * 10);
@@ -276,9 +274,17 @@ private long timeSinceLastHit = 0;
 		getScene().remove(this);
 	}
 	
+	private long timeSinceLastHit2 = 0;
+	
 	public void tick() {
 		if (getScene().getLevel().isMessageBeingShown())
 			return;
+		if (isPersuingPlayer()) {
+			theta += 0.05f;
+			if (getHealth() < 1 && System.currentTimeMillis() - timeSinceLastHit2 > 2000) {
+				addHealth(0.0005f);
+			}
+		}
 		float dist = getDistToPlayer();
 		
 		if (dist < 400 && getScene().getPlayer().isPhysicallyHitting()) {
@@ -287,6 +293,7 @@ private long timeSinceLastHit = 0;
 			if (getHealth() <= 0.00001) {
 				kill();
 			}
+			timeSinceLastHit2 = System.currentTimeMillis();
 			getScene().getPlayer().antiHit();
 		}
 		

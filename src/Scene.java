@@ -22,6 +22,7 @@ public class Scene<T> {
 	private Level level;
 	private boolean portalize = true;
 	private float playerY = 0;
+	private boolean fogEnabled = true;
 	public Scene(Level level, Rand rand) {
 		playerX = GameState.instance.playerLocation.x;
 		playerZ = GameState.instance.playerLocation.z;
@@ -41,6 +42,14 @@ public class Scene<T> {
 		}*/
 		scene = new SceneTesselator();
 		scene.addTesselator(player.getTesselator());
+	}
+	
+	public boolean isFogEnabled() {
+		return fogEnabled;
+	}
+	
+	public void setFogState(boolean state) {
+		fogEnabled = state;
 	}
 	
 	public void deportal() {
@@ -322,14 +331,14 @@ public class Scene<T> {
 		player.setPosition(new P3D(0, playerY, camDist));
 		player.draw(getSceneDarkness()+player.getIndividualDarkness()-lightningAmount);
 		
-		if (getFogStart() != 0 || getFogEnd() != 0)
+		if (!((getFogStart() == 0 && getFogEnd() == 0) || !fogEnabled))
 			scene.fog(Utility.adjustBrightness(getFogColor(),lightningAmount*2), getFogStart(), getFogEnd());
 		scene.setReverseFogEquation(true);
 		scene.draw(g);
 		numTriangles = scene.getNumAvaiableTriangles();
 		skippedTriangles = scene.getNumOfLastSkippedTriangles();
 	}
-	
+
 	public float getCameraDistance() {
 		return camDist;
 	}

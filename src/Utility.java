@@ -405,6 +405,20 @@ public class Utility {
 			g.drawLine(sx - 1, sy, sx + 1, sy);
 			g.drawLine(sx, sy - 1, sx, sy + 1);
 		}
+		g.setColor(new Color(120,0,0));
+		ArrayList<RedGem> redgems = scene.<RedGem> getObjectsByType(RedGem.class);
+		for (int i = 0; i < redgems.size(); i++) {
+			if (!redgems.get(i).isVisible())
+				continue;
+			int entityx = (int) ((redgems.get(i).getInstanceLoc().x + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int entityz = (int) ((redgems.get(i).getInstanceLoc().z + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int sx = mapx + entityx + 5;
+			int sy = mapy + entityz + 5;
+			g.drawLine(sx - 1, sy, sx + 1, sy);
+			g.drawLine(sx, sy - 1, sx, sy + 1);
+		}
 		g.setColor(new Color(144, 109, 74));
 		ArrayList<Tree> trees = scene.<Tree> getObjectsByType(Tree.class);
 		for (int i = 0; i < trees.size(); i++) {

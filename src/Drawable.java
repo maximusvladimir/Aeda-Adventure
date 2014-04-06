@@ -27,19 +27,21 @@ public abstract class Drawable {
 		}
 		int heartsProvided = 0;
 		for (int i = 0; i < csindexer; i++) {
-			if (heartsProvided < 2 && GameState.instance.health < 5 && Math.random() < 0.4) {
-				heartsProvided++;
-				GameState.instance.health++;
-				continue;
-			}
-			else if (heartsProvided < 2 && Math.random() < 0.05) {
-				heartsProvided++;
-				GameState.instance.health++;
-				continue;
-			}
 			P3D poll = P3D.add(getInstanceLoc(), 
 					new P3D((float)(Math.random() * 400) - 200,0,(float)(Math.random() * 400) - 200));
 			poll.y = -170;
+			if (heartsProvided < 2 && GameState.instance.health < 5 && Math.random() < 0.37) {
+				Heart heart = new Heart(getScene());
+				heart.setInstanceLoc(poll);
+				getScene().add(heart);
+				continue;
+			}
+			else if (heartsProvided < 2 && Math.random() < 0.12) {
+				Heart heart = new Heart(getScene());
+				heart.setInstanceLoc(poll);
+				getScene().add(heart);
+				continue;
+			}
 			Gem gem = null;
 			if (Math.random() < 0.05)
 				gem = new RedGem(getScene(),new Rand());

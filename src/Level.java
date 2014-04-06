@@ -55,6 +55,10 @@ public abstract class Level extends Screen {
 
 	private boolean stTickLoad = false;
 	public void silentTick() {
+		if (messages != null && activeMessageIndex != -1) {
+			messages.get(activeMessageIndex).physicalTick();
+		}
+		
 		if (getScene() == null)
 			return;
 		getScene().getGamePlane().allowFall();
@@ -111,9 +115,19 @@ public abstract class Level extends Screen {
 		if (showFlakes)
 			flakes.tick();
 	}
-	
+	private float decrement = 0.001f;
 	public void postSilentTick() {
 		//getScene().getPlayer().antiHit();
+		if (Main.blurAmount > 0) {
+			Main.blurAmount -= decrement;
+			decrement += 0.001f;
+			if (decrement > 0.05)
+				decrement = 0.05f;
+		}
+		else {
+			Main.blurAmount = 0;
+			decrement = 0.001f;
+		}
 	}
 	
 	public void addMessage(String message, String tagName) {
@@ -210,14 +224,8 @@ public abstract class Level extends Screen {
 			playerDelta = playerDelta - 0.1f;
 		} else if (code == KeyEvent.VK_SPACE) {
 			scene.getPlayer().jump();
-		} else if (code == KeyEvent.VK_P) {
-			scene.useThisMethodSparsingly().setUseWireframeWithShading(
-					!scene.useThisMethodSparsingly()
-							.getUseWireframeWithShader());
 		} else if (code == KeyEvent.VK_G) {
 			transition = 1;
-		} else if (code == KeyEvent.VK_L) {
-			scene.makeLightning();
 		}
 		GameState.instance.playerDelta = playerDelta;
 		scene.setPlayerDelta(playerDelta);
@@ -282,10 +290,14 @@ public abstract class Level extends Screen {
 				|| ke.getKeyCode() == KeyEvent.VK_S) && getScene() != null) {
 			scene.getPlayer().moving = false;
 		} else if (ke.getKeyCode() == KeyEvent.VK_Z && GameState.instance.hasRaft) {
-			//if (!(this instanceof SailorBay)) {
+			if (!(this instanceof SailorHarbour)) {
 				addMessage("You can't use a raft here.","NOUSERAFT");
 				setActiveMessage("NOUSERAFT");
-			//}
+			}
+			else {
+				// Really bad OOP here:
+				((SailorHarbour)this).startRaftMode();
+			}
 		}
 		if (ke.getKeyCode() == KeyEvent.VK_M && getScene() != null) {
 			showWorldMap = !showWorldMap;
@@ -295,6 +307,9 @@ public abstract class Level extends Screen {
 			} else {
 				scene.setPlayerMovable(true);
 			}
+		}
+		if (ke.getKeyCode() == KeyEvent.VK_T) {
+			Main.blurAmount = 20;
 		}
 		/*if (ke.getKeyCode() == KeyEvent.VK_SHIFT && getScene() != null) {
 			scene.setPlayerSpeed(19);

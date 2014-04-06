@@ -714,10 +714,16 @@ public static boolean removeAlpha = true;
 			} else if (pulled.getOperationType() == 2) {
 				// It's a rotation.
 				R3D rotations = (R3D) pulled;
-				rotationX = rotations.x;
-				rotationY = rotations.y;
-				rotationZ = rotations.z;
-				rotation = rotations;
+				rotationX += rotations.x;
+				rotationY += rotations.y;
+				rotationZ += rotations.z;
+				if (rotation == null)
+					rotation = rotations;
+				else {
+					rotation.x += rotations.x;
+					rotation.y += rotations.y;
+					rotation.z += rotations.z;
+				}
 				/*
 				 * float desiredX = rotation.x; float desiredY = rotation.y;
 				 * float desiredZ = rotation.z; if (desiredX != 0.0f) {

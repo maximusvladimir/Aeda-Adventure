@@ -64,6 +64,10 @@ public class Message {
 		return currentOption;
 	}
 	
+	public void physicalTick() {
+		characters += 0.25f;
+	}
+	
 	public void tick(Graphics g, IMain m) {
 		String messageBuilder = getMessage();
 		if (messageBuilder.indexOf("<PAUSE>") != -1) {
@@ -87,7 +91,6 @@ public class Message {
 				}
 			}
 			Utility.showDialog(oth, g, m);
-			characters += 0.2f;
 		}
 		else {
 			if (optionMessage) {

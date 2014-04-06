@@ -10,15 +10,17 @@ public class HolmVillage extends Level {
 
 	private House[] houses;
 	private P3D lastLoc = new P3D();
-	
+
 	public HolmVillage(IMain inst) {
 		super(inst);
 	}
-	
+
 	public void reloadedLevel() {
 		super.reloadedLevel();
-		/*getScene().setPlayerPosition(lastLoc);
-		GameState.instance.playerLocation = lastLoc;*/
+		/*
+		 * getScene().setPlayerPosition(lastLoc);
+		 * GameState.instance.playerLocation = lastLoc;
+		 */
 	}
 
 	public static long mapDrawTime = 0;
@@ -79,8 +81,10 @@ public class HolmVillage extends Level {
 			P3D treeLoc = getRand().nextLocation(-400);
 			boolean found = false;
 			while (!found) {
-				int[] pts = plane.getWorldPointAsGridPoint(treeLoc.x, treeLoc.z);
-				if ((pts[0] < 25 || pts[0] > 29) && (pts[1] < 26 || pts[1] > 30)) {
+				int[] pts = plane
+						.getWorldPointAsGridPoint(treeLoc.x, treeLoc.z);
+				if ((pts[0] < 25 || pts[0] > 29)
+						&& (pts[1] < 26 || pts[1] > 30)) {
 					found = true;
 					break;
 				}
@@ -120,38 +124,47 @@ public class HolmVillage extends Level {
 					getMain()) {
 				private Grandma grandma;
 				private boolean grandmaMessage = false;
+
 				public void reloadedLevel() {
 					grandmaMessage = false;
 				}
+
 				public void init() {
 					setRootLevel(HolmVillage.this);
 					super.init();
 					Couch co = new Couch(scene);
-					co.setInstanceLoc(-1100,-300,-500);
+					co.setInstanceLoc(-1100, -300, -500);
 					co.setDelta(MathCalculator.PIOVER2);
 					co.getHitbox().rotate90deg();
 					getScene().add(co);
 					Couch co2 = new Couch(scene);
-					co2.setInstanceLoc(-500,-300,-500);
-					co2.setDelta(MathCalculator.PIOVER2+MathCalculator.PI);
+					co2.setInstanceLoc(-500, -300, -500);
+					co2.setDelta(MathCalculator.PIOVER2 + MathCalculator.PI);
 					co2.getHitbox().rotate270deg();
 					getScene().add(co2);
 					Couch co3 = new Couch(scene);
-					co3.setInstanceLoc(-850,-300,-800);
+					co3.setInstanceLoc(-850, -300, -800);
 					getScene().add(co3);
+					Bed bed = new Bed(scene);
+					bed.setInstanceLoc(200, -300, -400);
+					getScene().add(bed);
 					grandma = new Grandma(getScene()) {
 						private boolean shownMessage = false;
+
 						public void tick() {
 							super.tick();
 							float dist = getDistToPlayer();
 							if (dist < 400 && !grandmaMessage) {
 								grandmaMessage = true;
 								if (GameState.instance.hasRaft) {
-									addMessage(Strings.inst.HOLM_HAUZ_GRAND_PURCHASED_RAFT,"raftGrandma");
+									addMessage(
+											Strings.inst.HOLM_HAUZ_GRAND_PURCHASED_RAFT,
+											"raftGrandma");
 									setActiveMessage("raftGrandma");
-								}
-								else {
-									addMessage(Strings.inst.HOLM_HAUZ_GRAND_NOT_PURCHASED_RAFT, "antiRaftGrandma");
+								} else {
+									addMessage(
+											Strings.inst.HOLM_HAUZ_GRAND_NOT_PURCHASED_RAFT,
+											"antiRaftGrandma");
 									setActiveMessage("antiRaftGrandma");
 								}
 							}
@@ -179,9 +192,9 @@ public class HolmVillage extends Level {
 		houses[3].setHouseName(Strings.inst.HOLM_VILLAGE_RULF_H);
 		houses[3].setOwnerName(Strings.inst.HOLM_VILLAGE_RULF_O);
 		houses[3].lightsOn = true;
-		
+
 		if (!getMain().screenExists(houses[3].getHouseName())) {
-			final Shop ssd = new Shop(houses[3].getHouseName(),getMain());
+			final Shop ssd = new Shop(houses[3].getHouseName(), getMain());
 			ssd.setSender(getName());
 			getMain().addScreen(ssd);
 		}
@@ -196,16 +209,26 @@ public class HolmVillage extends Level {
 		barrel[1].setInstanceLoc(-900, -350, 2075);
 		barrel[2].setInstanceLoc(600, -350, 3500);
 		barrel[3].setInstanceLoc(850, -300, -450);
-		barrel[4].setInstanceLoc(-1000,-300,-450);
+		barrel[4].setInstanceLoc(-1000, -300, -450);
 
-		enemies[0].setInstanceLoc(0,-350,4000);
-		enemies[1].setInstanceLoc(0,-350,5000);
-		enemies[2].setInstanceLoc(0,-350,6000);
-		enemies[3].setInstanceLoc(0,-350,7000);
-		/*Horse horse = new Horse(scene);
-		horse.setInstanceLoc(0, 0, 0);
-		scene.add(horse);*/
+		enemies[0].setInstanceLoc(0, -350, 4000);
+		enemies[1].setInstanceLoc(0, -350, 5000);
+		enemies[2].setInstanceLoc(0, -350, 6000);
+		enemies[3].setInstanceLoc(0, -350, 7000);
 		
+		// Very "heavy" object
+		Horse horse = new Horse(scene); horse.setInstanceLoc(-6000, -350, -850);
+		scene.add(horse);
+		
+
+		RedGem jewel = new RedGem(getScene(), getRand());
+		jewel.setInstanceLoc(-2000, -170, 5000);
+		scene.add(jewel);
+
+		Heart heart = new Heart(getScene());
+		heart.setInstanceLoc(0, -170, 2500);
+		scene.add(heart);
+
 		setSigns(signs);
 		scene.add(enemies);
 		scene.add(grass);
@@ -220,10 +243,11 @@ public class HolmVillage extends Level {
 		scene.add(windmill);
 		Well ohwell = new Well(scene) {
 			private boolean na = false;
+
 			public void tick() {
 				super.tick();
 				if (getDistToPlayer() < 400 && !na) {
-					addMessage(Strings.inst.HOLM_VILLAGE_WELL_MSG_0,"WELL0");
+					addMessage(Strings.inst.HOLM_VILLAGE_WELL_MSG_0, "WELL0");
 					setActiveMessage("WELL0");
 					na = true;
 				}
@@ -238,6 +262,7 @@ public class HolmVillage extends Level {
 	}
 
 	public void tick() {
+		GameState.instance.playerLevel = 1;
 		lastLoc = getScene().getPosition();
 		if (GameState.instance.talkedToGrandmaFiace) {
 			houses[0].lightsOn = true;
@@ -248,6 +273,15 @@ public class HolmVillage extends Level {
 		if (isGameHalted())
 			return;
 
+		if (getScene().getPlayerX() < -9500 && getScene().getPlayerZ() > -600
+				&& getScene().getPlayerZ() < 600 && getScene().canPortalize()) {
+			startTransition(getMain().getScreen("yLENIN"), new P3D(9200, 0, 0),
+					4.712388980384689f);
+			getScene().deportal();
+			GameState.instance.playerLevel = 2;
+			return;
+		}
+
 		if (getScene().getPlayerZ() > 9500 && getScene().getPlayerX() < 600
 				&& getScene().getPlayerX() > -600 && getScene().canPortalize()) {
 			startTransition(getMain().getScreen("level"), new P3D(0, 0, -9200),
@@ -256,8 +290,11 @@ public class HolmVillage extends Level {
 			GameState.instance.playerLevel = 0;
 			return;
 		}
-		if (getScene().getPlayerZ() < 9400 || getScene().getPlayerX() > 700
-				|| getScene().getPlayerZ() < -700)
+		if ((getScene().getPlayerZ() < 9400 || getScene().getPlayerX() > 700 || getScene()
+				.getPlayerZ() < -700)
+				&& (getScene().getPlayerZ() > 700
+						|| getScene().getPlayerX() > 9400 || getScene()
+						.getPlayerZ() < -700))
 			getScene().reportal();
 	}
 

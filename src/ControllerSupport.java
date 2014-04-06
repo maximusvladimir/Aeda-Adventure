@@ -5,16 +5,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import net.java.games.input.Controller;
-import net.java.games.input.ControllerEnvironment;
+//import net.java.games.input.*;
 
 public class ControllerSupport {
-	private Controller c;
+	//private Controller c;
 	public ControllerSupport() {
 		System.setErr(new PrintStream(new OutputStream() {
 		    @Override public void write(int b) throws IOException {}
 		}));
-		Controller[] ca = ControllerEnvironment.getDefaultEnvironment()
+		/*Controller[] ca = ControllerEnvironment.getDefaultEnvironment()
 				.getControllers();
 		for (int i = 0; i < ca.length; i++) {
 			if (ca[i].getType() == Controller.Type.UNKNOWN || ca[i].getType() == Controller.Type.MOUSE || ca[i].getType() == Controller.Type.KEYBOARD)
@@ -22,7 +21,7 @@ public class ControllerSupport {
 			c = ca[i];
 			break;
 			//System.out.println(ca[i].getName() + "," + ca[i].getType());
-		}
+		}*/
 		FileOutputStream fdErr = new FileOutputStream(FileDescriptor.err);
 		System.setErr(new PrintStream(new BufferedOutputStream(fdErr, 128), true));
 	}
@@ -40,13 +39,14 @@ public class ControllerSupport {
 	}
 
 	public boolean isAvaliable() {
-		return c != null;
+		//return c != null;
+		return false;
 	}
 	private float moveVal = 0.0f;
 	private boolean attack = false;
 	private boolean jump = false;
 	public void update() {
-		c.poll();
+		/*c.poll();
 		moveVal = 0.0f;
 		attack = false;
 		jump = false;
@@ -66,6 +66,6 @@ public class ControllerSupport {
 				if (c.getComponents()[i].getPollData() == 1)
 					jump = true;
 			}
-		}
+		}*/
 	}
 }

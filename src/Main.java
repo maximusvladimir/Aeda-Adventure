@@ -1,4 +1,5 @@
 import java.awt.AWTException;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.DisplayMode;
 import java.awt.Graphics;
@@ -18,6 +19,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.awt.image.VolatileImage;
 import java.util.ArrayList;
 import java.util.TimerTask;
@@ -53,7 +56,10 @@ public class Main extends JFrame implements IMain {
 	private boolean[] keys = new boolean[525];
 	private ControllerSupport cnt;
 	public static boolean antialias = false;
+	public static float blurAmount = 0;
 	private int activeIndex = -1;
+	private boolean paused = false;
+	private static float[] cel;
 	public static void main(String[] args) {
 		new Main();
 		System.out.println("Shutting down.");
@@ -62,6 +68,18 @@ public class Main extends JFrame implements IMain {
 	
 	public BufferedImage getBuffer() {
 		return buffer;
+	}
+	
+	public boolean isPaused() {
+		return paused;
+	}
+	
+	public void pause() {
+		paused = true;
+	}
+	
+	public void resume() {
+		paused = false;
 	}
 	
 	public Main() {
@@ -92,18 +110,18 @@ public class Main extends JFrame implements IMain {
 						leaveFullscreen();
 					else
 						goFullscreen();
-					if (active != null && !active.isInConsoleMode())
+					if (active != null && !active.isInConsoleMode() && !isPaused())
 						active.keyReleased(arg0);
 				}
 				else {
-					if (active != null && !active.isInConsoleMode())
+					if (active != null && !active.isInConsoleMode() && !isPaused())
 						active.keyReleased(arg0);
 				}
 				keys[arg0.getKeyCode()] = false;
 			}
 			
 			public void keyPressed(KeyEvent arg0) {
-				if (active != null && !active.isInConsoleMode())
+				if (active != null && !active.isInConsoleMode() && !isPaused())
 					active.keyPressed(arg0);
 				keys[arg0.getKeyCode()] = true; 
 			}
@@ -167,7 +185,7 @@ public class Main extends JFrame implements IMain {
 		setActiveScreen(0);
 		Timer timer = new Timer(10,new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				if (active != null && active.isActiveScreen() && !active.isInConsoleMode()) {
+				if (active != null && active.isActiveScreen() && !active.isInConsoleMode() && !isPaused()) {
 					if (active instanceof Level)
 						((Level)active).silentTick();
 					active.tick();
@@ -182,7 +200,7 @@ public class Main extends JFrame implements IMain {
 			System.out.println("Valid controller found.");
 		Timer keyFire = new Timer(30,new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				if (active != null && active.isActiveScreen() && !active.isInConsoleMode()) {
+				if (active != null && active.isActiveScreen() && !active.isInConsoleMode() && !isPaused()) {
 					keyTicks++;
 					for (int i = 0; i < keys.length; i++) {
 						if (keys[i]) {
@@ -279,12 +297,45 @@ public class Main extends JFrame implements IMain {
 						bufferedGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 					}
 					bufferedGraphics.dispose();
-					internalGraphics.drawImage(buffer,0,0,null);
+					
+					if (blurAmount > 0.001) {
+						GaussianFilter filter = new GaussianFilter(10.0f);
+						BufferedImage dest = new BufferedImage(buffer.getWidth(),buffer.getHeight(),BufferedImage.TYPE_INT_RGB);
+						filter.filter(buffer, dest);
+						internalGraphics.drawImage(dest,0,0,null);
+					}
+					else
+						internalGraphics.drawImage(buffer, 0, 0, null);
+					
 					if (framesDrawn == 2) {
 						drawTime = (int)(System.currentTimeMillis()-qSt);
 						GameState.DTIME = drawTime;
 					}
 					drawHUD(internalGraphics);
+					/*Graphics2D sn = (Graphics2D)internalGraphics;
+					int s = framesDrawn * 3 + 50;
+					sn.setColor(Color.black);
+					sn.fillRect(0, 0, s, s);
+					sn.setColor(Color.red);
+					sn.setStroke(new BasicStroke(s/64.0f));
+					sn.drawLine((int)(s * 0.5f/8.0f),(int)(s * 2.0f/8.0f),(int)(s * 3.5f/8.0f),(int)(s * 7.5f/8.0f));
+					sn.drawLine((int)(s * 0.5f/8.0f),(int)(s * 2.0f/8.0f),(int)(s * 3.5f/8.0f),(int)(s * 0.5f/8.0f));
+					sn.drawLine((int)(s * 3.5f/8.0f),(int)(s * 0.5f/8.0f),(int)(s * 6.5f/8.0f),(int)(s * 6.0f/8.0f));
+					sn.drawLine((int)(s * 6.5f/8.0f),(int)(s * 6.0f/8.0f),(int)(s * 3.5f/8.0f),(int)(s * 7.5f/8.0f));
+					
+					//left arrow:
+					sn.drawLine((int)(s * 1.5f/8.0f),(int)(s * 7.0f/8.0f),(int)(s * 2.0f/8.0f),(int)(s * 7.5f/8.0f));
+					sn.drawLine((int)(s * 1.5f/8.0f),(int)(s * 7.0f/8.0f),(int)(s * 1.5f/8.0f),(int)(s * 6.5f/8.0f));
+					sn.drawLine((int)(s * 1.0f/8.0f), (int)(s * 6.5f/8.0f), (int)(s * 2.0f/8.0f), (int)(s * 6.5f/8.0f));
+					sn.drawLine((int)(s * 1.0f/8.0f), (int)(s * 6.5f/8.0f), (int)(s * 1.5f/8.0f), (int)(s * 6.0f/8.0f));
+					sn.drawLine((int)(s * 2.0f/8.0f), (int)(s * 6.5f/8.0f), (int)(s * 1.5f/8.0f), (int)(s * 6.0f/8.0f));
+					
+					//right arrow:
+					sn.drawLine((int)(s * 7.0f/8.0f), (int)(s * 4.5f/8.0f), (int)(s * 6.5f/8.0f),(int)(s * 4.0f/8.0f));
+					sn.drawLine((int)(s * 7.0f/8.0f), (int)(s * 4.5f/8.0f),(int)(s * 7.0f/8.0f),(int)(s * 5.0f/8.0f));
+					sn.drawLine((int)(s * 6.5f/8.0f), (int)(s * 5.0f/8.0f), (int)(s * 7.5f/8.0f), (int)(s * 5.0f/8.0f));
+					sn.drawLine((int)(s * 6.5f/8.0f), (int)(s * 5.0f/8.0f),(int)(s * 7.0f/8.0f),(int)(s * 5.5f/8.0f));
+					sn.drawLine((int)(s * 7.5f/8.0f), (int)(s * 5.0f/8.0f),(int)(s * 7.0f/8.0f),(int)(s * 5.5f/8.0f));*/
 					painting = true;
 					repaint();
 				}
@@ -389,7 +440,17 @@ public class Main extends JFrame implements IMain {
 	
 	public void goFullscreen() {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		int w = -1;
+		int h = -1;
 		GraphicsDevice device = ge.getScreenDevices()[0]; 
+		for (int i = 0; i < ge.getScreenDevices().length; i++) {
+			GraphicsDevice d = ge.getScreenDevices()[i];
+			if (d.getDisplayMode().getWidth() > w || d.getDisplayMode().getHeight() > h) {
+				device = d;
+				w = d.getDisplayMode().getWidth();
+				h = d.getDisplayMode().getHeight();
+			}
+		}
 		if (device.isFullScreenSupported()) {
 			setVisible(false);
 			dispose();

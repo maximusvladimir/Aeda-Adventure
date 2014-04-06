@@ -22,12 +22,19 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.JOptionPane;
 
 
 public class FileSave {
 	private final String fileName = "game.sav";
 	public FileSave() {
 		
+	}
+	
+	public String saveApplet(GameState state) {
+		StringBuilder builder = new StringBuilder();
+		save(state,builder);
+		return builder.toString();
 	}
 	
 	public void save(GameState state) {
@@ -174,6 +181,10 @@ public class FileSave {
 			e1.printStackTrace();
 		}
 		return state;
+	}
+	
+	public GameState loadApplet(String data) {
+		return read(new BufferedReader(new StringReader(data)));
 	}
 	
 	public GameState load() {

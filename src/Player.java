@@ -8,6 +8,7 @@ public class Player extends Character {
 	private FacialExpression mouthExpression;
 	private FacialExpression eyeExpression;
 	private float armsLag = 0.0f;
+	
 	public Player(Scene<Drawable> scene) {
 		super(scene, new Hitbox(new P3D(-110, -225, -40), new P3D(110, 140, 40)));
 		tesselator = new PointTesselator();
@@ -109,6 +110,7 @@ public class Player extends Character {
 	public Color playerColor;
 	private final float ni = (float) (Math.PI / 180.0f * 90);
 	private final float re = (float) (Math.PI * 2);
+	public boolean raftMode = false;
 	float delta = 0.0f;
 	float time0 = 0;
 	float time1 = 0;
@@ -116,6 +118,7 @@ public class Player extends Character {
 	float time3 = 0;
 	float jump = 0.0f;
 	float jumploss = 0.1f;
+	public float actualDelta = 0.0f;
 	public boolean moving = false;
 	Rand va = new Rand(2);
 	private boolean isASheik = true;
@@ -190,12 +193,16 @@ public class Player extends Character {
 		//if (mouth < 0)
 			//mouth = -mouth;
 		//mouth = mouth - 4;
-		tesselator.rotate(0, (float) Math.PI + delta, 0);
+		actualDelta = delta + MathCalculator.PI;
+		tesselator.rotate(0, actualDelta, 0);
 		if (jump > 0) {
 			jump -= jumploss;
 			jumploss += 2*(9.8/getScene().getScreen().getMain().getFPS());
 		}
-		tesselator.translate(pos.x, pos.y + jump + selShak, pos.z, false);
+		if (raftMode)
+			tesselator.translate(pos.x,getScene().getGamePlane().getSparsalHeight()+100,pos.z-200,false);
+		else
+			tesselator.translate(pos.x, pos.y + jump + selShak, pos.z, false);
 
 		// hair and hat
 		//P3D pinnacle = new P3D(-34, 160 + (8 - hatJump), -62);
@@ -830,19 +837,27 @@ public class Player extends Character {
 				 destZ = 0;
 			 }
 		}
-		
-		time0 += 0.002f;
-		if (moving) {
-			time2 += 0.08f;//was 0.025f
-			time1 += 0.18f;
-			armsLag = (float)(Math.abs(Math.sin(time1*0.2)));
-		} else {
+		if (raftMode) {
 			if (Math.sin(time2) < -0.1 || Math.sin(time2) > 0.1) {
 				time2 += 0.053f;
 				// don't leave the player in a weird position when they
 				// stop moving.
 			}
-			time1 += 0.02f;
+		}
+		else {
+			time0 += 0.002f;
+			if (moving) {
+				time2 += 0.08f;//was 0.025f
+				time1 += 0.18f;
+				armsLag = (float)(Math.abs(Math.sin(time1*0.2)));
+			} else {
+				if (Math.sin(time2) < -0.1 || Math.sin(time2) > 0.1) {
+					time2 += 0.053f;
+					// don't leave the player in a weird position when they
+					// stop moving.
+				}
+				time1 += 0.02f;
+			}
 		}
 	}
 	

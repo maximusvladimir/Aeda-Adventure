@@ -190,6 +190,7 @@ public class FiaceForest extends Level {
 									});
 					getScene().getLevel().setActiveMessage("GRAND3");
 					GameState.instance.gems += 200;
+					GameState.instance.talkedToGrandmaFiace = true;
 					makeSweet();
 				}
 				if (completedAction)
@@ -225,6 +226,7 @@ public class FiaceForest extends Level {
 	}
 	
 	public void tick() {
+		GameState.instance.playerLevel = 0;
 		getScene().setPlayerY(getScene().getGamePlane().getHeight());
 		super.tick();
 	}

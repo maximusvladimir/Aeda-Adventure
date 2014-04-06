@@ -10,7 +10,7 @@ public class GameState {
 	public String playerGUID = "Aeda";
 	public int gems = 0;
 	public float playerDelta = 0.0f;
-	public Color playerColor = Color.blue;
+	public Color playerColor = Color.green.darker();
 	public static P3D ORIGINS = new P3D(0,0,0);
 	public int healthPieces = 10;
 	
@@ -42,9 +42,14 @@ public class GameState {
 	public static int DISPLAYED3DOBJECTS = 0;
 	public static int TOTAL3DOBJECTS = 0;
 	public static int DTIME = 0;
+	public static String appletInstance = null;
 	public static void save() {
-		if (instance == null || Network.RUNNING || MainApplet.isApplet)
+		if (instance == null || Network.RUNNING)
 			return;
+		if (MainApplet.isApplet) {
+			appletInstance = saver.saveApplet(instance);
+			return;
+		}
 		saver.save(instance);
 		saveNum++;
 	}

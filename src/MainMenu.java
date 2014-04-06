@@ -54,12 +54,8 @@ public class MainMenu extends Screen {
 		heightInit();
 
 		FileSave save = new FileSave();
-		if (MainApplet.isApplet) {
-			GameState.instance = new GameState();
-			GameState.instance.playerGUID = "Aeda";
-			GameState.instance.playerLocation = new P3D(0,0,0);
+		if (MainApplet.isApplet)
 			return;
-		}
 		if (!save.exists()) {
 			GameState.instance = new GameState();
 			String res = "";
@@ -355,12 +351,18 @@ public class MainMenu extends Screen {
 				if (!getMain().screenExists("vbm")) {
 					getMain().addScreen(new HolmVillage(getMain()));
 				}
+				if (!getMain().screenExists("yLENIN")) {
+					getMain().addScreen(new SailorHarbour(getMain()));
+				}
 				if (GameState.instance.playerLevel == 0) {
 					getMain().setActiveScreen("level");
 					System.out.println("Going to level");
-				} else {
+				} else if (GameState.instance.playerLevel == 1) {
 					getMain().setActiveScreen("vbm");
 					System.out.println("Going to VBM");
+				} else if (GameState.instance.playerLevel == 2) {
+					getMain().setActiveScreen("yLENIN");
+					System.out.println("Going to yLENIN");
 				}
 				startFade = false;
 				fade = 0.0f;

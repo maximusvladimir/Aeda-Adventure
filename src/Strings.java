@@ -27,6 +27,9 @@ public class Strings {
 		SHOP_DISPL_HART = "Heart Piece (800 Gems)";
 		SHOP_DISPL_LAMP = "Lamp (600 Gems)";
 		SHOP_NO_FUNDS = "Sorry. Insufficent funds.";
+		
+		SAIL_RAFT_RULE_NOTE = "You must be in the water to use your raft.";
+		SAIL_RAFT_CANT_LEAVE = "You can not leave a raft in deep water.";
 	}
 	
 	public final String HOLM_VILLAGE_SIGN;
@@ -49,4 +52,7 @@ public class Strings {
 	public final String SHOP_DISPL_LAMP;
 	public final String SHOP_DISPL_HART;
 	public final String SHOP_NO_FUNDS;
+	
+	public final String SAIL_RAFT_RULE_NOTE;
+	public final String SAIL_RAFT_CANT_LEAVE;
 }
