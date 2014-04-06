@@ -1,0 +1,19 @@
+// I am a comment. I like to explain things that are happening here.
+     ///// I am also legal
+
+// This model is a simple, three color triangle.
+
+// Draw as triangles.
+dt triangles
+
+// red
+c (255, 0, 0)
+p (-100,-100,-300)
+
+// green
+c (0, 255, 0)
+p (100, -100,-300)
+
+// blue
+c (0, 0, 255)
+p (0, 100, -300)
