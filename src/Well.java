@@ -15,8 +15,8 @@ public class Well extends Drawable {
 			float pTheta = (float)(Math.PI * 2 / sides);
 			for (int r = 0; r < sides; r++) {
 				trigCache[r] = new P3D();
-				trigCache[r].x = (float)Math.cos(pTheta * r);
-				trigCache[r].z = (float)Math.sin(pTheta * r);
+				trigCache[r].x = (float)MathCalculator.cos(pTheta * r);
+				trigCache[r].z = (float)MathCalculator.sin(pTheta * r);
 			}
 		}
 	}
@@ -33,8 +33,8 @@ public class Well extends Drawable {
 		final float outerR = 165;
 		final float innerR = 125;
 		final float co = 2.75f;
-		final float nis = (float)(Math.cos(cosic) * 15);
-		final float nin = (float)(Math.sin(cosic) * 15);
+		final float nis = (float)(MathCalculator.cos(cosic) * 15);
+		final float nin = (float)(MathCalculator.sin(cosic) * 15);
 		
 		drawCylinder(outerR,innerR,height, Utility.adjustBrightness(new Color(144,136,124), -darkness),true);
 		//drawCylinder(innerR,0,height,new Color(80,85,120),false);

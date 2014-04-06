@@ -131,28 +131,15 @@ public class Player extends Character {
 			return;
 		va.setSeed(2);
 		delta = delta % re;
-		time0 += 0.001f;
-		if (moving) {
-			time2 += 0.04f;//was 0.025f
-			time1 += 0.09f;
-			armsLag = (float)(Math.abs(Math.sin(time1*0.2)));
-		} else {
-			if (Math.sin(time2) < -0.1 || Math.sin(time2) > 0.1) {
-				time2 += 0.053f;
-				// don't leave the player in a weird position when they
-				// stop moving.
-			}
-			time1 += 0.01f;
-		}
-		float feet = (float) (Math.sin(time2) * 80);
-		float feer = (float) (Math.cos(time2) * 10);
-		float feera = (float) (Math.cos(time2+(Math.PI)) * 10);
-		float adj1 = (float) (Math.sin(time1 * 0.2) * 5) + 10;
+		float feet = (float) (MathCalculator.sin(time2) * 80);
+		float feer = (float) (MathCalculator.cos(time2) * 10);
+		float feera = (float) (MathCalculator.cos(time2+(Math.PI)) * 10);
+		float adj1 = (float) (MathCalculator.sin(time1 * 0.2) * 5) + 10;
 
-		float feet2 = (float) (Math.sin(time2 + Math.PI) * 80);
-		float feer2 = (float) (Math.cos(time2 + Math.PI) * 10);
-		float feer2a = (float) (Math.cos(time2 + (2*Math.PI)) * 10);
-		float adj2 = (float) (Math.cos((time1 + 295) * 0.2) * 5) - 10;
+		float feet2 = (float) (MathCalculator.sin(time2 + Math.PI) * 80);
+		float feer2 = (float) (MathCalculator.cos(time2 + Math.PI) * 10);
+		float feer2a = (float) (MathCalculator.cos(time2 + (2*Math.PI)) * 10);
+		float adj2 = (float) (MathCalculator.cos((time1 + 295) * 0.2) * 5) - 10;
 		
 		float alt1 = feet2;
 		if (alt1 < 0)
@@ -162,8 +149,8 @@ public class Player extends Character {
 			alt2 = 0;
 		
 		//float hatJump = (float) (Math.sin(time2 * 1.5) * 8);
-		float hatJump = (float) (Math.sin(time2 * 1.5) * 16);
-		float selShak = (float) (Math.cos(time2 * 1.4) * 9);
+		float hatJump = (float) (MathCalculator.sin(time2 * 1.5) * 16);
+		float selShak = (float) (MathCalculator.cos(time2 * 1.4) * 9);
 		//float offsetEyes = 5;// (float)(Math.cos(time0*20)*6);
 		float offsetEyes = 0;
 		if (eyeExpression == FacialExpression.EYEBROWS_ANGRY)
@@ -172,12 +159,12 @@ public class Player extends Character {
 			offsetEyes = -4;
 		else
 			offsetEyes = 0;
-		float wind = (float) (Math.sin(time0 * 30.4) * 20)-10;
+		float wind = (float) (MathCalculator.sin(time0 * 30.4) * 20)-10;
 		// float wind =0.0f;
 		//float mouth = (float) (Math.sin(time0 * 39) * 10);
 		float armLift = 0.0f;
-		float arm1 = (float) (Math.sin(time2) * 20);
-		float arm2 = (float) (Math.sin(time2 + Math.PI) * 20);
+		float arm1 = (float) (MathCalculator.sin(time2) * 20);
+		float arm2 = (float) (MathCalculator.sin(time2 + Math.PI) * 20);
 		if (hitDelta > 0.0f) {
 			hitDelta -= 0.04f;
 			arm2 = -Math.abs((float)(hitDelta * 20));
@@ -580,11 +567,11 @@ public class Player extends Character {
 
 	private void drawArm(Color bootsBase, Color clothBase, Color skinBase, float arm1, float amount909, boolean left,int dar) {
 		float delta909 = amount909;
-		float armPosX2 = -((float)(Math.abs(Math.cos(delta909)) * 40));
-		float armPosY2 = -(float)(Math.abs(Math.sin(delta909)) * 50)+50;
+		float armPosX2 = -((float)(Math.abs(MathCalculator.cos(delta909)) * 40));
+		float armPosY2 = -(float)(Math.abs(MathCalculator.sin(delta909)) * 50)+50;
 		
-		float armPosX = -((float)(Math.abs(Math.cos(delta909)) * 65));
-		float armPosY = -(float)(Math.abs(Math.sin(delta909)) * 25)+25;
+		float armPosX = -((float)(Math.abs(MathCalculator.cos(delta909)) * 65));
+		float armPosY = -(float)(Math.abs(MathCalculator.sin(delta909)) * 25)+25;
 		
 		float armSwayMid = 0.5f * arm1;
 		byte bit = -1;
@@ -828,6 +815,20 @@ public class Player extends Character {
 				 destX = 0;
 				 destZ = 0;
 			 }
+		}
+		
+		time0 += 0.001f;
+		if (moving) {
+			time2 += 0.04f;//was 0.025f
+			time1 += 0.09f;
+			armsLag = (float)(Math.abs(Math.sin(time1*0.2)));
+		} else {
+			if (Math.sin(time2) < -0.1 || Math.sin(time2) > 0.1) {
+				time2 += 0.053f;
+				// don't leave the player in a weird position when they
+				// stop moving.
+			}
+			time1 += 0.01f;
 		}
 	}
 	

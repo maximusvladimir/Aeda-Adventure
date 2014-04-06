@@ -1,9 +1,19 @@
+import java.io.BufferedOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import net.java.games.input.Controller;
 import net.java.games.input.ControllerEnvironment;
 
 public class ControllerSupport {
 	private Controller c;
 	public ControllerSupport() {
+		System.setErr(new PrintStream(new OutputStream() {
+		    @Override public void write(int b) throws IOException {}
+		}));
 		Controller[] ca = ControllerEnvironment.getDefaultEnvironment()
 				.getControllers();
 		for (int i = 0; i < ca.length; i++) {
@@ -13,6 +23,8 @@ public class ControllerSupport {
 			break;
 			//System.out.println(ca[i].getName() + "," + ca[i].getType());
 		}
+		FileOutputStream fdErr = new FileOutputStream(FileDescriptor.err);
+		System.setErr(new PrintStream(new BufferedOutputStream(fdErr, 128), true));
 	}
 	
 	public boolean isJumping() {

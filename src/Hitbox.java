@@ -24,6 +24,7 @@ public class Hitbox {
 	private HitAction action = defaultAction;
 	private P3D location = new P3D(0, 0, 0);
 
+	private boolean enabled = true;
 	public static HitAction getDefaultHitAction() {
 		return defaultAction;
 	}
@@ -38,6 +39,18 @@ public class Hitbox {
 	
 	public Hitbox(P3D... multiple) {
 		bounds = multiple;
+	}
+	
+	public void disable() {
+		enabled = false;
+	}
+	
+	public void enabled() {
+		enabled = true;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
 	}
 
 	public void setHitAction(HitAction action) {
@@ -122,8 +135,8 @@ public class Hitbox {
 
 		float alpha = (float) (Math.atan2(hc.z - pc.z, hc.x - pc.x) + Math.PI);
 		float dist = hc.dist(pc) * 0.1f;
-		return new P3D((float) (Math.cos(alpha) * dist),
-				player.getLocation().y, (float) (Math.sin(alpha) * dist));
+		return new P3D((float) (MathCalculator.cos(alpha) * dist),
+				player.getLocation().y, (float) (MathCalculator.sin(alpha) * dist));
 	}
 
 	private Drawable drawable;
@@ -133,7 +146,7 @@ public class Hitbox {
 	}
 
 	public boolean hit(Hitbox d) {
-		if (!d.isHitable() || !isHitable())
+		if (!d.isHitable() || !isHitable() || !isEnabled())
 			return false;
 		boolean enumerator = false;
 		int indexthis = -1;

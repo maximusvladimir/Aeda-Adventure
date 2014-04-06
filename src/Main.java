@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.ImageCapabilities;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,12 +27,13 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 
 @SuppressWarnings("serial")
-public class Main extends JFrame {
+public class Main extends JFrame implements IMain {
 	private VolatileImage vRAMBuffer;
 	private Thread updateThread;
 	private long timeSinceUpdate = 0;
@@ -50,6 +52,8 @@ public class Main extends JFrame {
 	private long keyTicks = 0;
 	private boolean[] keys = new boolean[525];
 	private ControllerSupport cnt;
+	public static boolean antialias = false;
+	private int activeIndex = -1;
 	public static void main(String[] args) {
 		new Main();
 		System.out.println("Shutting down.");
@@ -61,8 +65,8 @@ public class Main extends JFrame {
 	}
 	
 	public Main() {
-		new ThreadDebugger();
-		Utility.startInterfaceLookup();
+			new ThreadDebugger();
+			Utility.startInterfaceLookup();
 		setSize(512,384);
 		int w = Toolkit.getDefaultToolkit().getScreenSize().width;
 		int h = Toolkit.getDefaultToolkit().getScreenSize().height;
@@ -77,6 +81,7 @@ public class Main extends JFrame {
 		setResizable(false);
 		setTitle("Aeda Adventure");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		buffer = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_RGB);
 		screens = new ArrayList<Screen>();
 		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
@@ -106,6 +111,8 @@ public class Main extends JFrame {
 			public void keyTyped(KeyEvent arg0) {
 				if (active != null)
 					active.keyTyped(arg0);
+				if (arg0.getKeyChar() == '`')
+					antialias = !antialias;
 			}
 		});
 		
@@ -160,7 +167,7 @@ public class Main extends JFrame {
 		setActiveScreen(0);
 		Timer timer = new Timer(10,new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				if (active != null) {
+				if (active != null && active.isActiveScreen()) {
 					if (active instanceof Level)
 						((Level)active).silentTick();
 					active.tick();
@@ -173,7 +180,7 @@ public class Main extends JFrame {
 			System.out.println("Valid controller found.");
 		Timer keyFire = new Timer(30,new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				if (active != null) {
+				if (active != null && active.isActiveScreen()) {
 					keyTicks++;
 					for (int i = 0; i < keys.length; i++) {
 						if (keys[i]) {
@@ -259,8 +266,16 @@ public class Main extends JFrame {
 						timeSinceUpdate = System.currentTimeMillis();
 					}
 					long qSt = System.currentTimeMillis();
-					Graphics bufferedGraphics = buffer.getGraphics();
+					Graphics2D bufferedGraphics = (Graphics2D)buffer.getGraphics();
+					if (antialias) {
+						bufferedGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+						bufferedGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+					}
 					draw(bufferedGraphics);
+					if (antialias) {
+						bufferedGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+						bufferedGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+					}
 					bufferedGraphics.dispose();
 					internalGraphics.drawImage(buffer,0,0,null);
 					if (framesDrawn == 2) {
@@ -311,12 +326,17 @@ public class Main extends JFrame {
 		return null;
 	}
 	
+	public int getActiveScreen() {
+		return activeIndex;
+	}
+	
 	public void removeScreen(Screen screen) {
 		screens.remove(screen);
 	}
 	
 	public void setActiveScreen(int index) {
 		Screen s = screens.get(index);
+		activeIndex = index;
 		if (!s.isInited()) {
 			s.internalInit();
 		}
@@ -327,24 +347,28 @@ public class Main extends JFrame {
 		name = name.toLowerCase();
 		for (int i = 0; i<screens.size(); i++) {
 			if (screens.get(i).getName().toLowerCase().equals(name)) {
-				if (!screens.get(i).isInited())
+				activeIndex = i;
+				if (!screens.get(i).isInited()) {
 					screens.get(i).internalInit();
+				}
 				active = screens.get(i);
+				return;
 			}
 		}
+		new IllegalStateException("Unable to find screen:" + name);
 	}
 	
 	public void draw(Graphics g) {
-		if (active != null)
+		if (active != null && active.isActiveScreen()) {
 			active.draw(g);
-		else {
+		} else {
 			g.setColor(Color.black);
 			g.fillRect(0,0,getWidth(),getHeight());
 		}
 	}
 	
 	public void drawHUD(Graphics g) {
-		if (active != null)
+		if (active != null && active.isActiveScreen())
 			active.drawHUD(g);
 	}
 	

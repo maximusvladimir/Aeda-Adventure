@@ -30,7 +30,7 @@ public class GameState {
 	public static int TOTAL3DOBJECTS = 0;
 	public static int DTIME = 0;
 	public static void save() {
-		if (instance == null || Network.RUNNING)
+		if (instance == null || Network.RUNNING || MainApplet.isApplet)
 			return;
 		saver.save(instance);
 		saveNum++;

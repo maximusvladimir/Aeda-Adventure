@@ -12,18 +12,22 @@ import java.awt.image.BufferedImage;
 
 
 public abstract class Screen {
-	private Main inst;
+	private IMain inst;
 	private boolean inited = false;
 	private int mx = 0, my = 0;
 	private BufferedImage buffer;
 	private long timeSinceInit = -1;
-	public Screen(Main inst) {
+	public Screen(IMain inst) {
 		this.inst = inst;
 		buffer = new BufferedImage(inst.getWidth(),inst.getHeight(),BufferedImage.TYPE_INT_RGB);
 	}
 	
 	public float lerp(float a0, float a1, float amount) {
 		return a0 + (amount * (a1 - a0));
+	}
+	
+	public boolean isActiveScreen() {
+		return (getMain().getScreen(getMain().getActiveScreen()) == this);
 	}
 	
 	public long getTimeSinceInit() {
@@ -53,7 +57,7 @@ public abstract class Screen {
 		return new Color(r,g,b);
 	}
 	
-	public Main getMain() {
+	public IMain getMain() {
 		return inst;
 	}
 	
@@ -198,11 +202,15 @@ public abstract class Screen {
 	public void hideCursor() {
 		Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(
 				new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB), new Point(0, 0), "blank");
-		getMain().getContentPane().setCursor(blank);
+		if (getMain() instanceof Main)
+			((Main)getMain()).getContentPane().setCursor(blank);
 	}
 	
 	public boolean isFullscreen() {
-		return getMain().isFullscreen();
+		if (getMain() instanceof Main)
+			return ((Main)getMain()).isFullscreen();
+		else
+			return false;
 	}
 	
 	public void drawCursor(Graphics g) {

@@ -1,26 +1,17 @@
 import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RadialGradientPaint;
-import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 public class FiaceForest extends Level {
 
-	public FiaceForest(Main inst) {
+	public FiaceForest(IMain inst) {
 		super(inst);
 	}
 
-	private long timeSinceTheSecondGUI = Long.MAX_VALUE;
 	public static long mapDrawTime = 0;
 
 	public void init() {
@@ -29,11 +20,12 @@ public class FiaceForest extends Level {
 		Grass[] grass = new Grass[80];
 		Barrel[] barrel = new Barrel[20];
 		Sign[] signs = new Sign[10];
-		scene = new Scene<Drawable>(this, getRand(), 55, new Color(110, 130, 110),
-				14, 0.5f);
-		scene.setFog(-2100, -2600);// -2550);
-		//scene.setFogColor(new Color(140, 140, 165));
-		scene.setFogColor(new Color(93,109,120));
+		scene = new Scene<Drawable>(this, getRand());
+		scene.setPlane(new GamePlane(scene, getRand(), 55, new Color(110, 130,
+				110), 14, 0.5f));
+		scene.setFog(-2000, -2600);// -2550);
+		// scene.setFogColor(new Color(140, 140, 165));
+		scene.setFogColor(new Color(93, 109, 120));
 		for (int i = 0; i < gems.length; i++) {
 			gems[i] = new Gem(scene, getRand());
 			gems[i].setInstanceLoc(getRand().nextLocation(-170));
@@ -80,34 +72,159 @@ public class FiaceForest extends Level {
 		scene.add(barrel);
 		scene.add(new GameWalls(scene));
 		Enemy en = new Enemy(scene);
-		en.setInstanceLoc(new P3D(-400,-300,0));
+		en.setInstanceLoc(new P3D(-400, -300, 0));
 		scene.add(en);
 		Lamppost lamp = new Lamppost(scene);
-		lamp.setInstanceLoc(new P3D(2000,-300,0));
+		lamp.setInstanceLoc(new P3D(2000, -300, 0));
+		lamp.updateInstLoc();
 		scene.add(lamp);
-		
+
 		Well well = new Well(scene);
-		well.setInstanceLoc(new P3D(2000,-300,300));
+		well.setInstanceLoc(new P3D(2000, -300, 300));
 		scene.add(well);
-		//Water feature = new Water(scene,10);
-		//feature.setInstanceLoc(new P3D(2000,-200,1300));
-		//scene.add(feature);
-		Grandma grandma = new Grandma(scene);
-		grandma.setInstanceLoc(new P3D(2000,-350,600));
+
+		PortalFront frontPortal = new PortalFront(scene);
+		frontPortal.setInstanceLoc(0, -10500);
+		scene.add(frontPortal);
+		// Water feature = new Water(scene,10);
+		// feature.setInstanceLoc(new P3D(2000,-200,1300));
+		// scene.add(feature);
+		Grandma grandma = new Grandma(scene) {
+			private boolean showingMessage = false;
+			private boolean askAnnoyingMessageAnymore = true;
+			private boolean talkedTo = false;
+			private boolean traveling = false;
+			private boolean completedAction = false;
+			private boolean showedCompletedAction = false;
+
+			public void tick() {
+				float pDist = getDistToPlayer();
+				if (pDist < 400 && !showingMessage && !talkedTo && !traveling) {
+					cancelMovement();
+					talkedTo = true;
+					setDelta((float) Math.atan2((-getScene().getPlayerZ()
+							+ getInstanceLoc().z + 500), (-getScene()
+							.getPlayerX() + getInstanceLoc().x)));
+					showingMessage = true;
+					if (askAnnoyingMessageAnymore)
+						getScene().getLevel().addMessage(
+								"Could you please help me with an errand?",
+								"GRAND0", true, new ActionListener() {
+									public void actionPerformed(ActionEvent e) {
+										Message m = (Message) e.getSource();
+										if (m.getResult()) {
+											makeAngry();
+											getScene()
+													.getLevel()
+													.addMessage(
+															"GOOD! Heheheh... Please follow me.",
+															"GRAND1");
+											getScene().getLevel()
+													.setActiveMessage("GRAND1");
+											askAnnoyingMessageAnymore = false;
+											setMoveSpeed(3.5f);
+											moveTowards(0, -7000);
+											traveling = true;
+										} else {
+											getScene()
+													.getLevel()
+													.addMessage(
+															"Okay... You can always help me later.",
+															"GRAND2");
+											getScene().getLevel()
+													.setActiveMessage("GRAND2");
+										}
+									}
+								});
+					getScene().getLevel().setActiveMessage("GRAND0");
+				} else if (talkedTo && pDist > 400)
+					talkedTo = false;
+				if (pDist > 400)
+					showingMessage = false;
+				if (showingMessage)
+					return;
+
+				if (traveling && !isMovingTowards()) {
+					completedAction = true;
+				}
+				if (completedAction && !showedCompletedAction) {
+					showedCompletedAction = true;
+					getScene()
+							.getLevel()
+							.addMessage(
+									"Thank you so much!\nAs a token of my gratitude, please take these 200 Gems!",
+									"GRAND3", new ActionListener() {
+										public void actionPerformed(
+												ActionEvent e) {
+											getScene()
+													.getLevel()
+													.addMessage(
+															GameState.instance.playerGUID
+																	+ "...",
+															"GRAND4",
+															new ActionListener() {
+																public void actionPerformed(
+																		ActionEvent arg0) {
+																	getScene()
+																			.getLevel()
+																			.addMessage(
+																					"This dark fog has taken over the land..."
+																							+ "\nYou should go to Holm Village to see what you can do.<PAUSE>"
+																							+ "\n(JK- The fog is actually here because this graphics engine isn't"
+																							+ "\nfast enough to fully render the level.)"
+																							+ "\nHolm town is just due north of here.",
+
+																					"GRAND7");
+																	getScene()
+																			.getLevel()
+																			.setActiveMessage(
+																					"GRAND7");
+																}
+															});
+											getScene().getLevel()
+													.setActiveMessage("GRAND4");
+										}
+									});
+					getScene().getLevel().setActiveMessage("GRAND3");
+					GameState.instance.gems += 200;
+					makeSweet();
+				}
+				if (completedAction)
+					return;
+				doMovement();
+			}
+		};
+		grandma.setInstanceLoc(new P3D(2000, -350, 600));
 		scene.add(grandma);
-		//scene.add(new Windmill(scene));
-		/*House h = new House(scene);
-		h.setHouseName("-- Blacksmith --");
-		h.setInstanceLoc(new P3D(0,-300,0));
-		scene.add(h);*/
+		// scene.add(new Windmill(scene));
+		/*
+		 * House h = new House(scene); h.setHouseName("-- Blacksmith --");
+		 * h.setInstanceLoc(new P3D(0,-300,0)); scene.add(h);
+		 */
 
 		if (GameState.instance.playerStage == 0) {
 			GameState.instance.playerStage = 1;
 			GameState.save();
-		} else
-			displayFirstGUI = false;
+			addMessage(
+					"Press 'Q' to skip the dialogues or jump."
+							+ "\nPress 'E' to attack.\nPress 'WASD' to move around.\nThe game automatically saves every 10 seconds, so there is no\nneed to save.",
+					"intro1");
+			addMessage("Welcome to Fi\u00E4ce Forest, "
+					+ GameState.instance.playerGUID + ". Press 'Q'.", "intro0",
+					new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							setActiveMessage("intro1");
+						}
+					});
+			setActiveMessage("intro0");
+		}
 	}
 	
+	public void tick() {
+		getScene().setPlayerY(getScene().getGamePlane().getHeight());
+		super.tick();
+	}
+
 	public String getName() {
 		return "level";
 	}
@@ -120,71 +237,22 @@ public class FiaceForest extends Level {
 	}
 
 	public void mouseReleased(MouseEvent me) {
-		ArrayList<House> houses = scene.<House>getObjectsByType(House.class);
-		for (int i = 0;  i< houses.size(); i++) {
+		super.mouseReleased(me);
+		ArrayList<House> houses = scene.<House> getObjectsByType(House.class);
+		for (int i = 0; i < houses.size(); i++) {
 			houses.get(i).lightsOn = !houses.get(i).lightsOn;
 		}
-		ArrayList<Lamppost> lamps = scene.<Lamppost>getObjectsByType(Lamppost.class);
-		for (int i = 0;  i< lamps.size(); i++) {
+		ArrayList<Lamppost> lamps = scene
+				.<Lamppost> getObjectsByType(Lamppost.class);
+		for (int i = 0; i < lamps.size(); i++) {
 			lamps.get(i).setLampOn(!lamps.get(i).isLampOn());
 		}
 	}
-	
+
 	public void keyReleased(KeyEvent ke) {
 		super.keyReleased(ke);
-		if (ke.getKeyCode() == KeyEvent.VK_SPACE) {
-			if (displayFirstGUI) {
-				displayFirstGUI = false;
-				displaySecondGUI = true;
-			} else if (displaySecondGUI) {
-				displaySecondGUI = false;
-				displayThirdGUI = true;
-				GameState.instance.playerStage = 1;
-				GameState.save();
-				timeSinceTheSecondGUI = System.currentTimeMillis();
-			} else if (displayThirdGUI) {
-				displayThirdGUI = false;
-			}
-			if (GameState.instance.gems == 1 && !displayedFourthGUI)
-				displayedFourthGUI = true;
-		}
 		if (ke.getKeyCode() == KeyEvent.VK_B) {
 			GameState.instance.health = 10;
 		}
-	}
-	
-	private boolean displayFirstGUI = true;
-	private boolean displaySecondGUI = false;
-	private boolean displayThirdGUI = false;
-	private boolean displayedFourthGUI = false;
-
-	public boolean drawWindows(Graphics g) {
-		// TODO replace with Queue.
-		boolean flagForMovable = false;
-		if (displayFirstGUI) {
-			Utility.showDialog("Welcome to Fi\u00E4ce Forest, "
-					+ GameState.instance.playerGUID + ". Press 'Q'.", g,
-					getMain());
-			flagForMovable = false;
-		} else if (displaySecondGUI) {
-			Utility.showDialog(
-					"Press 'Q' to skip the dialogues or jump."
-							+ "\nPress 'E' to attack.\nPress 'WASD' to move around.\nThe game automatically saves every 10 seconds, so there is no\nneed to save.",
-					g, getMain());
-			flagForMovable = false;
-		} else if (displayThirdGUI
-				&& System.currentTimeMillis() - timeSinceTheSecondGUI > 4000) {
-			Utility.showDialog(
-					"You should try to find as many gems as you can.\nIf you encounter enemies along the way, remember to press 'E'.\nFind Aeda's Imperial Crown Piece to open the door to Holm Village.",
-					g, getMain());
-			flagForMovable = false;
-		} else if (GameState.instance.gems == 1 && !displayedFourthGUI) {
-			flagForMovable = false;
-			Utility.showDialog(
-					"You collected a gem. Each time you collect 20 gems, your health   meter increases by 1.",
-					g, getMain());
-		} else
-			flagForMovable = true;
-		return flagForMovable;
 	}
 }

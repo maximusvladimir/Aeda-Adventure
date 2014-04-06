@@ -26,6 +26,7 @@ public class Utility {
 	}
 
 	public static String capitalizeEnumerator(String str) {
+		// capitalizes the first letter of every word in a phrase.
 		try {
 			String[] twm = str.split(" ");
 			String build = "";
@@ -83,7 +84,7 @@ public class Utility {
 		}
 	}
 
-	public static void drawWorldMap(Graphics g, Main m, Scene<Drawable> s) {
+	public static void drawWorldMap(Graphics g, IMain m, Scene<Drawable> s) {
 		g.setColor(new Color(0, 0, 0, 175));
 		int sx = (int) (m.getWidth() * 0.075f);
 		int sy = (int) (m.getHeight() * 0.075f);
@@ -99,15 +100,23 @@ public class Utility {
 				(float) Math.abs(Math.sin(flash)));
 		int rectSize = (int) (m.getWidth() * 0.14f);
 		int rectSizeHalf = rectSize / 2;
-		drawBorderRect(g, current, new Color(255, 0, 0, 125), sx + (sw / 2)
+		Color def1 = new Color(255, 255, 255, 45);
+		Color def2 = new Color(255, 255, 255, 45);
+		Color def3 = new Color(255, 255, 255, 45);
+		Color def4 = new Color(255, 255, 255, 45);
+		if (s.getLevel().getName().equals("vbm"))
+			def2 = current;
+		if (s.getLevel().getName().equals("level"))
+			def1 = current;
+		drawBorderRect(g, def1, new Color(255, 0, 0, 125), sx + (sw / 2)
 				- rectSizeHalf, sy + sh - rectSize, rectSize, rectSize, 3);
-		drawBorderRect(g, new Color(255, 255, 255, 45), new Color(0, 255, 0,
+		drawBorderRect(g, def2, new Color(0, 255, 0,
 				125), sx + (sw / 2) - (int) (0.8f * rectSizeHalf), sy + sh
 				- rectSize - rectSize, (int) (0.8f * rectSize), rectSize, 3);
-		drawBorderRect(g, new Color(255, 255, 255, 45), new Color(30, 40, 255,
+		drawBorderRect(g, def3, new Color(30, 40, 255,
 				125), sx + (sw / 3) - (int) (1.2f * rectSizeHalf) + 1, sy + sh
 				- rectSize - rectSize, (int) (1.2f * rectSize), rectSize, 3);
-		drawBorderRect(g, new Color(255, 255, 255, 45), new Color(30, 40, 255,
+		drawBorderRect(g, def4, new Color(30, 40, 255,
 				125), sx + (sw / 3) - (int) (3.2f * rectSizeHalf) + 1, sy + sh
 				- (int) (rectSize * 3.2f), (int) (1.2f * rectSize), rectSize, 3);
 		flash += 0.013f;
@@ -149,16 +158,16 @@ public class Utility {
 	}
 
 	public static int rotatePointX(int x, int cx, int y, int cy, double rad) {
-		double cosAngle = Math.cos(rad);
-		double sinAngle = Math.sin(rad);
+		double cosAngle = MathCalculator.cos(rad);
+		double sinAngle = MathCalculator.sin(rad);
 		double dx = x;
 		double dy = y;
 		return cx + (int) (dx * cosAngle - dy * sinAngle);
 	}
 
 	public static int rotatePointY(int x, int cx, int y, int cy, double rad) {
-		double cosAngle = Math.cos(rad);
-		double sinAngle = Math.sin(rad);
+		double cosAngle = MathCalculator.cos(rad);
+		double sinAngle = MathCalculator.sin(rad);
 		double dx = x;
 		double dy = y;
 		return cy + (int) (dx * sinAngle + dy * cosAngle);
@@ -240,6 +249,7 @@ public class Utility {
 					// stops at the first *working* solution
 					// break OUTER;
 				}
+				System.out.println("Default network interface: " + interface_.getDisplayName());
 				return interface_;
 			}
 		} catch (Throwable t) {
@@ -338,7 +348,7 @@ public class Utility {
 		return new int[] { cx, cy };
 	}
 	
-	public static void drawEnemyData(Graphics g, Main m, Scene<Drawable> scene) {
+	public static void drawEnemyData(Graphics g, IMain m, Scene<Drawable> scene) {
 		ArrayList<Enemy> ens = scene.<Enemy>getObjectsByType(Enemy.class);
 		int w = m.getWidth() - (int) (m.getWidth() * 0.16f) - 16;
 		for (int i = 0; i < ens.size(); i++) {
@@ -352,7 +362,7 @@ public class Utility {
 		}
 	}
 
-	public static void drawMap(Graphics g, Main m, Scene<Drawable> scene) {
+	public static void drawMap(Graphics g, IMain m, Scene<Drawable> scene) {
 		int mapx = m.getWidth() - (int) (m.getWidth() * 0.16f) - 8;
 		int mapy = (int) (m.getWidth() * 0.02f);
 		int mapw2 = (int) (m.getWidth() * 0.14f);
@@ -395,6 +405,20 @@ public class Utility {
 			int entityx = (int) ((trees.get(i).getInstanceLoc().x + scene
 					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
 			int entityz = (int) ((trees.get(i).getInstanceLoc().z + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int sx = mapx + entityx + 5;
+			int sy = mapy + entityz + 5;
+			g.drawLine(sx - 1, sy, sx + 1, sy);
+			g.drawLine(sx, sy - 1, sx, sy + 1);
+		}
+		g.setColor(Color.orange);
+		ArrayList<House> houses = scene.<House> getObjectsByType(House.class);
+		for (int i = 0; i < houses.size(); i++) {
+			if (!houses.get(i).isVisible())
+				continue;
+			int entityx = (int) ((houses.get(i).getInstanceLoc().x + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int entityz = (int) ((houses.get(i).getInstanceLoc().z + scene
 					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
 			int sx = mapx + entityx + 5;
 			int sy = mapy + entityz + 5;
@@ -455,10 +479,10 @@ public class Utility {
 		Polygon p24 = new Polygon();
 		float tt2 = (float) ((Math.PI * 2 / sides));
 		for (int i = 0; i < (int) (GameState.instance.health / 10.0f * sides); i++) {
-			float x2 = (float) (Math.cos(tt2 * i) * 30);
-			float y2 = (float) (Math.sin(tt2 * i) * 30);
-			float x3 = (float) (Math.cos(tt2 * (1 + i)) * 30);
-			float y3 = (float) (Math.sin(tt2 * (1 + i)) * 30);
+			float x2 = (float) (MathCalculator.cos(tt2 * i) * 30);
+			float y2 = (float) (MathCalculator.sin(tt2 * i) * 30);
+			float x3 = (float) (MathCalculator.cos(tt2 * (1 + i)) * 30);
+			float y3 = (float) (MathCalculator.sin(tt2 * (1 + i)) * 30);
 			p24.addPoint((int) x2 + 40, (int) y2 + 40);
 			p24.addPoint(40, 40);
 			p24.addPoint((int) x3 + 40, (int) y3 + 40);
@@ -469,8 +493,8 @@ public class Utility {
 			healthThing = new Polygon();
 			float ee = (float) (Math.PI * 2 / sides);
 			for (int i = 0; i < sides; i++) {
-				float x2 = (float) (Math.cos(ee * i) * 30);
-				float y2 = (float) (Math.sin(ee * i) * 30);
+				float x2 = (float) (MathCalculator.cos(ee * i) * 30);
+				float y2 = (float) (MathCalculator.sin(ee * i) * 30);
 				healthThing.addPoint((int) x2 + 40, (int) y2 + 40);
 			}
 		}
@@ -503,17 +527,19 @@ public class Utility {
 	private static ArrayList<String> evilTracker = new ArrayList<String>();
 	private static Font messageFont = new Font("Courier New", 0, 12);
 
-	public static void showDialog(String message, Graphics g, Main mainInst) {
+	public static void showDialog(String message, Graphics g, IMain mainInst) {
 		if (evilTracker.indexOf(message) == -1) {
 			// This is evil in the sense that it stores already shown messages.
 			evilTracker.add(message);
 			SoundManager.playClick = true;
 		}
+		if (message.indexOf("¢") > -1)
+			message = message.replace("¢", "");
 		g.setColor(new Color(185, 163, 124, 125));
 		g.fillRoundRect(10, mainInst.getHeight() - 125,
 				mainInst.getWidth() - 26, 85, 8, 8);
-		g.setColor(new Color(109, 88, 57));
-		g.drawRoundRect(13, mainInst.getHeight() - 122,
+		g.setColor(new Color(109, 88, 57,125));
+		g.fillRoundRect(13, mainInst.getHeight() - 122,
 				mainInst.getWidth() - 33, 78, 8, 8);
 		g.setFont(messageFont);
 		g.setColor(Color.black);

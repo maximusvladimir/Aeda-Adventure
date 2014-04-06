@@ -27,8 +27,8 @@ public class Water extends Drawable {
 		tesselator.translate(pos.x-(sq*size*0.5f),pos.y,pos.z-(sq*size*0.5f),false);
 		for (int x = 0; x < size; x++) {
 			for (int z = 0; z < size; z++) {
-				float he0 = (float)((Math.cos(period*(x+delta))*50));
-				float he1 = (float)((Math.cos(period*(x+1+delta))*50));
+				float he0 = (float)((MathCalculator.cos(period*(x+delta))*50));
+				float he1 = (float)((MathCalculator.cos(period*(x+1+delta))*50));
 				//tesselator.color(49,56,128);
 				float avg = (he0 + he1)/150;
 				tesselator.color(MathCalculator.lerp(new Color(49,56,128), new Color(160,180,210), avg));

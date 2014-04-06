@@ -16,6 +16,8 @@ public class Barrel extends Drawable {
 		
 		delta = rand.next2PI();
 		
+		upI = rand.nextBoolean();
+		
 		float height = 200;
 		float radius = 75;
 		int numSections = 6;
@@ -28,9 +30,9 @@ public class Barrel extends Drawable {
 			Color top = new Color(121,95,61);
 			Color side = new Color(131,106,75);
 			for (int i = 0; i < numSections; i++) {
-				float x = (float)Math.cos(theta * i) * radius;
+				float x = (float)MathCalculator.cos(theta * i) * radius;
 			    float z = (float)Math.sin(theta * i) * radius;
-			    float nx = (float)Math.cos(theta * (i+1)) * radius;
+			    float nx = (float)MathCalculator.cos(theta * (i+1)) * radius;
 			    float nz = (float)Math.sin(theta * (i+1)) * radius;
 			    // top part of barrel.
 			    colors2.add(Utility.adjustBrightness(top, rand.nextInt(-20, 5)));
@@ -103,10 +105,13 @@ public class Barrel extends Drawable {
 	private boolean turnedSideways = false;
 	public void draw(int darkness) {
 		tesselator.translate(pos.x, pos.y, pos.z, false);
-		if (turnedSideways)
-			tesselator.rotate((float)(-Math.PI/2), delta, 0);
+		if (rotateOver != -43)
+			tesselator.rotate(rotateOver, delta, 0);
 		else
 			tesselator.rotate(0, delta, 0);
+		int trn = getTesselator().getTransparency();
+		if (trn < 255)
+			darkness = darkness - (255-trn);
 		for (int i = 0; i < gens.length / 3; i++) {
 			tesselator.color(Utility.adjustBrightness(colors[i],-darkness));
 			tesselator.point(gens[i*3+0]);
@@ -115,12 +120,46 @@ public class Barrel extends Drawable {
 		}
 	}
 
+	private float rotateOver = -43;
+	private boolean done = false;
+	private long deadTime = 0;
+	private boolean upI = false;
 	public void tick() {
+		if (rotateOver != -43) {
+			if (rotateOver >= 0 && rotateOver < MathCalculator.PIOVER2 * 0.7f)
+				rotateOver += 0.03f;
+			if (getInstanceLoc().y > -350)
+				setInstanceLoc(getInstanceLoc().x,getInstanceLoc().y - 10, getInstanceLoc().z);
+		}
 		
+		// fade it out (this is cool)
+		if (deadTime != 0 && System.currentTimeMillis() - deadTime > 6000) {
+			int adjust = (int)((System.currentTimeMillis() - deadTime) - 6000);
+			getTesselator().setTransparency(255 - (int)((adjust/3500.0f) * 255));
+			if (adjust > 3500)
+				setVisible(false);
+		}
+		
+		if (getDistToPlayer() < 375 && !done) {
+			if (getScene().getPlayer().isHitting()) {
+				getHitbox().disable();
+				rotateOver = 0;
+				GameState.instance.score += 20;
+				done = true;
+				for (int i = 0; i < (int)(Math.random() * 5.5)+2; i++) {
+					P3D poll = P3D.add(getInstanceLoc(), 
+							new P3D((float)(Math.random() * 400) - 200,0,(float)(Math.random() * 400) - 200));
+					poll.y = -170;
+					Gem gem = new Gem(getScene(),new Rand());
+					gem.setInstanceLoc(poll);
+					getScene().add(gem);
+				}
+				deadTime = System.currentTimeMillis();
+			}
+		}
 	}
 
 	public PointTesselator getTesselator() {
 		return tesselator;
 	}
-
 }

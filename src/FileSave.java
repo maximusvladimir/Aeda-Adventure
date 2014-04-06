@@ -57,6 +57,7 @@ public class FileSave {
 		writer.append(store("health"+(int)state.health)+"\n");
 		writer.append(store("gEmS"+state.gems)+"\n");
 		writer.append(store("DELTA"+state.playerDelta)+"\n");
+		writer.append(store("LeV"+state.playerLevel)+"\n");
 		writer.append(store("COlor"+"(" + state.playerColor.getRed() + 
 				"," + state.playerColor.getGreen() + "," + state.playerColor.getBlue() + ")")+"\n");
 	}
@@ -141,8 +142,9 @@ public class FileSave {
 			    	}
 			    	else if (line.indexOf("DELTA") > -1) {
 			    		state.playerDelta = Float.parseFloat(line.replace("DELTA",""));
-			    	}
-			    	else if (line.indexOf("COlor") > -1) {
+			    	} else if (line.indexOf("LeV") > -1) {
+			    		state.playerLevel = Integer.parseInt(line.replace("LeV", ""));
+			    	} else if (line.indexOf("COlor") > -1) {
 			    		line = line.replace("COlor","");
 			    		line = line.replace("(", "");
 			    		line = line.replace(")", "");

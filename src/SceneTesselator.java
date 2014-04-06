@@ -961,17 +961,17 @@ public class SceneTesselator extends PointTesselator {
 		int i;
 		double x, y, z;
 		for (i = 1; i < 6; i++) {
-			x = r * Math.cos(the) * Math.cos(phia);
-			y = r * Math.sin(the) * Math.cos(phia);
-			z = r * Math.sin(phia);
+			x = r * MathCalculator.cos(the) * Math.cos(phia);
+			y = r * MathCalculator.sin(the) * Math.cos(phia);
+			z = r * MathCalculator.sin(phia);
 			vertices[i] = new P3D((float) x, (float) y, (float) z);
 			the = the + the72;
 		}
 		the = theb;
 		for (i = 6; i < 11; i++) {
-			x = r * Math.cos(the) * Math.cos(-phia);
-			y = r * Math.sin(the) * Math.cos(-phia);
-			z = r * Math.sin(-phia);
+			x = r * MathCalculator.cos(the) * Math.cos(-phia);
+			y = r * MathCalculator.sin(the) * Math.cos(-phia);
+			z = r * MathCalculator.sin(-phia);
 			vertices[i] = new P3D((float) x, (float) y, (float) z);
 			the = the + the72;
 		}
@@ -1121,11 +1121,11 @@ public class SceneTesselator extends PointTesselator {
 
 	private P3D getConicalPoint(float radius, int side, int latitudes,
 			P3D apex, float height) {
-		float circleX = (float) (radius * Math.cos(Math.PI * 2.0 * side
+		float circleX = (float) (radius * MathCalculator.cos(Math.PI * 2.0 * side
 				/ latitudes))
 				+ apex.x;
 		float circleY = apex.y - height;
-		float circleZ = (float) (radius * Math.sin(Math.PI * 2.0 * side
+		float circleZ = (float) (radius * MathCalculator.sin(Math.PI * 2.0 * side
 				/ latitudes))
 				+ apex.z;
 		return new P3D(circleX, circleY, circleZ);
@@ -1134,11 +1134,11 @@ public class SceneTesselator extends PointTesselator {
 	private P3D getSphericalPoint(double lat, double log, float radius,
 			int totallatitude, int totallongitude) {
 		double theta = lat * Math.PI / totallatitude;
-		double sinTheta = Math.sin(theta);
-		double cosTheta = Math.cos(theta);
+		double sinTheta = MathCalculator.sin(theta);
+		double cosTheta = MathCalculator.cos(theta);
 		double phi = log * 2 * Math.PI / totallongitude;
-		double sinPhi = Math.sin(phi);
-		double cosPhi = Math.cos(phi);
+		double sinPhi = MathCalculator.sin(phi);
+		double cosPhi = MathCalculator.cos(phi);
 		float x = (float) (cosPhi * sinTheta);
 		float y = (float) cosTheta;
 		float z = (float) (sinPhi * sinTheta);

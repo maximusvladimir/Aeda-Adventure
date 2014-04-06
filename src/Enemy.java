@@ -48,7 +48,7 @@ public class Enemy extends Character {
 		tesselator.translate(pos.x, pos.y, pos.z, false);
 		// tesselator.rotate(0, (float)(Math.PI / 2.5f), 0);
 		int d = darkness;
-		tesselator.rotate(0, -delta - (3.1415926535f/2), 0);
+		tesselator.rotate(0, -delta - MathCalculator.PIOVER2, 0);
 		if (isPersuingPlayer())
 			tesselator.color(255, 0, 0);
 		else
@@ -58,10 +58,10 @@ public class Enemy extends Character {
 			theta += 0.05f;
 		P3D toe1 = new P3D(-70, 0, -40);
 		P3D toe2 = new P3D(70, 0, -40);
-		float head = (float) (Math.sin(theta) * 10);
-		float bod = (float)(Math.cos(theta/1.2f) * 25)+45;
-		toe1.z += (float) (Math.sin(theta) * 40);
-		toe2.z += (float) (Math.sin(theta + (Math.PI)) * 40);
+		float head = (float) (MathCalculator.sin(theta) * 10);
+		float bod = (float)(MathCalculator.cos(theta/1.2f) * 25)+45;
+		toe1.z += (float) (MathCalculator.sin(theta) * 40);
+		toe2.z += (float) (MathCalculator.sin(theta + (Math.PI)) * 40);
 		// Color bodColor = new Color(102, 40, 1);
 		Color bodColor = Utility.adjustBrightness(new Color(209, 185, 153),-d);
 		Color mouth = Utility.adjustBrightness(new Color(160,30,30),-d);
@@ -251,6 +251,8 @@ public class Enemy extends Character {
 	float lastHitDist = 0.0f;
 	
 	public void tick() {
+		if (getScene().getLevel().isMessageBeingShown())
+			return;
 		float dist = getDistToPlayer();
 		if (dist > 300 && persueHalt) {
 			persueHalt = false;
@@ -268,7 +270,10 @@ public class Enemy extends Character {
 			checker = true;
 			if (!isMovingTowards())
 				checker = false;
+			getScene().getPlayer().setFaceEmotion(FacialExpression.EMOTION_SAD);
 		}
+		else
+			getScene().getPlayer().setFaceEmotion(FacialExpression.EMOTION_PLAIN);
 		/*if (isPersuingPlayer() && !persueHalt) {
 			if (!checker)
 				moveTowards(new P3D(getScene().getPlayerX(),0,getScene().getPlayerZ()));

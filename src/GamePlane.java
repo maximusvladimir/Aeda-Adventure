@@ -7,10 +7,11 @@ import java.util.Random;
 
 public class GamePlane extends Drawable {
 	private PointTesselator tesselator;
-	public static int size;
+	public int size;
 	private Color baseColor;
 	private float[] points;
 	private Color[] colors;
+	private Color[] colors2;
 	private float px, pz;
 	private static final float space = 375.0f;
 	private float WORLDSIZE;
@@ -64,6 +65,7 @@ public class GamePlane extends Drawable {
 		//baseColor = new Color(110, 130, 110);
 		this.baseColor = baseColor;
 		colors = new Color[size * size * 4];
+		colors2 = new Color[size * size * 4];
 	}
 
 	public float getLocationPoint(float x, float z) {
@@ -94,6 +96,22 @@ public class GamePlane extends Drawable {
 			playerHeight -= (playerHeight - target) * 0.1f;
 		}
 	}
+	
+	public int[] getWorldPointAsGridPoint(Drawable d) {
+		return getWorldPointAsGridPoint(d.getInstanceLoc().x,d.getInstanceLoc().z);
+	}
+	
+	public int[] getWorldPointAsGridPoint(float x, float z) {
+		/*float nx = ((x+WORLDSIZEHALF+ getScene().getPlayerX()) / space);
+		float nz = 110-((z+WORLDSIZEHALF+ getScene().getPlayerZ()) / space);*/
+		float nx = ((x + WORLDSIZEHALF)
+				/ WORLDSIZE * size);
+		float nz = ((z + WORLDSIZEHALF)
+				/ WORLDSIZE * size);
+		//System.out.println(nx+","+nz);
+		return new int[] {(int)nx,(int)nz};
+		//return new int[]{0,0};
+	}
 
 	private float playerHeight = 0;
 	private BufferedImage genWorld;
@@ -121,7 +139,11 @@ public class GamePlane extends Drawable {
 		float s = 68.0f/size;
 		for (int x = 0; x < size; x++) {
 			for (int z = 0; z < size; z++) {
-				Color cs = new Color(
+				int cDet0 = getColor(x,z);
+				int cDet1 = cDet0;
+				Color cs = null;
+				if (colors[cDet0] == null || colors2[cDet1] == null) {
+				cs = new Color(
 						MathCalculator.colorLock((variance.nextInt(variability) - variabilityhalf + baseColor
 								.getRed())),
 								MathCalculator.colorLock((variance.nextInt(variability) - variabilityhalf + baseColor
@@ -137,8 +159,11 @@ public class GamePlane extends Drawable {
 				int rgb = (int)(p*60)+65;
 				Color cd = new Color(rgb,rgb,rgb);
 				cs = MathCalculator.lerp(cs, cd, colorHeight);
-				colors[2 * (z) * (size - 1) + (2 * (x))] = cs;
-				colors[2 * (z + 1) * (size - 1) + (2 * (x + 1))] = cs;
+				colors[cDet0] = cs;
+				colors2[cDet1] = variance.bright(cs,20);
+				}
+				else
+					cs = colors[cDet0];
 				g.setColor(cs);
 				float x3 = (x*68.0f/size);
 				float y3 = (z*68.0f/size);
@@ -146,6 +171,21 @@ public class GamePlane extends Drawable {
 				g.fill(new Rectangle2D.Float(x3,y3,s,s));
 			}
 		}
+	}
+	public void setColorPoint(int x, int z, Color color) {
+		int det = getColor(x,z);
+		if (det < 0 || det > colors.length - 1)
+			return;
+		colors[det] = color;
+		colors2[det] = color;
+	}
+
+	// float sinz = 0.0f;
+	public Color getColorPoint(int x, int z) {
+		int det = getColor(x,z);
+		if (det < 0 || det > colors.length - 1 || colors[det] == null)
+			return Color.white;
+		return colors[det];// + (float)(Math.sin(sinz + x) * 50);
 	}
 
 	public BufferedImage getGenWorld() {
@@ -179,11 +219,22 @@ public class GamePlane extends Drawable {
 
 	// float sinz = 0.0f;
 	public float getHeightPoint(int x, int z) {
-		return points[z * size + x]; // + (float)(Math.sin(sinz + x) * 50);
+		int det = z * size + x;
+		if (det < 0 || det > points.length - 1)
+			return -0.00000001f;
+		return points[det]; // + (float)(Math.sin(sinz + x) * 50);
 	}
 
 	public boolean isCullable() {
 		return false;
+	}
+	
+	private int getColor(int x, int z) {
+		int det = (z * (size*2)) + x;
+		if (det > colors.length - 1 || det < 0)
+			return 0;
+		else
+			return det;
 	}
 	
 	public void draw(int darkness) {
@@ -222,9 +273,11 @@ public class GamePlane extends Drawable {
 		int zshad = (int) ((pz + WORLDSIZEHALF - 260)
 				/ WORLDSIZE * size);
 		int xshad = (int) ((px + WORLDSIZEHALF) / WORLDSIZE * size);
+		Random ds = new Random(52);
 		for (int x = xmin; x < xlim; x++) {
 			for (int z = zmin; z < zlim; z++) {
-				Color sample1 = colors[z * 2 * (size - 1) + (x * 2)];
+				int indi = getColor(x,z);
+				Color sample1 = colors[indi];
 				if (xshad == x && zshad == z) {
 					darkness = darkness + 20;
 				}
@@ -236,7 +289,7 @@ public class GamePlane extends Drawable {
 						* space);
 				tesselator.point((x + 1) * space, getHeightPoint(x + 1, z + 1),
 						(z + 1) * space);
-				Color sample2 = colors[2 * (z + 1) * (size - 1) + (2 * (x + 1))];
+				Color sample2 = colors2[getColor(x,z)];
 				tesselator.color(sample2.getRed() - darkness,
 						sample2.getGreen() - darkness, sample2.getBlue()
 								- darkness);
@@ -253,7 +306,7 @@ public class GamePlane extends Drawable {
 	}
 
 	public void tick() {
-
+		
 	}
 
 	public PointTesselator getTesselator() {

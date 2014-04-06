@@ -1,5 +1,4 @@
 // I am a comment. I like to explain things that are happening here.
-     ///// I am also legal
 
 // This model is a simple, three color triangle.
 

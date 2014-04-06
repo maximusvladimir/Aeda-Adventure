@@ -41,8 +41,8 @@ public class Tree extends Drawable {
 		float halfH = height/2.2f;
 		swayx+=0.02f;
 		swayz+=0.03f;
-		float asx = (float)(Math.cos(swayx)*swayr);
-		float asz = (float)(Math.sin(swayz)*swayr);
+		float asx = (float)(MathCalculator.cos(swayx)*swayr);
+		float asz = (float)(MathCalculator.sin(swayz)*swayr);
 		tesselator.color(85-darkness,62-darkness,47-darkness);
 		//tesselator.color(new Color(85,62,47));
 		tesselator.point(-20,0,-20);

@@ -1725,18 +1725,18 @@ public static boolean removeAlpha = true;
 	}
 
 	private void rotateX(float deltaX) {
-		rotationY = (float) (Math.sin(angleX + deltaX) * radiusX);
-		rotationZ = (float) (Math.cos(angleX + deltaX) * radiusX);
+		rotationY = (float) (MathCalculator.sin(angleX + deltaX) * radiusX);
+		rotationZ = (float) (MathCalculator.cos(angleX + deltaX) * radiusX);
 	}
 
 	private void rotateY(float deltaY) {
-		rotationX = (float) (Math.sin(angleY + deltaY) * radiusY);
-		rotationZ = (float) (Math.cos(angleY + deltaY) * radiusY);
+		rotationX = (float) (MathCalculator.sin(angleY + deltaY) * radiusY);
+		rotationZ = (float) (MathCalculator.cos(angleY + deltaY) * radiusY);
 	}
 
 	private void rotateZ(float deltaZ) {
-		rotationX = (float) (Math.cos(angleZ + deltaZ) * radiusZ);
-		rotationY = (float) (Math.sin(angleZ + deltaZ) * radiusZ);
+		rotationX = (float) (MathCalculator.cos(angleZ + deltaZ) * radiusZ);
+		rotationY = (float) (MathCalculator.sin(angleZ + deltaZ) * radiusZ);
 	}
 
 	private void rotateXYZ(float x, float y, float z, float deltaX,

@@ -1,22 +1,31 @@
 // 3D Point class.
-public class P3D extends Operation3D {
+public class P3D extends Operation3D implements Cloneable {
 	public float x = 0.0f;
 	public float y = 0.0f;
 	public float z = 0.0f;
 	private boolean isnormalised = false;
+	public static long totalDistanceOverhead = 0;
+	private long quS = 0;
 
 	public P3D() {
 		id = 1;
 	}
 	
+	public Object clone() {
+		return new P3D(x,y,z);
+	}
+	
 	public float dist(P3D other) {
+		quS = System.nanoTime();
 		float dx = other.x - x;
 		dx = dx*dx;
 		float dy = other.y - y;
 		dy = dy*dy;
 		float dz = other.z - z;
 		dz = dz*dz;
-		return (float)Math.sqrt(dx+dy+dz);
+		float v = (float)Math.sqrt(dx+dy+dz);
+		totalDistanceOverhead += (System.nanoTime() - quS);
+		return v;
 	}
 
 	public P3D(float x, float y, float z) {

@@ -31,22 +31,23 @@ public class Windmill extends Drawable {
 		float theta = (float)(Math.PI * 2 / blades);
 		final float height = 1300.0f;
 		Rand rand = new Rand(32);
+		int dr = -darkness;
 		for (int i = 0; i < blades; i++) {
 			if (i % 2 == 0)
 				continue;
 			final float rad = 600.0f;
 			final float si = (float)(rand.nextDouble() * 0.25f) + 0.75f;
-			float ax = (float)Math.cos(theta * i + spinDelta) * rad;
-			float az = (float)Math.sin(theta * i + spinDelta) * rad;
-			float nx = (float)Math.cos(theta * (i+si) + spinDelta) * rad;
-			float nz = (float)Math.sin(theta * (i+si) + spinDelta) * rad;
-			tesselator.color(Utility.adjustBrightness(new Color(200,195,190),rand.nextInt(-25,10)));
+			float ax = (float)MathCalculator.cos(theta * i + spinDelta) * rad;
+			float az = (float)MathCalculator.sin(theta * i + spinDelta) * rad;
+			float nx = (float)MathCalculator.cos(theta * (i+si) + spinDelta) * rad;
+			float nz = (float)MathCalculator.sin(theta * (i+si) + spinDelta) * rad;
+			tesselator.color(Utility.adjustBrightness(new Color(200,195,190),rand.nextInt(-25,10)+dr));
 			tesselator.point(new P3D(0,height,100));
 			tesselator.point(new P3D(ax,az+height,100));
 			tesselator.point(new P3D(nx,nz+height,100));
 		}
-		Color step = new Color(90,90,85);
-		Color roof = new Color(131,105,71);
+		Color step = Utility.adjustBrightness(new Color(90,90,85),dr);
+		Color roof = Utility.adjustBrightness(new Color(131,105,71),dr);
 		
 		tesselator.color(Utility.adjustBrightness(step,rand.nextInt(-20, 20)));
 		tesselator.point(-300,height/3,100);
@@ -116,12 +117,12 @@ public class Windmill extends Drawable {
 			float rz = (float)(Math.sin(theta * i) * rad2);
 			float nx = (float)(Math.cos(theta * (i+1)) * rad2);
 			float nz = (float)(Math.sin(theta * (i+1)) * rad2);
-			tesselator.color(Utility.adjustBrightness(Color.gray, rand.nextInt(-20,20)));
+			tesselator.color(Utility.adjustBrightness(Color.gray, rand.nextInt(-20,20)+dr));
 			tesselator.point(rx, height/3, rz);
 			tesselator.point(nx, height/3, nz);
 			tesselator.point(nx, 0, nz);
 			
-			tesselator.color(Utility.adjustBrightness(Color.gray, rand.nextInt(-20,20)));
+			tesselator.color(Utility.adjustBrightness(Color.gray, rand.nextInt(-20,20)+dr));
 			tesselator.point(nx,0,nz);
 			tesselator.point(rx,0,rz);
 			tesselator.point(rx,height/3,rz);

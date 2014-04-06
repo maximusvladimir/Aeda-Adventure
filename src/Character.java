@@ -19,12 +19,20 @@ public abstract class Character extends Drawable {
 		return movingTowards;
 	}
 	
+	public void cancelMovement() {
+		movingTowards = false;
+	}
+	
 	public void setMoveSpeed(float val) {
 		moveSpeed = val;
 	}
 	
 	public float getMoveSpeed() {
 		return moveSpeed;
+	}
+	
+	public void moveTowards(float x, float z) {
+		moveTowards(new P3D(x,0,z));
 	}
 	
 	public void moveTowards(P3D p) {

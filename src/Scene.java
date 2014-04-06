@@ -19,27 +19,51 @@ public class Scene<T> {
 	private GamePlane plane;
 	private boolean canMove = true;
 	private Screen screen;
-	public Scene(Screen screen, Rand rand,int levelsize,Color baseTerrainColor, int colorVariance, float colorMix) {
+	private Level level;
+	private boolean portalize = true;
+	private float playerY = 0;
+	public Scene(Level level, Rand rand) {
 		playerX = GameState.instance.playerLocation.x;
 		playerZ = GameState.instance.playerLocation.z;
 		this.rand = rand;
-		this.screen = screen;
+		this.level = level;
+		this.screen = level;
 		rand.setScene(getThis());
 		player = new Player(getThis());
 		player.playerColor = GameState.instance.playerColor;
 		playerDelta = GameState.instance.playerDelta;
-		plane = new GamePlane(getThis(),rand,levelsize,baseTerrainColor,colorVariance,colorMix);
+		fogColor = Color.black;
 		/*for (int i = 0; i < 10; i++) {
 			int x = (int)(Math.cos(Math.PI * 2 / 10 * i) * 4) + 10;
 			int z = (int)(Math.sin(Math.PI * 2 / 10 * i) * 4) + 10;
 			plane.setHeightPoint(x,z , i * 200);
 			System.out.println(x + "," + z + ":" + i * 200);
 		}*/
-		plane.genWorld();
-		plane.setInstanceLoc(new P3D(0,-390,-500));
 		scene = new SceneTesselator();
 		scene.addTesselator(player.getTesselator());
+	}
+	
+	public void deportal() {
+		portalize = false;
+	}
+	
+	public void reportal() {
+		portalize = true;
+	}
+	
+	public boolean canPortalize() {
+		return portalize;
+	}
+	
+	public void setPlane(GamePlane plane2) {
+		plane = plane2;
+		plane.genWorld();
+		plane.setInstanceLoc(new P3D(0,-390,-500));
 		add(plane);
+	}
+	
+	public Level getLevel() {
+		return level;
 	}
 	
 	public SceneTesselator useThisMethodSparsingly() {
@@ -65,7 +89,7 @@ public class Scene<T> {
 		return screen;
 	}
 	
-	public Main getMain() {
+	public IMain getMain() {
 		return screen.getMain();
 	}
 	
@@ -96,6 +120,7 @@ public class Scene<T> {
 	
 	public void setPlayerDelta(float t) {
 		playerDelta = t;
+		player.delta = t;
 	}
 	
 	public float getWorldSize() {
@@ -110,6 +135,15 @@ public class Scene<T> {
 		return plane.getActualSize();
 	}
 	
+	private boolean moveOverride = false;
+	public void setMoveOverride(boolean b) {
+		moveOverride = b;
+	}
+	
+	public boolean isMoveOverriden() {
+		return moveOverride;
+	}
+	
 	public void movePlayer(boolean forward) {
 		float te = plane.getWorldSizeHalf();
 		if (!SoundManager.playFootstep1 && !SoundManager.playFootstep2) {
@@ -119,11 +153,11 @@ public class Scene<T> {
 				SoundManager.playFootstep2 = true;
 		}
 		if (forward) {
-			playerX += walkSpeed * Math.cos(playerDelta);
-			playerZ -= walkSpeed * Math.sin(playerDelta);
+			playerX += walkSpeed * MathCalculator.cos(playerDelta);
+			playerZ -= walkSpeed * MathCalculator.sin(playerDelta);
 		} else {
-			playerX -= walkSpeed * Math.cos(playerDelta) * 0.75f;
-			playerZ += walkSpeed * Math.sin(playerDelta) * 0.75f;
+			playerX -= walkSpeed * MathCalculator.cos(playerDelta) * 0.75f;
+			playerZ += walkSpeed * MathCalculator.sin(playerDelta) * 0.75f;
 		}
 		if (playerX < -te + 500)
 			playerX = -te + 500;
@@ -133,11 +167,13 @@ public class Scene<T> {
 			playerX = te - 850;
 		if (playerZ > te - 310)
 			playerZ = te - 310;
-		GameState.instance.playerLocation = new P3D(playerX, 0, playerZ);
 		player.delta = GameState.instance.playerDelta;
 		playerDelta = GameState.instance.playerDelta;
 		player.playerColor = GameState.instance.playerColor;
 		player.moving = true;
+		if (isMoveOverriden())
+			return;
+		GameState.instance.playerLocation = new P3D(playerX, 0, playerZ);
 	}
 	
 	public void resize(int width, int height) {
@@ -155,9 +191,32 @@ public class Scene<T> {
 		return playerZ;
 	}
 	
+	public float getPlayerY() {
+		return playerY;
+	}
+	
+	public void setPlayerY(float b) {
+		playerY = b;
+	}
+	
+	public void setPlayerX(float x) {
+		playerX = x;
+	}
+	
+	public void setPlayerZ(float z) {
+		playerZ = z;
+	}
+	
 	public void add(Drawable d) {
 		objs.add(d);
 		scene.addTesselator(d.getTesselator());
+	}
+	
+	public void add(ArrayList<T> d) {
+		for (int i = 0; i < d.size(); i++) {
+			objs.add((Drawable)d.get(i));
+			scene.addTesselator(((Drawable)d.get(i)).getTesselator());
+		}
 	}
 	
 	public void add(T[] d) {
@@ -222,10 +281,18 @@ public class Scene<T> {
 	public GamePlane getGamePlane() {
 		return plane;
 	}
-	
+	private static final float FPI = (float)(4 / Math.PI);
 	public void draw(Graphics g) {
 		int total = getSceneSize()+1;
 		int display = 1;
+		int lightningAmount = 0;
+		if (lightn > 0) {
+			float am = (float)(Math.pow(10,lightn));
+			lightningAmount = (int)(am * 5);
+			lightn -= 0.005f;
+			if (lightn < 0.4 && Math.random() < 0.02)
+				lightn = (float)(Math.random()*0.4f + 0.6f);
+		}
 		for (int i = 0; i < getSceneSize(); i++) {
 			Drawable d = get(i);
 			d.setPosition(new P3D(-playerX, 0, -playerZ));
@@ -233,29 +300,33 @@ public class Scene<T> {
 				if (d.isCullable()) {
 					if (isVisible(d)) {
 						display++;
-						d.draw(getSceneDarkness()+d.getIndividualDarkness());
+						d.draw(getSceneDarkness()+d.getIndividualDarkness()-lightningAmount);
 					}
 				}
 				else {
 					display++;
-					d.draw(getSceneDarkness());
+					d.draw(getSceneDarkness()+d.getIndividualDarkness()-lightningAmount);
 				}
 			}
 		}
 		GameState.DISPLAYED3DOBJECTS = display;
 		GameState.TOTAL3DOBJECTS = total;
 		player.setPlayerDelta(playerDelta);
-		GameState.FIXEDLOC = new P3D(-playerX, plane.getHeight(), -playerZ);
-		player.setPosition(new P3D(0, plane.getHeight(), -625));
-		player.draw(getSceneDarkness()+player.getIndividualDarkness());
+		GameState.FIXEDLOC = new P3D(-playerX, playerY, -playerZ);
+		player.setPosition(new P3D(0, playerY, -625));
+		player.draw(getSceneDarkness()+player.getIndividualDarkness()-lightningAmount);
 		
-		scene.fog(Utility.adjustBrightness(getFogColor(),-getSceneDarkness()), getFogStart(), getFogEnd());
+		scene.fog(Utility.adjustBrightness(getFogColor(),lightningAmount*2), getFogStart(), getFogEnd());
 		scene.setReverseFogEquation(true);
 		scene.draw(g);
 		numTriangles = scene.getNumAvaiableTriangles();
 		skippedTriangles = scene.getNumOfLastSkippedTriangles();
 	}
 	
+	public void makeLightning() {
+		lightn = 1;
+	}
+	private float lightn = 0.0f;
 	public static long numTriangles = 0;
 	public static int skippedTriangles = 0;
 	

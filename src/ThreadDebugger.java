@@ -163,6 +163,9 @@ public class ThreadDebugger extends JFrame {
 				106);
 		g.drawString("Java heap:" + (Runtime.getRuntime().totalMemory())
 				+ " bytes", 215, 117);
+		
+		// super rare bug.
+		if (GameState.instance != null)
 		g.drawString("Player delta:"
 				+ ((int) (GameState.instance.playerDelta * 57.295)) % 360, 215,
 				128);
@@ -174,6 +177,7 @@ public class ThreadDebugger extends JFrame {
 		g.drawString("Num. of skipped triangles:" + Scene.skippedTriangles, 215, 183);
 		long millis = (System.currentTimeMillis() - spinTime);
 		g.drawString("Game runtime:" + millis + " (seconds: " + (millis/1000) + ")", 215, 194);
+		g.drawString("Total distance overhead:" + (P3D.totalDistanceOverhead/1000000) + " ms", 215, 205);
 		g2.drawImage(b, 0, 0, null);
 	}
 }

@@ -7,11 +7,21 @@ public class House extends Drawable {
 	private String houseName = null;
 
 	public House(Scene<Drawable> scene) {
-		super(scene, new Hitbox(new P3D(-890, 0, -395), new P3D(890, 600, 395)));
+		super(scene, new Hitbox(new P3D(-890, 0, -600), new P3D(890, 600, 395)));
 		tesselator = new PointTesselator();
 		tesselator.setSkipCullCheck(true);
 		tesselator.setDrawType(DrawType.Triangle);
 	}
+	
+	public void setDelta(float d) {
+		delta = d;
+	}
+	
+	public float getDelta() {
+		return delta;
+	}
+	
+	private String ownerName = "";
 
 	public void setHouseName(String name) {
 		houseName = name;
@@ -20,13 +30,23 @@ public class House extends Drawable {
 	public String getHouseName() {
 		return houseName;
 	}
+	
+	public void setOwnerName(String owner) {
+		ownerName = owner;
+	}
+	
+	public String getOwnerName() {
+		return ownerName;
+	}
 
-	float delta = 0.0f;
+	private float delta = 0.0f;
 
 	public void draw(int darkness) {
 		tesselator.translate(pos.x, pos.y, pos.z, false);
 		tesselator.rotate(0, delta, 0);
 
+		sideColor = Utility.adjustBrightness(new Color(191, 181, 169), -darkness);
+		
 		// delta += 0.05f;
 		drawPane(new P3D(-890, 600, 395), new P3D(0, 0, 395), new P3D(890, 600,
 				395), new P3D(0, 0, 395));
@@ -121,57 +141,30 @@ public class House extends Drawable {
 
 	private static Font fontCache = new Font("Courier New", 0, 16);
 
-	public boolean goToHouse() {
-		return gotohouse;
-	}
-
-	public void qPressed() {
-		isShowing = false;
-		alreadyShown = true;
-	}
-
-	public boolean doSigns(Graphics g, Main main) {
-		if (doNotShow)
-			return false;
-		if (isShowing && !lightsOn)
-			Utility.showDialog("Nobody's home.", g, main);
-		else if (isShowing && lightsOn) {
-			gotohouse = true;
-		}
-		return isShowing && !lightsOn;
-	}
-
-	public void markHouse() {
-		gotohouse = false;
-	}
-
-	private boolean gotohouse = false;
-
-	public void setUserPosition(float x, float z) {
-		usx = x;
-		usz = z;
-	}
-
-	private float usx, usz;
 	private boolean isShowing = false;
 	private boolean alreadyShown = false;
-	public boolean doNotShow = false;
-
 	public void tick() {
-		// System.out.println(usz + "," + staticPos.z);
-		float dx = getInstanceLoc().x - usx;
-		// float dy = pos.y;
-		float dz = (getInstanceLoc().z - usz) + 875; // make it slightly in
-														// front of the house.
-		float dist = (float) Math.sqrt(dx * dx + dz * dz);
-		// System.out.println(dist);
-		if (dist < 270 && !alreadyShown) {
-			isShowing = true;
-		} else if (dist > 270) {
+		if (getScene().getLevel().isGameHalted())
+			return;
+		setInstanceLoc(getInstanceLoc().x,getInstanceLoc().z+500);
+		float dist = getDistToPlayer();
+		setInstanceLoc(getInstanceLoc().x,getInstanceLoc().z-500);
+		if (dist < 270 && !alreadyShown && !isShowing) {
+			if (!lightsOn) {
+				isShowing = true;
+				getScene().getLevel().addMessage(getOwnerName() + " isn't home right now.", getHouseName());
+				getScene().getLevel().setActiveMessage(getHouseName());
+			}
+			else if (getScene().canPortalize() && getScene().getLevel().getMain().screenExists(getHouseName())) {
+				getScene().getLevel().startTransition(getScene().getLevel().getMain().getScreen(getHouseName()),new P3D(0,0,0),0);
+				getScene().deportal();
+				getScene().setPlayerZ(getScene().getPlayerZ()+400);
+			}
+		}
+		else if (dist > 270) {
 			alreadyShown = false;
 			isShowing = false;
-			gotohouse = false;
-			doNotShow = false;
+			getScene().reportal();
 		}
 	}
 
@@ -230,7 +223,7 @@ public class House extends Drawable {
 	 * tesselator.point(0,p1.y,p1.z); tesselator.point(p0.x,p0.y,p1.z); }
 	 */
 	private void drawSideRoof(P3D p0, P3D p1, float height) {
-		tesselator.color(191, 181, 169);
+		tesselator.color(sideColor);
 		tesselator.point(p0.x, p0.y, p0.z);
 		tesselator.point((p0.x + p1.x) / 2, (p0.y + p1.y) / 2 + height,
 				(p0.z + p1.z) / 2);
@@ -238,7 +231,7 @@ public class House extends Drawable {
 	}
 
 	private void drawPane(P3D tr0, P3D bl0, P3D tr1, P3D bl1) {
-		tesselator.color(191, 181, 169);
+		tesselator.color(sideColor);
 		tesselator.point(bl0.x, bl0.y, tr0.z);
 		tesselator.point(tr0.x, bl0.y, tr0.z);
 		tesselator.point(tr0.x, tr0.y, tr0.z);
@@ -255,7 +248,7 @@ public class House extends Drawable {
 	}
 
 	private void drawPaneSide(P3D tr0, P3D bl0, P3D tr1, P3D bl1) {
-		tesselator.color(191, 181, 169);
+		tesselator.color(sideColor);
 		tesselator.point(tr0.x, bl0.y, bl0.z);
 		tesselator.point(tr0.x, bl0.y, tr0.z);
 		tesselator.point(tr0.x, tr0.y, tr0.z);
@@ -270,6 +263,8 @@ public class House extends Drawable {
 		tesselator.point(tr1.x, tr1.y, bl1.z);
 		tesselator.point(tr1.x, bl1.y, bl1.z);
 	}
+	
+	private Color sideColor = null;
 
 	private void drawLengthSide(P3D tr, P3D bl) {
 		tesselator.color(100, 92, 79);

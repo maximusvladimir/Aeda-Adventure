@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 
 
 public class Multiplayer extends Screen {
-	public Multiplayer(Main inst) {
+	public Multiplayer(IMain inst) {
 		super(inst);
 	}
 
@@ -71,10 +71,12 @@ public class Multiplayer extends Screen {
 
 	public void resize(int width, int height) {
 		terrain.setSize(getCompatabilityBuffer(), width, height);
+		if (getMain() instanceof MainApplet)
+			return;
 		if (isFullscreen())
 			hideCursor();
 		else
-			getMain().getContentPane().setCursor(Cursor.getDefaultCursor());
+			((Main)getMain()).getContentPane().setCursor(Cursor.getDefaultCursor());
 	}
 
 	

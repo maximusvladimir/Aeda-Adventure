@@ -4,9 +4,9 @@ import java.awt.Graphics;
 
 public class Flakes {
 	private Flake[] parts;
-	private Main main;
+	private IMain main;
 	private Rand rand;
-	public Flakes(Main main,Rand rand,int num) {
+	public Flakes(IMain main,Rand rand,int num) {
 		parts = new Flake[num];
 		for (int i = 0; i < parts.length; i++) {
 			parts[i] = new Flake();
