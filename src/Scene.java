@@ -31,11 +31,21 @@ public class Scene<T> {
 		player.playerColor = GameState.instance.playerColor;
 		playerDelta = GameState.instance.playerDelta;
 		plane = new GamePlane(getThis(),rand,levelsize,baseTerrainColor,colorVariance,colorMix);
+		/*for (int i = 0; i < 10; i++) {
+			int x = (int)(Math.cos(Math.PI * 2 / 10 * i) * 4) + 10;
+			int z = (int)(Math.sin(Math.PI * 2 / 10 * i) * 4) + 10;
+			plane.setHeightPoint(x,z , i * 200);
+			System.out.println(x + "," + z + ":" + i * 200);
+		}*/
 		plane.genWorld();
 		plane.setInstanceLoc(new P3D(0,-390,-500));
 		scene = new SceneTesselator();
 		scene.addTesselator(player.getTesselator());
 		add(plane);
+	}
+	
+	public SceneTesselator useThisMethodSparsingly() {
+		return scene;
 	}
 	
 	public Player getPlayer() {
@@ -206,7 +216,7 @@ public class Scene<T> {
 		return darkness;
 	}
 	
-	float dist = 0.0f;
+	private float dist = 0.0f;
 	public void tick() {
 		if (playerDestX != 0.0f || playerDestZ != 0.0f) {
 			float lx = playerDestX - playerX;
@@ -240,7 +250,7 @@ public class Scene<T> {
 				if (d.isCullable()) {
 					if (isVisible(d)) {
 						display++;
-						d.draw(getSceneDarkness());
+						d.draw(getSceneDarkness()+d.getIndividualDarkness());
 					}
 				}
 				else {
@@ -253,13 +263,18 @@ public class Scene<T> {
 		GameState.TOTAL3DOBJECTS = total;
 		player.setPlayerDelta(playerDelta);
 		GameState.FIXEDLOC = new P3D(-playerX, plane.getHeight(), -playerZ);
-		player.setPosition(new P3D(0, plane.getHeight(), -600));
-		player.draw(getSceneDarkness());
+		player.setPosition(new P3D(0, plane.getHeight(), -625));
+		player.draw(getSceneDarkness()+player.getIndividualDarkness());
 		
-		scene.fog(getFogColor(), getFogStart(), getFogEnd());
+		scene.fog(Utility.adjustBrightness(getFogColor(),-getSceneDarkness()), getFogStart(), getFogEnd());
 		scene.setReverseFogEquation(true);
 		scene.draw(g);
+		numTriangles = scene.getNumAvaiableTriangles();
+		skippedTriangles = scene.getNumOfLastSkippedTriangles();
 	}
+	
+	public static long numTriangles = 0;
+	public static int skippedTriangles = 0;
 	
 	public float getTerrainHeight(float x, float z) {
 		return plane.getLocation(x, z);

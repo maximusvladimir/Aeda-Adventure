@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -31,8 +32,8 @@ public class FiaceForest extends Level {
 		scene = new Scene<Drawable>(this, getRand(), 55, new Color(110, 130, 110),
 				14, 0.5f);
 		scene.setFog(-2100, -2600);// -2550);
-		scene.setFogColor(new Color(140, 140, 165));
-		// scene.setFogColor(new Color(101,101,116));
+		//scene.setFogColor(new Color(140, 140, 165));
+		scene.setFogColor(new Color(93,109,120));
 		for (int i = 0; i < gems.length; i++) {
 			gems[i] = new Gem(scene, getRand());
 			gems[i].setInstanceLoc(getRand().nextLocation(-170));
@@ -69,20 +70,29 @@ public class FiaceForest extends Level {
 		}
 		for (int i = 0; i < barrel.length; i++) {
 			barrel[i] = new Barrel(scene, getRand());
-			barrel[i].setInstanceLoc(getRand().nextLocation(-350));
+			barrel[i].setInstanceLoc(getRand().nextLocation(-300));
 		}
 		setSigns(signs);
 		scene.add(grass);
 		scene.add(gems);
 		scene.add(trees);
 		scene.add(signs);
-		// scene.add(barrel);
+		scene.add(barrel);
 		scene.add(new GameWalls(scene));
+		Enemy en = new Enemy(scene);
+		en.setInstanceLoc(new P3D(-400,-300,0));
+		scene.add(en);
+		Lamppost lamp = new Lamppost(scene);
+		lamp.setInstanceLoc(new P3D(2000,-300,0));
+		scene.add(lamp);
+		Well well = new Well(scene);
+		well.setInstanceLoc(new P3D(2000,-300,300));
+		scene.add(well);
 		//scene.add(new Windmill(scene));
-		House h = new House(scene);
-		h.setHouseName("My House");
+		/*House h = new House(scene);
+		h.setHouseName("-- Blacksmith --");
 		h.setInstanceLoc(new P3D(0,-300,0));
-		scene.add(h);
+		scene.add(h);*/
 
 		if (GameState.instance.playerStage == 0) {
 			GameState.instance.playerStage = 1;
@@ -102,9 +112,20 @@ public class FiaceForest extends Level {
 		scene.draw(g);
 	}
 
+	public void mouseReleased(MouseEvent me) {
+		ArrayList<House> houses = scene.<House>getObjectsByType(House.class);
+		for (int i = 0;  i< houses.size(); i++) {
+			houses.get(i).lightsOn = !houses.get(i).lightsOn;
+		}
+		ArrayList<Lamppost> lamps = scene.<Lamppost>getObjectsByType(Lamppost.class);
+		for (int i = 0;  i< lamps.size(); i++) {
+			lamps.get(i).setLampOn(!lamps.get(i).isLampOn());
+		}
+	}
+	
 	public void keyReleased(KeyEvent ke) {
 		super.keyReleased(ke);
-		if (ke.getKeyCode() == KeyEvent.VK_Q) {
+		if (ke.getKeyCode() == KeyEvent.VK_SPACE) {
 			if (displayFirstGUI) {
 				displayFirstGUI = false;
 				displaySecondGUI = true;
@@ -122,11 +143,8 @@ public class FiaceForest extends Level {
 			if (GameState.instance.gems == 1 && !displayedFourthGUI)
 				displayedFourthGUI = true;
 		}
-		if (ke.getKeyCode() == KeyEvent.VK_Y) {
-			scene.getPlayer().setMouthExpression(FacialExpression.getMouthExpression(menum++));
-		}
-		if (ke.getKeyCode() == KeyEvent.VK_U) {
-			scene.getPlayer().setEyebrowExpression(FacialExpression.getEyeExpression(eenum++));
+		if (ke.getKeyCode() == KeyEvent.VK_B) {
+			GameState.instance.health = 10;
 		}
 	}
 	

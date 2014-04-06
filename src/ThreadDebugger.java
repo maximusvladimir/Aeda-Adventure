@@ -21,6 +21,7 @@ import javax.swing.Timer;
 public class ThreadDebugger extends JFrame {
 	private static final long serialVersionUID = 2217557311939282837L;
 
+	private long spinTime = System.currentTimeMillis();
 	public ThreadDebugger() {
 		setTitle("Thread Debugger");
 		setSize(450, 240);
@@ -169,6 +170,10 @@ public class ThreadDebugger extends JFrame {
 		g.drawString("Rendered 3D objects:" + GameState.DISPLAYED3DOBJECTS, 215, 150);
 		if (GameState.DISPLAYED3DOBJECTS > 0)
 			g.drawString("Per-object draw time: " + ((float)GameState.DTIME/(float)GameState.DISPLAYED3DOBJECTS), 215,161);
+		g.drawString("Num. of possible triangles:" + Scene.numTriangles,215,172);
+		g.drawString("Num. of skipped triangles:" + Scene.skippedTriangles, 215, 183);
+		long millis = (System.currentTimeMillis() - spinTime);
+		g.drawString("Game runtime:" + millis + " (seconds: " + (millis/1000) + ")", 215, 194);
 		g2.drawImage(b, 0, 0, null);
 	}
 }

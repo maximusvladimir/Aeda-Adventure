@@ -1,3 +1,5 @@
+import java.awt.Color;
+
 
 public class Tree extends Drawable {
 	private PointTesselator tesselator;
@@ -32,6 +34,7 @@ public class Tree extends Drawable {
 		float asx = (float)(Math.cos(swayx)*swayr);
 		float asz = (float)(Math.sin(swayz)*swayr);
 		tesselator.color(85-darkness,62-darkness,47-darkness);
+		//tesselator.color(new Color(85,62,47));
 		tesselator.point(-20,0,-20);
 		tesselator.point(-10,halfH,-20);
 		tesselator.point(20,0,-20);

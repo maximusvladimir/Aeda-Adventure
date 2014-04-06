@@ -6,6 +6,7 @@ public abstract class Drawable {
 	private P3D staticPos = null;
 	private boolean visible = true;
 	private Scene<Drawable> scene;
+	private int iddark = 0;
 	public Drawable(Scene<Drawable> scene, Hitbox hitbox) {
 		if (hitbox == null)
 			throw new IllegalArgumentException("For no hitbox, please provide a nullary constructor of the hitbox class.");
@@ -14,6 +15,20 @@ public abstract class Drawable {
 		pos = new P3D(0,0,0);
 		staticPos = new P3D(0,0,0);
 		this.scene = scene;
+	}
+	
+	public float getDistToPlayer() {
+		float dist = new P3D(0, -100, -625).dist(new P3D(-getScene().getPlayerX() + getInstanceLoc().x, getInstanceLoc().y,
+				-getScene().getPlayerZ() + getInstanceLoc().z));
+		return dist;
+	}
+	
+	public int getIndividualDarkness() {
+		return iddark;
+	}
+	
+	public void setIndividualDarkness(int value) {
+		iddark = value;
 	}
 	
 	public void setInstanceLoc(P3D st) {

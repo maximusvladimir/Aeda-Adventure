@@ -107,12 +107,12 @@ public class House extends Drawable {
 		drawSideRoof(new P3D(-895, 580, 400), new P3D(895, 580, 400), 400);
 
 		// drawRoof(new P3D(-930,600,400), new P3D(930,600,-400),200);
-		drawRoof(new P3D(900, 600, -430), new P3D(-900, 600, 430), 400);
+		drawRoof(new P3D(900, 600, -450), new P3D(-900, 600, 450), 400);
 
 		if (getHouseName() != null) {
 			Font3D font = new Font3D();
 			font.color = Color.black;
-			font.loc = new P3D(-100, 600, 405);
+			font.loc = new P3D(-28.75f * 0.5f * getHouseName().length(), 600, 405);
 			font.font = fontCache;
 			font.str = getHouseName();
 			tesselator.text(font);

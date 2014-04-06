@@ -171,7 +171,10 @@ public class GamePlane extends Drawable {
 	}
 
 	public void setHeightPoint(int x, int z, float height) {
-		points[z * size + x] = height;
+		int det = z * size + x;
+		if (det < 0 || det > points.length - 1)
+			return;
+		points[det] = height;
 	}
 
 	// float sinz = 0.0f;

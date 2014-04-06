@@ -9,7 +9,7 @@ public class Barrel extends Drawable {
 	private static Color[] colors;
 	private float delta = 0.0f;
 	public Barrel(Scene<Drawable> scene, Rand rand) {
-		super(scene,new Hitbox());
+		super(scene,new Hitbox(new P3D(-75,0,-75), new P3D(75,200,75)));
 		tesselator = new PointTesselator();
 		tesselator.setDrawType(DrawType.Triangle);
 		tesselator.setSkipCullCheck(true);

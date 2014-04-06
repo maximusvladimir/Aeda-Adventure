@@ -56,15 +56,20 @@ public class MainMenu extends Screen {
 			while (res == null || res.equals("") || res.length() > 8) {
 				 res = JOptionPane.showInputDialog(getMain(), "Please enter your name. (Less than 9 chars)");
 			}
-			res = res.substring(0, 1).toUpperCase() + res.substring(1);
+			res = Utility.capitalizeEnumerator(res);
 			GameState.instance.playerGUID = res;
 			res = null;
 			Color pC = null;
+			if (GameState.instance.playerGUID.equals("Sheik") || GameState.instance.playerGUID.equals("Zelda")) {
+				pC = new Color(50,127,218);
+			}
+			else {
 			while (res == null || res.equals("") || (pC = Utility.validateColor(res)) == null) {
 				 res = JOptionPane.showInputDialog(getMain(), 
 						 "Please enter your favorite color." +
 						"\n(Red,Green,Blue,Orange,Yellow,Magneta)." +
 						"\nYou can also enter an RGB like (no quotes): \"255,0,0\"");
+			}
 			}
 			GameState.instance.playerColor = pC;
 			GameState.save();

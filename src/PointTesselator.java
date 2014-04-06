@@ -71,6 +71,8 @@ public class PointTesselator {
 	static float focalLength;
 	static float zDistance;
 	private static BufferedImage img;
+	
+	private int transparency = 255;
 
 	private static float[] stagedPoints;
 	private static int stagedWidth;
@@ -90,10 +92,13 @@ public class PointTesselator {
 	// currently do not support translations or z-depth (so they
 	// don't work).
 	private final static boolean useOldMath = true;
+	//public static boolean useMathCache = true;
 	// =====================================
 
 	private boolean skipCull = false;
 
+	//private static IdentityHashMap<P3D,>
+	
 	// Rotation values.
 	protected float rotationX = 0.0f;
 	protected float rotationY = 0.0f;
@@ -184,6 +189,18 @@ public class PointTesselator {
 		operationStack = new Queue<Operation3D>();
 		currentDrawType = DrawType.Points;
 		matrix = new Matrix();
+	}
+	
+	public int getTransparency() {
+		return transparency;
+	}
+	
+	public void setTransparency(int val) {
+		if (val > 255)
+			val = 255;
+		if (val < 0)
+			val = 0;
+		transparency = val;
 	}
 
 	/**
@@ -346,7 +363,7 @@ public class PointTesselator {
 	public void point(P3D point) {
 		operationStack.enqueue(point);
 	}
-
+public static boolean removeAlpha = true;
 	public void color(Color c) {
 		// Remove any alpha - It makes it slow and messes with the depth.
 		c = new Color(c.getRed(), c.getGreen(), c.getBlue());
@@ -596,14 +613,14 @@ public class PointTesselator {
 						tri0X = screenX;
 						tri0Y = screenY;
 						tri0Z = screenZ;// rotationZ;
-						tri0C = g.getColor();
+						tri0C = currentStackColor;
 						tri0ZT = point.z;
 						p0YY = new P3D(rotationX, rotationY, rotationZ);
 						preRotate0 = new P3D(rotationX, rotationY, rotationZ);
 					} else if (tri1X == 0 && tri1Y == 0 && font == null) {
 						tri1X = screenX;
 						tri1Y = screenY;
-						tri1C = g.getColor();
+						tri1C = currentStackColor;
 						tri1Z = screenZ;// rotationZ;
 						tri1ZT = point.z;
 						p1YY = new P3D(rotationX, rotationY, rotationZ);
@@ -658,7 +675,7 @@ public class PointTesselator {
 									tri0C = lastKnownGoodColor;
 								if (tri1C == null)
 									tri1C = lastKnownGoodColor;
-								Color other = g.getColor();
+								Color other = currentStackColor;
 								if (font != null)
 									other = font.color;
 								p2YY = new P3D(rotationX, rotationY, rotationZ);
@@ -712,6 +729,7 @@ public class PointTesselator {
 				final C3D color = (C3D) pulled;
 				if (color != null && color.color != null)
 					lastKnownGoodColor = color.color;
+				currentStackColor = color.color;
 				g.setColor(color.color);
 			} else if (pulled.getOperationType() == 4) {
 				// It's a texture coordinate
@@ -733,6 +751,8 @@ public class PointTesselator {
 		operationStack.clear();
 		//operationStack = new Queue<Operation3D>();
 	}
+	
+	private Color currentStackColor = Color.white;
 
 	public void draw(Graphics g) {
 		partialDraw(g);

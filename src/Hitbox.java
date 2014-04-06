@@ -24,6 +24,10 @@ public class Hitbox {
 	private HitAction action = defaultAction;
 	private P3D location = new P3D(0, 0, 0);
 
+	public static HitAction getDefaultHitAction() {
+		return defaultAction;
+	}
+	
 	public Hitbox() {
 
 	}

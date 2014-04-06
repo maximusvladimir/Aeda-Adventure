@@ -25,7 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 
 public class FileSave {
-	private final String fileName = "game.dat";
+	private final String fileName = "game.sav";
 	public FileSave() {
 		
 	}

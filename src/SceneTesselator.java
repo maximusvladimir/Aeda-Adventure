@@ -19,6 +19,7 @@ public class SceneTesselator extends PointTesselator {
 	private ArrayList<T3D> triangles;
 	private ArrayList<SPCache> spherePointCache;
 	private ArrayList<Light> lights;
+	//private ArrayList<T3D> rendererdTriangles; cache rendererd triangles and see if inside.
 	private static final TriangleComparator2 cmp2 = new TriangleComparator2();
 	private Color fogColor = Color.white;
 	private float fogStart = 0.0f;
@@ -35,7 +36,7 @@ public class SceneTesselator extends PointTesselator {
 	}
 
 	public void setUseWireframeWithShading(boolean value) {
-		useWireframeAdditionally = true;
+		useWireframeAdditionally = value;
 	}
 
 	public boolean getUseWireframeWithShader() {
@@ -82,15 +83,29 @@ public class SceneTesselator extends PointTesselator {
 		}
 		for (int i = 0; i < size(); i++) {
 			try {
-				getTesselator(i).translate(translatePreX, translatePreY,
+				PointTesselator tess = getTesselator(i);
+				tess.translate(translatePreX, translatePreY,
 						translatePreZ, true);
-				getTesselator(i).translate(translatePostX, translatePostY,
+				tess.translate(translatePostX, translatePostY,
 						translatePostZ, false);
-				getTesselator(i).rotate(rotationX, rotationY, rotationZ);
-				getTesselator(i)
+				tess.rotate(rotationX, rotationY, rotationZ);
+				tess
 						.scale(getScale().x, getScale().y, getScale().z);
-				getTesselator(i).partialDraw(g);
-				triangles.addAll(getTesselator(i).getTriangles());
+				tess.partialDraw(g);
+				if (tess.getTransparency() < 253 && !PointTesselator.removeAlpha) {
+					for (int u = 0; u < getTesselator(i).getTriangles().size(); u++) {
+						T3D tsd = getTesselator(i).getTriangles().get(u);
+						if (tsd.c0i != null)
+						tsd.c0i = Utility.adjustAlpha(tsd.c0i, tess.getTransparency());
+						if (tsd.c1i != null)
+						tsd.c1i = Utility.adjustAlpha(tsd.c1i, tess.getTransparency());
+						if (tsd.c2i != null)
+						tsd.c2i = Utility.adjustAlpha(tsd.c2i, tess.getTransparency());
+						triangles.add(tsd);
+					}
+				}
+				else
+					triangles.addAll(tess.getTriangles());
 			} catch (Throwable t) {
 				System.err
 						.println("Failed to perform render on object. The object was probably removed without respect to this thread: "
@@ -240,7 +255,7 @@ public class SceneTesselator extends PointTesselator {
 										fogEquation);
 						int blue = (int) MathCalculator.lerp(
 								fogColor.getBlue(), c0.getBlue(), fogEquation);
-						g.setColor(new Color(red, green, blue));
+						g.setColor(new Color(red, green, blue, c0.getAlpha()));
 					} else if (t.root.getFaceLighting())
 						g.setColor(new Color((int) colors[0], (int) colors[1],
 								(int) colors[2]));
@@ -326,6 +341,7 @@ public class SceneTesselator extends PointTesselator {
 			} else
 				numSkippedTriangles++;
 		}
+		avaiableTriangles = 0;
 		for (int i = 0; i < size(); i++) {
 			final PointTesselator sample = getTesselator(i);
 			sample.translatePreX = sample.translatePreY = sample.translatePreZ = 0;
@@ -335,6 +351,7 @@ public class SceneTesselator extends PointTesselator {
 			sample.matrix.zero();
 			numSkippedTriangles += sample.numSkippedTriangles;
 			sample.numSkippedTriangles = 0;
+			avaiableTriangles += sample.getTriangles().size();
 			sample.getTriangles().clear();
 		}
 		lastSkippedTriangles = (int) numSkippedTriangles;
@@ -343,6 +360,11 @@ public class SceneTesselator extends PointTesselator {
 		lights.clear();
 		fogUsed = false;
 		// Compiler.enable();
+	}
+	private long avaiableTriangles = 0;
+	
+	public long getNumAvaiableTriangles() {
+		return avaiableTriangles;
 	}
 
 	public void cube(PointTesselator tesselator, float centerX, float centerY,

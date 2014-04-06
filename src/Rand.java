@@ -70,4 +70,12 @@ public class Rand extends Random {
 		int db = MathCalculator.colorLock(base.getBlue() + nextInt(-halfT,halfT));
 		return new Color(dr,dg,db);
 	}
+	
+	public Color bright(Color base, int tolerance) {
+		int halfT = tolerance / 2;
+		int rgbreduction = nextInt(-halfT,halfT);
+		return new Color(MathCalculator.colorLock(rgbreduction+base.getRed()),
+				MathCalculator.colorLock(rgbreduction+base.getGreen()),
+				MathCalculator.colorLock(rgbreduction+base.getBlue()));
+	}
 }

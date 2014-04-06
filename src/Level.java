@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 
 public abstract class Level extends Screen {
@@ -17,6 +18,7 @@ public abstract class Level extends Screen {
 	private static BufferedImage vignette = null;
 	public Level(Main inst) {
 		super(inst);
+		PointTesselator.removeAlpha = false;
 		if (vignette == null)
 			vignette = Utility.generateVignette(getMain().getWidth(), getMain()
 				.getHeight());
@@ -42,22 +44,62 @@ public abstract class Level extends Screen {
 		showFlakes = vis;
 	}
 	
+	public Scene<Drawable> getScene() {
+		return scene;
+	}
+	
 	public void silentTick() {
-		if (getTimeSinceInit() == -1 || System.currentTimeMillis() - getTimeSinceInit() < 1000)
+		if (getTimeSinceInit() == -1 || System.currentTimeMillis() - getTimeSinceInit() < 500) {
+			getScene().setPlayerMovable(false);
 			return;
+		}
+		else
+			getScene().setPlayerMovable(true);
 		
 		for (int i = 0; i < scene.getSceneSize(); i++) {
-			scene.get(i).hit(scene.getPlayer());
-			scene.get(i).tick();
+			try {
+				scene.get(i).hit(scene.getPlayer());
+				scene.get(i).tick();
+			}
+			catch (Throwable t) {
+				// Ocassionally the other thread removes the object in transit.
+			}
 		}
 		scene.tick();
+		sf += 0.01f;
+		if (blinkTime != -1) {
+			if (System.currentTimeMillis() - blinkTime > 260) {
+				blinkTime = -1;
+				scene.getPlayer().setEyesOpen(true);
+				lastBlink = System.currentTimeMillis() + rand.nextInt(0,2500);
+			}
+		}
+		else if (System.currentTimeMillis() - lastBlink > 4000) {
+			scene.getPlayer().setEyesOpen(false);
+			blinkTime = System.currentTimeMillis();
+		}
+		ArrayList<Lamppost> lamps = scene.getObjectsByType(Lamppost.class);
+		int darkBuilder = 0;
+		for (int i = 0; i < lamps.size(); i++) {
+			Lamppost lamp = lamps.get(i);
+			if (!lamp.isLampOn())
+				continue;
+			float dist = lamp.getDistToPlayer();
+			if (dist < 700) {
+				float ams = (float)(Math.sin(lamp.getWindDelta())*25) + 65;
+				darkBuilder += -(ams-(int)(dist/700*ams));
+			}
+		}
+		scene.getPlayer().setIndividualDarkness(darkBuilder);
 	}
-
+	long blinkTime = -1;
+	long lastBlink = 0;
+float sf = 0.0f;
 	public void silentInit() {
 		if (isFullscreen())
 			hideCursor();
 		rand = new Rand(4);
-		flakes = new Flakes(getMain(), rand, 30);
+		flakes = new Flakes(getMain(), rand, 20);
 		playerDelta = GameState.instance.playerDelta;
 	}
 	
@@ -78,7 +120,7 @@ public abstract class Level extends Screen {
 	}
 	
 	public void keyDown(int code) {
-		if (!scene.canPlayerMove())
+		if (!scene.canPlayerMove() || showWorldMap)
 			return;
 		if (code == KeyEvent.VK_W) {
 			scene.movePlayer(true);
@@ -88,8 +130,13 @@ public abstract class Level extends Screen {
 			playerDelta = playerDelta + 0.1f;
 		} else if (code == KeyEvent.VK_D) {
 			playerDelta = playerDelta - 0.1f;
-		} else if (code == KeyEvent.VK_E) {
+		} else if (code == KeyEvent.VK_ENTER) {
 			scene.getPlayer().hit();
+		} else if (code == KeyEvent.VK_P) {
+			scene.useThisMethodSparsingly().setUseWireframeWithShading(!
+					scene.useThisMethodSparsingly().getUseWireframeWithShader());
+		} else if (code == KeyEvent.VK_G) {
+			transition = 1;
 		}
 		GameState.instance.playerDelta = playerDelta;
 		scene.setPlayerDelta(playerDelta);
@@ -181,7 +228,7 @@ public abstract class Level extends Screen {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_OFF);
-		if (transition >= 0.05f) {
+		if (transition >= -0.1f) {
 			transition -= 0.01f;
 			// player.moving = false;
 			// canMove = false;
