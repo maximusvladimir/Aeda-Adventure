@@ -33,25 +33,29 @@ public class SceneTesselator extends PointTesselator {
 		spherePointCache = new ArrayList<SPCache>();
 		lights = new ArrayList<Light>();
 	}
-	
+
 	public void setUseWireframeWithShading(boolean value) {
 		useWireframeAdditionally = true;
 	}
-	
+
 	public boolean getUseWireframeWithShader() {
 		return useWireframeAdditionally;
 	}
-	
+
 	public void setReverseFogEquation(boolean value) {
 		reverseFogEquation = value;
 	}
-	
-	public boolean isReverseFogEquation(){
+
+	public boolean isReverseFogEquation() {
 		return reverseFogEquation;
 	}
 
 	public void addTesselator(PointTesselator tesselator) {
 		sceneObjects.add(tesselator);
+	}
+	
+	public void removeTesselator(PointTesselator tesselator) {
+		sceneObjects.remove(tesselator);
 	}
 
 	public PointTesselator getTesselator(int index) {
@@ -66,27 +70,31 @@ public class SceneTesselator extends PointTesselator {
 		sceneObjects.remove(index);
 	}
 
+	private Polygon p = new Polygon();
+
 	public void draw(Graphics g) {
 		// Compiler.disable();
 		if (fogUsed) {
 			g.setColor(fogColor);
-			g.fillRect(0,0,maxWidth,maxHeight);
+			g.fillRect(0, 0, maxWidth, maxHeight);
 		}
 		for (int i = 0; i < size(); i++) {
-			getTesselator(i).translate(translatePreX, translatePreY, translatePreZ, true);
-			getTesselator(i).translate(translatePostX, translatePostY, translatePostZ, false);
-			getTesselator(i).rotate(rotationX,rotationY,rotationZ);
-			getTesselator(i).scale(getScale().x,getScale().y,getScale().z);
+			getTesselator(i).translate(translatePreX, translatePreY,
+					translatePreZ, true);
+			getTesselator(i).translate(translatePostX, translatePostY,
+					translatePostZ, false);
+			getTesselator(i).rotate(rotationX, rotationY, rotationZ);
+			getTesselator(i).scale(getScale().x, getScale().y, getScale().z);
 			getTesselator(i).partialDraw(g);
 			triangles.addAll(getTesselator(i).getTriangles());
 		}
-		
+
 		// rare bug:
-		//Exception in thread "main" java.lang.IllegalArgumentException: Comparison method violates its general contract!
+		// Exception in thread "main" java.lang.IllegalArgumentException:
+		// Comparison method violates its general contract!
 		try {
 			Collections.sort(triangles, cmp2);
-		}
-		catch (Throwable t) {
+		} catch (Throwable t) {
 			t.printStackTrace();
 		}
 
@@ -109,8 +117,8 @@ public class SceneTesselator extends PointTesselator {
 				numSkippedTriangles++;
 				continue;
 			}
-			float[] colors=null;
-			float[] lcolors=null;
+			float[] colors = null;
+			float[] lcolors = null;
 			float darkness = -1;
 			if (t.root.getFaceLighting()) {
 				lcolors = new float[4];
@@ -132,40 +140,48 @@ public class SceneTesselator extends PointTesselator {
 						if (j == 2)
 							sma = t.c2i;
 						float dot = P3D.dot(norm, sf);
-						
+
 						// Specular calculation:
 						if (sampler.shinyness > 0)
-							dot = ((float)Math.pow(dot,sampler.shinyness) + dot);
-						
+							dot = ((float) Math.pow(dot, sampler.shinyness) + dot);
+
 						// Artificial specular highlite:
-						//if (dot > 0.8f)
-							//dot = 1;
-						
-						float red = MathCalculator.lerp(sampler.r,sma.getRed(), sampler.intensity) * dot;
-						float green = MathCalculator.lerp(sampler.g,sma.getGreen(), sampler.intensity) * dot;
-						float blue = MathCalculator.lerp(sampler.b,sma.getBlue(), sampler.intensity) * dot;
-						
+						// if (dot > 0.8f)
+						// dot = 1;
+
+						float red = MathCalculator.lerp(sampler.r,
+								sma.getRed(), sampler.intensity) * dot;
+						float green = MathCalculator.lerp(sampler.g,
+								sma.getGreen(), sampler.intensity)
+								* dot;
+						float blue = MathCalculator.lerp(sampler.b,
+								sma.getBlue(), sampler.intensity)
+								* dot;
+
 						lcolors[0] += sampler.r * dot;
 						lcolors[1] += sampler.g * dot;
 						lcolors[2] += sampler.b * dot;
 						lcolors[3] += sampler.intensity;
-						
+
 						darkness += dot;
 						colors[0 + (j * 3)] += red;
 						colors[1 + (j * 3)] += green;
 						colors[2 + (j * 3)] += blue;
 					}
-					//darkness = darkness * 0.3333333333333333f;
+					// darkness = darkness * 0.3333333333333333f;
 				}
 				for (int v = 0; v < 9; v++) {
-					colors[v] = MathCalculator.colorLock(colors[v]);// * 0.33333333f);
+					colors[v] = MathCalculator.colorLock(colors[v]);// *
+																	// 0.33333333f);
 				}
 			}
 			boolean ev = true;
 			if (!t.root.isCullSkipped())
 				ev = drawableTriangle(tri);
 			if (ev) {
-				if ((Utility.colorEqual(c0, c1, c2) && !t.root.getUseTexture()) || (lcolors != null && lcolors[3] < 0.06f && !t.root.getUseTexture())) {
+				if ((Utility.colorEqual(c0, c1, c2) && !t.root.getUseTexture())
+						|| (lcolors != null && lcolors[3] < 0.06f && !t.root
+								.getUseTexture())) {
 					// If they are all the same color,
 					// then render it with basic Java graphics
 					// methods.
@@ -173,10 +189,11 @@ public class SceneTesselator extends PointTesselator {
 						lcolors[0] = MathCalculator.colorLock(lcolors[0]);
 						lcolors[1] = MathCalculator.colorLock(lcolors[1]);
 						lcolors[2] = MathCalculator.colorLock(lcolors[2]);
-						c0 = new Color((int)lcolors[0],(int)lcolors[1],(int)lcolors[2]);
+						c0 = new Color((int) lcolors[0], (int) lcolors[1],
+								(int) lcolors[2]);
 					}
 					if (t.root.getFaceLighting() && fogUsed) {
-						float fogEquation = 1-(float) ((fogEnd - t.dist) / (fogEnd - fogStart));
+						float fogEquation = 1 - (float) ((fogEnd - t.dist) / (fogEnd - fogStart));
 						if (fogEquation > 1.4) {
 							numSkippedTriangles++;
 							continue;
@@ -187,14 +204,16 @@ public class SceneTesselator extends PointTesselator {
 							fogEquation = 0;
 						if (isReverseFogEquation())
 							fogEquation = 1 - fogEquation;
-						colors[0] = MathCalculator.lerp(colors[0], fogColor.getRed(), fogEquation);
-						colors[1] = MathCalculator.lerp(colors[1], fogColor.getGreen(), fogEquation);
-						colors[2] = MathCalculator.lerp(colors[2], fogColor.getBlue(), fogEquation);
+						colors[0] = MathCalculator.lerp(colors[0],
+								fogColor.getRed(), fogEquation);
+						colors[1] = MathCalculator.lerp(colors[1],
+								fogColor.getGreen(), fogEquation);
+						colors[2] = MathCalculator.lerp(colors[2],
+								fogColor.getBlue(), fogEquation);
 						g.setColor(new Color((int) colors[0], (int) colors[1],
 								(int) colors[2]));
-					}
-					else if (fogUsed) {
-						float fogEquation = 1-(float) ((fogEnd - t.dist) / (fogEnd - fogStart));
+					} else if (fogUsed) {
+						float fogEquation = 1 - (float) ((fogEnd - t.dist) / (fogEnd - fogStart));
 						if (fogEquation > 1.4) {
 							numSkippedTriangles++;
 							continue;
@@ -205,44 +224,49 @@ public class SceneTesselator extends PointTesselator {
 							fogEquation = 0;
 						if (isReverseFogEquation())
 							fogEquation = 1 - fogEquation;
-						int red = (int)MathCalculator.lerp(fogColor.getRed(), c0.getRed(), fogEquation);
-						int green = (int)MathCalculator.lerp(fogColor.getGreen(), c0.getGreen(), fogEquation);
-						int blue = (int)MathCalculator.lerp(fogColor.getBlue(), c0.getBlue(), fogEquation);
-						g.setColor(new Color(red,green,blue));
-					}
-					else if (t.root.getFaceLighting())
+						int red = (int) MathCalculator.lerp(fogColor.getRed(),
+								c0.getRed(), fogEquation);
+						int green = (int) MathCalculator
+								.lerp(fogColor.getGreen(), c0.getGreen(),
+										fogEquation);
+						int blue = (int) MathCalculator.lerp(
+								fogColor.getBlue(), c0.getBlue(), fogEquation);
+						g.setColor(new Color(red, green, blue));
+					} else if (t.root.getFaceLighting())
 						g.setColor(new Color((int) colors[0], (int) colors[1],
 								(int) colors[2]));
 					else
 						g.setColor(c0);
 					if (t.font == null) {
-					Polygon p = new Polygon();
-					p.addPoint(tri[0], tri[1]);
-					p.addPoint(tri[2], tri[3]);
-					p.addPoint(tri[4], tri[5]);
-					p.addPoint(tri[0], tri[1]);
-					g.fillPolygon(p);
-					if (useWireframeAdditionally) {
-					g.setColor(g.getColor().darker());
-					g.drawPolygon(p);
-					}
-					}
-					else {
-						//System.out.println("DRAWING"+t.zdepth);
-						//g.setColor(t.font.color);
-						float size = (1-Math.abs(t.zdepth))*t.font.font.getSize()*3;
+						// p.reset();
+						p = new Polygon();
+						p.addPoint(tri[0], tri[1]);
+						p.addPoint(tri[2], tri[3]);
+						p.addPoint(tri[4], tri[5]);
+						// p.addPoint(tri[0], tri[1]);
+						g.fillPolygon(p);
+						if (useWireframeAdditionally) {
+							g.setColor(g.getColor().darker());
+							g.drawPolygon(p);
+						}
+					} else {
+						// System.out.println("DRAWING"+t.zdepth);
+						// g.setColor(t.font.color);
+						float size = (1 - Math.abs(t.zdepth))
+								* t.font.font.getSize() * 3;
 						g.setFont(t.font.font.deriveFont(size));
-						String[] trims = new String[] {t.font.str};
+						String[] trims = new String[] { t.font.str };
 						if (t.font.str.indexOf("\n") > -1) {
 							trims = t.font.str.split("\n");
 						}
 						for (int b = 0; b < trims.length; b++) {
-							g.drawString(trims[b],tri[4],tri[5]+(int)((size*b)+1.2f));
+							g.drawString(trims[b], tri[4], tri[5]
+									+ (int) ((size * b) + 1.2f));
 						}
 					}
 				} else {
 					if (fogUsed) {
-						float fogEquation = 1-(float) ((fogEnd - t.dist) / (fogEnd - fogStart));
+						float fogEquation = 1 - (float) ((fogEnd - t.dist) / (fogEnd - fogStart));
 						if (fogEquation > 1.4) {
 							numSkippedTriangles++;
 							continue;
@@ -266,23 +290,22 @@ public class SceneTesselator extends PointTesselator {
 					if (!t.root.getUseTexture())
 						texture2 = null;
 					if (texture2 == null && t.root.getFaceLighting()) {
-						/*t.c0i = new Color((int) colors[0], (int) colors[1],
-								(int) colors[2]);
-						t.c1i = new Color((int) colors[3], (int) colors[4],
-								(int) colors[5]);
-						t.c2i = new Color((int) colors[6], (int) colors[7],
-								(int) colors[8]);*/
-					}
-					else if (t.root.getFaceLighting()) {
+						/*
+						 * t.c0i = new Color((int) colors[0], (int) colors[1],
+						 * (int) colors[2]); t.c1i = new Color((int) colors[3],
+						 * (int) colors[4], (int) colors[5]); t.c2i = new
+						 * Color((int) colors[6], (int) colors[7], (int)
+						 * colors[8]);
+						 */
+					} else if (t.root.getFaceLighting()) {
 						t.lightingColor = lcolors;
 					}
 					if (barycentricRasterizorOn) {
 						fillTriangle(t, texture2, bck);
-					}
-					else
+					} else
 						fillTriangle(t, texture2, bck);
 					if (useWireframeAdditionally) {
-						Polygon p = new Polygon();
+						p.reset();
 						p.addPoint(tri[0], tri[1]);
 						p.addPoint(tri[2], tri[3]);
 						p.addPoint(tri[4], tri[5]);
@@ -542,7 +565,7 @@ public class SceneTesselator extends PointTesselator {
 				float halfRadius = radius * 0.5f;
 				P3D radCen = new P3D(center.x - halfRadius, center.y
 						- halfRadius, center.z - halfRadius);
-				//P3D normAdder = new P3D();
+				// P3D normAdder = new P3D();
 				// This is a really evil for loop.
 				for (int d = 0; d < inst.points.length;) {
 					if (d % 9 == 0 && d / 9 < colors.length - 1)
@@ -789,18 +812,18 @@ public class SceneTesselator extends PointTesselator {
 		// ^ Front left
 
 		tesselator.color(c0);
-		tesselator.normal(0,1,0);
+		tesselator.normal(0, 1, 0);
 		tesselator.point(frontLeft);
 		tesselator.point(backRight.x, frontLeft.y, frontLeft.z);
 		tesselator.point(backRight);
 
 		tesselator.color(c1);
-		tesselator.normal(0,1,0);
+		tesselator.normal(0, 1, 0);
 		tesselator.point(backRight);
 		tesselator.point(frontLeft.x, backRight.y, backRight.z);
 		tesselator.point(frontLeft);
 	}
-	
+
 	public void plane(PointTesselator tesselator, P3D frontLeft, P3D backRight,
 			Color c0, Color c1, Color c2, Color c3) {
 		// V Back right
@@ -818,14 +841,14 @@ public class SceneTesselator extends PointTesselator {
 		// ^ Front left
 
 		tesselator.color(c0);
-		tesselator.normal(0,1,0);
+		tesselator.normal(0, 1, 0);
 		tesselator.point(frontLeft);
 		tesselator.color(c1);
 		tesselator.point(backRight.x, frontLeft.y, frontLeft.z);
 		tesselator.color(c2);
 		tesselator.point(backRight);
 
-		tesselator.normal(0,1,0);
+		tesselator.normal(0, 1, 0);
 		tesselator.point(backRight);
 		tesselator.color(c3);
 		tesselator.point(frontLeft.x, backRight.y, backRight.z);
@@ -986,9 +1009,9 @@ public class SceneTesselator extends PointTesselator {
 		tesselator.point(vertices[6]);
 		tesselator.point(vertices[1]);
 	}
-	
+
 	public void light(Color color) {
-		light(new P3D(0,0,1),color);
+		light(new P3D(0, 0, 1), color);
 	}
 
 	public void light(P3D position) {
@@ -1002,64 +1025,52 @@ public class SceneTesselator extends PointTesselator {
 	public void light(P3D position, float intensity) {
 		light(position, Color.white, intensity);
 	}
-	
+
 	public void light(P3D position, Color color, float intensity) {
-		light(position,color,intensity,0);
+		light(position, color, intensity, 0);
 	}
 
-	public void light(P3D position, Color color, float intensity, float shinyness) {
+	public void light(P3D position, Color color, float intensity,
+			float shinyness) {
 		Light st = new Light();
 		float computeRed = color.getRed();
 		float computeGreen = color.getGreen();
 		float computeBlue = color.getBlue();
-		/*boolean canCompute = true;
-		if (intensity == 0.0f)
-			canCompute = false;
-		float expansion = 0.0f;
-		if (intensity < 0)
-			intensity = -intensity;
-		while (canCompute && expansion < intensity) {
-			expansion += 0.01f;
-			computeRed += 0.01f;
-			computeGreen += 0.01f;
-			computeBlue += 0.01f;
-			if (computeRed >= 255.0f || computeGreen >= 255.0f
-					|| computeBlue >= 255.0f)
-				canCompute = false;
-		}*/
+		/*
+		 * boolean canCompute = true; if (intensity == 0.0f) canCompute = false;
+		 * float expansion = 0.0f; if (intensity < 0) intensity = -intensity;
+		 * while (canCompute && expansion < intensity) { expansion += 0.01f;
+		 * computeRed += 0.01f; computeGreen += 0.01f; computeBlue += 0.01f; if
+		 * (computeRed >= 255.0f || computeGreen >= 255.0f || computeBlue >=
+		 * 255.0f) canCompute = false; }
+		 */
 		int red = (int) computeRed;
 		int green = (int) computeGreen;
 		int blue = (int) computeBlue;
-		/*if (red > 255)
-			red = 255;
-		if (green > 255)
-			green = 255;
-		if (blue > 255)
-			blue = 255;
-		if (red < 0)
-			red = 0;
-		if (green < 0)
-			green = 0;
-		if (blue < 0)
-			blue = 0;*/
+		/*
+		 * if (red > 255) red = 255; if (green > 255) green = 255; if (blue >
+		 * 255) blue = 255; if (red < 0) red = 0; if (green < 0) green = 0; if
+		 * (blue < 0) blue = 0;
+		 */
 		st.position = position;
 		st.b = blue;
 		st.r = red;
 		st.g = green;
-		st.intensity = 1-intensity;
+		st.intensity = 1 - intensity;
 		st.shinyness = shinyness;
 		lights.add(st);
 	}
 
 	public void fog(Color fogColor, float start, float end) {
-		//if (start <= end)
-			//throw new IllegalArgumentException("The fog must end further away than the start.");
+		// if (start <= end)
+		// throw new
+		// IllegalArgumentException("The fog must end further away than the start.");
 		fogUsed = true;
 		this.fogColor = fogColor;
 		this.fogStart = start;
 		this.fogEnd = end;
 	}
-	
+
 	private P3D getConicalPoint(float radius, int side, int latitudes,
 			P3D apex, float height) {
 		float circleX = (float) (radius * Math.cos(Math.PI * 2.0 * side
@@ -1089,7 +1100,8 @@ public class SceneTesselator extends PointTesselator {
 	public void model(Model model, P3D position) {
 		if (model == null)
 			return;
-		PointTesselator tess = model.doNotPlayAroundWithThisMethodPleaseThanksIReallyAppreciateIt();
+		PointTesselator tess = model
+				.doNotPlayAroundWithThisMethodPleaseThanksIReallyAppreciateIt();
 		while (!model.isCompletelyQueried()) {
 			tess.push(model.next());
 		}
@@ -1110,10 +1122,10 @@ class TriangleComparator2 implements Comparator<T3D> {
 		// float y = Math.abs(t0.midpoint.y) - Math.abs(t1.midpoint.y);
 		// float z = Math.abs(t0.midpoint.z) - Math.abs(t1.midpoint.z);
 		// return (int)(x + y + z);
-		//return (int) ((t0.zdepth - t1.zdepth) * 4000);
+		// return (int) ((t0.zdepth - t1.zdepth) * 4000);
 		// return (int)((t0.))
 		// return (int)((t0.dist - t1.dist)*1000);
-		//System.out.println(t0.zdepth + "," + t1.zdepth);
+		// System.out.println(t0.zdepth + "," + t1.zdepth);
 		if (t0.zdepth < t1.zdepth)
 			return -1;
 		else if (t0.zdepth == t1.zdepth)

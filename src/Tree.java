@@ -1,8 +1,8 @@
 
 public class Tree extends Drawable {
 	private PointTesselator tesselator;
-	public Tree(Rand rand) {
-		super(new P3D(-60,0,-60),new P3D(60,900,60));
+	public Tree(Scene<Drawable> scene,Rand rand) {
+		super(scene,new P3D(-60,0,-60),new P3D(60,900,60));
 		tesselator = new PointTesselator();
 		delta = (float)(rand.nextDouble() * Math.PI * 2);
 		swayx = (float)(rand.nextDouble() * 6);

@@ -249,8 +249,10 @@ public class Main extends JFrame {
 					long qSt = System.currentTimeMillis();
 					draw(buffer.getGraphics());
 					internalGraphics.drawImage(buffer,0,0,null);
-					if (framesDrawn == 2)
+					if (framesDrawn == 2) {
 						drawTime = (int)(System.currentTimeMillis()-qSt);
+						GameState.DTIME = drawTime;
+					}
 					drawHUD(internalGraphics);
 					painting = true;
 					repaint();

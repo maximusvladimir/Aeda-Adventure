@@ -5,8 +5,8 @@ import java.util.Random;
 public class Grass extends Drawable {
 	private PointTesselator tesselator;
 	private float delta = 0.0f;
-	public Grass() {
-		super(null,null);//new P3D(-60,0,-60),new P3D(60,900,60));
+	public Grass(Scene scene) {
+		super(scene,null,null);//new P3D(-60,0,-60),new P3D(60,900,60));
 		tesselator = new PointTesselator();
 	}
 	public void draw(int darkness) {

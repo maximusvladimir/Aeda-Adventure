@@ -5,8 +5,8 @@ public class Gem extends Drawable {
 	private PointTesselator tesselator;
 	private float spinOffset;
 	private float dark = 0.0f;
-	public Gem(Rand rand) {
-		super(new P3D(-50,-40,-25),new P3D(50,40,25));
+	public Gem(Scene<Drawable> scene, Rand rand) {
+		super(scene,new P3D(-50,-40,-25),new P3D(50,40,25));
 		tesselator = new PointTesselator();
 		spinOffset = (float)(rand.nextDouble() * Math.PI *2);
 		dark = (float)(rand.nextDouble() * Math.PI *2);

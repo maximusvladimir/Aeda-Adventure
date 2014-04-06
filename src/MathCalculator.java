@@ -16,10 +16,18 @@ public class MathCalculator {
 		return volumeCube(new P3D(sx,sy,sz), new P3D(ex,ey,ez));
 	}
 	
+	public static float lock(float v) {
+		if (v > 1)
+			v = 1;
+		if (v < 0)
+			v = 0;
+		return v;
+	}
+	
 	public static Color lerp(Color c0, Color c1, float amount) {
 		return new Color((int)lerp(c0.getRed(),c1.getRed(),amount),
 				(int)lerp(c0.getGreen(),c1.getGreen(),amount),
-				(int)lerp(c0.getRed(),c1.getBlue(),amount));
+				(int)lerp(c0.getBlue(),c1.getBlue(),amount));
 	}
 	
 	public static float volumeCube(P3D frontTopLeftPoint,

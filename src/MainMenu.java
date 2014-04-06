@@ -150,7 +150,7 @@ public class MainMenu extends Screen {
 		g2d.fillRect(0,0,getMain().getWidth(),(int)(getMain().getHeight()*0.7f));
 		glow(new Color(180,188,149),g2d,(getMain().getWidth() * 0.6f),(-getMain().getHeight() * 0.05f + moon),(getMain().getWidth() * 0.2f),(getMain().getWidth() * 0.2f));
 		if (moon < getMain().getHeight() * 0.15f)
-			moon += 0.02f;
+			moon += 0.063f;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		delta += 0.005f;
 		terrain.setDrawType(DrawType.Triangle);
@@ -245,7 +245,7 @@ public class MainMenu extends Screen {
 		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		inButton = 0;
-		if (GameState.instance == null || GameState.instance.playerStage == 1000) {
+		if (GameState.instance == null || GameState.instance.playerStage == 0) {
 			drawButton(g,"Create new game",125,120,250,40);
 		}
 		else {
@@ -273,10 +273,12 @@ public class MainMenu extends Screen {
 		((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		if (startFade) {
 			if (fade >= 250) {
-				if (!getMain().screenExists("level")) {
-					getMain().addScreen(new Level(getMain()));
+				if (GameState.instance.playerLevel == 0) {
+					if (!getMain().screenExists("level")) {
+						getMain().addScreen(new Level(getMain()));
+					}
+					getMain().setActiveScreen("level");
 				}
-				getMain().setActiveScreen("level");
 				startFade = false;
 				fade = 0.0f;
 			}
@@ -287,7 +289,7 @@ public class MainMenu extends Screen {
 			g.setColor(new Color(0,0,0,(int)fade));
 			g.fillRect(0,0,getMain().getWidth(),getMain().getHeight());
 			//fade += 2.0f;
-			if (GameState.instance == null || GameState.instance.playerStage == 1000) {
+			if (GameState.instance == null || GameState.instance.playerStage == 0) {
 				fade += 2.3f;
 			}
 			else {

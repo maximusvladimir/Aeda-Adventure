@@ -32,7 +32,8 @@ public class T3D {
 		/*float hx = (p0.x + p1.x+ p2.x)*0.333333333333f;
 		float hy = (p0.y + p1.y+ p2.y)*0.333333333333f;
 		float hz = (p0.z + p1.z+ p2.z)*0.333333333333f;
-		zdepth = (float)Math.sqrt(hx*hx+hy*hy+hz*hz);*/
+		//zdepth = (float)Math.sqrt(hx*hx+hy*hy+hz*hz);
+		zdepth = (float)(hx*hx+hy*hy+hz*hz)/4;*/
 		if (c1 == null)
 			c1 = c0;
 		if (c2 == null)

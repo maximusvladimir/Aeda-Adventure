@@ -3,9 +3,12 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -16,170 +19,120 @@ public class Level extends Screen {
 		super(inst);
 	}
 
-	private SceneTesselator scene;
-	private Gem[] gems;
-	private Tree[] trees;
-	private Grass[] grass;
-	private Rock rock;
-	private Player player;
-	private Player otherPlayer;
-	private GamePlane plane;
-	private Flake[] parts;
 	private long timeSinceTheSecondGUI = Long.MAX_VALUE;
-	private Enemy enemy;
-	private boolean canMove = true;
-	private long timeSinceRan = 0;
-	private float prevWalkX = -10000000.0f;
-	private float prevWalkZ = -10000000.0f;
-	private GameWalls walls;
 	private Sign[] signs;
-
-	public void tick() {
-		if (System.currentTimeMillis() - timeSinceRan > 4000) {
-			for (int i = 0; i < gems.length; i++) {
-				if (gems[i].staticPos.z > walkZ || gems[i].staticPos.z + 2550 < walkZ)
-					continue;
-				gems[i].tick();
-				if (player.hit(gems[i])) {
-					gems[i].setVisible(false);
-					SoundManager.playGem = true;
-					GameState.instance.gems++;
-					GameState.instance.score += 2;
-					if (GameState.instance.gems % 20 == 0) {
-						if (GameState.instance.health < 10)
-							GameState.instance.health++;
-					}
-				}
-			}
-			/*enemy.findPlayer(walkX, walkZ);
-			if (enemy.hit(player)) {
-				GameState.instance.health -= 0.005f;
-				if (GameState.instance.health <= 0.0f) {
-					getMain().removeScreen(this);
-					getMain().removeScreen(getMain().getScreen(0));
-					getMain().addScreen(new MainMenu(getMain()));
-					GameState.instance = null;
-					new FileSave().delete();
-					getMain().setActiveScreen(0);
-					JOptionPane.showMessageDialog(getMain(), "Sorry. You lose.");
-				}
-			}
-			enemy.tick();*/
-		}
-		for (int i = 0; i < signs.length; i++) {
-			if (signs[i].staticPos.z > walkZ || signs[i].staticPos.z + 2550 < walkZ)
-				continue;
-			signs[i].setUserPosition(walkX,walkZ);
-			signs[i].tick();
-		}
-		player.tick();
-		GameState gs = new GameState();
-		gs.playerGUID = GameState.instance.playerGUID;
-		gs.gems = GameState.instance.gems;
-		gs.health= GameState.instance.health;
-		gs.playerLocation = new P3D(walkX,0,walkZ);
-		gs.playerDelta = playerDelta;
-		gs.playerStage = GameState.instance.playerStage;
-		gs.score = GameState.instance.score;
-		Network.pushPlayerInfo(gs);
-	}
-	private Rand rand;
+	public static long mapDrawTime = 0;
+	private Scene<Drawable> scene;
 
 	public void init() {
 		if (isFullscreen())
 			hideCursor();
-		timeSinceRan = System.currentTimeMillis();
-		gems = new Gem[40];//40
-		rand = new Rand(4);
-		trees = new Tree[60];//20
-		grass = new Grass[20];
+		vignette = Utility.generateVignette(getMain().getWidth(), getMain()
+				.getHeight());
+		Gem[] gems = new Gem[40];// 40
+		Tree[] trees = new Tree[60];// 20
+		Grass[] grass = new Grass[80];
+		Barrel[] barrel = new Barrel[20];
 		signs = new Sign[5];
-		plane = new GamePlane(rand);
-		scene = new SceneTesselator();
-		enemy = new Enemy();
-		scene.addTesselator(enemy.getTesselator());
+		rand = new Rand(4);
+		flakes = new Flakes(getMain(), rand, 25);
+		scene = new Scene<Drawable>(this, rand, 55, new Color(110, 130, 110),
+				14, 0.5f);
+		scene.setFog(-2100, -2600);//-2550);
+		scene.setFogColor(new Color(140, 140, 165));
+		//scene.setFogColor(new Color(101,101,116));
+		playerDelta = GameState.instance.playerDelta;
 		for (int i = 0; i < gems.length; i++) {
-			gems[i] = new Gem(rand);
-			float dx = (float) (rand.nextDouble() * -GamePlane.WORLDSIZE) + GamePlane.WORLDSIZEHALF;
-			float dz = (float) (rand.nextDouble() * -GamePlane.WORLDSIZE) + GamePlane.WORLDSIZEHALF;
-			float dy = -150 + plane.getLocation(dx, dz);
-			gems[i].staticPos = new P3D(dx,dy,dz);
-			scene.addTesselator(gems[i].getTesselator());
+			gems[i] = new Gem(scene, rand);
+			gems[i].setInstanceLoc(rand.nextLocation(-170));
 		}
-		for (int i = 0; i < grass.length; i++) {
-			grass[i] = new Grass();
-			float dx = (float) (rand.nextDouble() * -GamePlane.WORLDSIZE) + GamePlane.WORLDSIZEHALF;
-			float dz = (float) (rand.nextDouble() * -GamePlane.WORLDSIZE) + GamePlane.WORLDSIZEHALF;
-			float dy = -410 + plane.getLocation(dx, dz);
-			grass[i].staticPos = new P3D(dx,dy,dz);
-			scene.addTesselator(grass[i].getTesselator());
+		// an interesting grass algorithm.
+		int currentGrass = 0;
+		while (currentGrass < grass.length) {
+			int remaining = grass.length - currentGrass;
+			int currentNum = rand.nextInt(remaining / 6, remaining / 4);
+			if (currentNum <= 0)
+				currentNum = 1;
+			int indexer = 0;
+			P3D ps = rand.nextLocation(0);
+			while (indexer < currentNum) {
+				indexer++;
+				float offsetX = rand.nextInt(-550, 550);
+				float offsetZ = rand.nextInt(-550, 550);
+				P3D ms = new P3D(ps.x+offsetX,scene.getTerrainHeight(ps.x+offsetX,ps.z+offsetZ)-410,ps.z+offsetZ);
+				if (currentGrass > grass.length - 1)
+					break;
+				grass[currentGrass] = new Grass(scene);
+				grass[currentGrass++].setInstanceLoc(ms);
+			}
 		}
 		for (int i = 0; i < trees.length; i++) {
-			trees[i] = new Tree(rand);
-			float dx = (float) (rand.nextDouble() * -GamePlane.WORLDSIZE) + GamePlane.WORLDSIZEHALF;
-			float dz = (float) (rand.nextDouble() * -GamePlane.WORLDSIZE) + GamePlane.WORLDSIZEHALF;
-			float dy = -400 + plane.getLocation(dx, dz);
-			trees[i].staticPos = new P3D(dx,dy,dz);
-			scene.addTesselator(trees[i].getTesselator());
+			trees[i] = new Tree(scene, rand);
+			trees[i].setInstanceLoc(rand.nextLocation(-400));
 		}
 		for (int i = 0; i < signs.length; i++) {
-			signs[i] = new Sign();
-			float dx = (float) (rand.nextDouble() * -GamePlane.WORLDSIZE) + GamePlane.WORLDSIZEHALF;
-			float dz = (float) (rand.nextDouble() * -GamePlane.WORLDSIZE) + GamePlane.WORLDSIZEHALF;
-			float dy = -250 + plane.getLocation(dx, dz);
-			signs[i].staticPos = new P3D(dx,dy,dz);
-			signs[i].setSignMessage("Sign #" + (i+1));
-			scene.addTesselator(signs[i].getTesselator());
+			signs[i] = new Sign(scene);
+			signs[i].setInstanceLoc(rand.nextLocation(-180));
+			signs[i].setSignMessage("Sign #" + (i + 1));
 		}
-		walls = new GameWalls();
-		scene.addTesselator(walls.getTesselator());
-		player = new Player();
-		plane.setPlayer(player);
-		otherPlayer = new Player();
-		scene.addTesselator(otherPlayer.getTesselator());
-		player.delta = GameState.instance.playerDelta;
-		playerDelta = GameState.instance.playerDelta;
-		player.playerColor = GameState.instance.playerColor;
-		scene.addTesselator(player.getTesselator());
-		rock = new Rock(rand);
-		scene.addTesselator(rock.getTesselator());
-		enemy.staticPos = new P3D((float) (rand.nextDouble() * -GamePlane.WORLDSIZEHALF), 0,
-				(float) (rand.nextDouble() * -GamePlane.WORLDSIZEHALF));
-		/*try {
-			plane.getTesselator().loadTexture(new Texture(ImageIO.read(Level.class.getResource("icon.png"))));
+		for (int i = 0; i < barrel.length; i++) {
+			barrel[i] = new Barrel(scene, rand);
+			barrel[i].setInstanceLoc(rand.nextLocation(-350));
 		}
-		catch (Throwable t) {
-			
-		}*/
-		scene.addTesselator(plane.getTesselator());
-		//scene.setUseWireframeWithShading(true);
+		scene.add(grass);
+		scene.add(gems);
+		scene.add(trees);
+		scene.add(signs);
+		scene.add(barrel);
+		scene.add(new GameWalls(scene));
 
-		parts = new Flake[25];
-		for (int i = 0; i < parts.length; i++) {
-			parts[i] = new Flake();
-			parts[i].x = (float) (rand.nextDouble() * getMain().getWidth());
-			parts[i].y = (float) (rand.nextDouble() * getMain().getHeight());
-			parts[i].dx = (float) (rand.nextDouble() * 1.1f);
-			parts[i].size = (int) (rand.nextDouble() * 4);
-			parts[i].clr = (int) (rand.nextDouble() * 127) + 127;
-			if (rand.nextDouble() < 0.5)
-				parts[i].dx *= -1;
-		}
-
-		if (GameState.instance.playerStage == 1000) {
-			GameState.instance.playerStage = 0;
+		if (GameState.instance.playerStage == 0) {
+			GameState.instance.playerStage = 1;
 			GameState.save();
-		}
-		if (GameState.instance.playerStage >= 1)
+		} else
 			displayFirstGUI = false;
-		walkX = GameState.instance.playerLocation.x;
-		walkZ = GameState.instance.playerLocation.z;
 	}
 
+	public void tick() {
+		/*
+		 * if (System.currentTimeMillis() - timeSinceRan > 4000) { for (int i =
+		 * 0; i < gems.length; i++) { if (gems[i].staticPos.z > walkZ ||
+		 * gems[i].staticPos.z + 2550 < walkZ) continue; gems[i].tick(); if
+		 * (player.hit(gems[i])) { gems[i].setVisible(false);
+		 * SoundManager.playGem = true; GameState.instance.gems++;
+		 * GameState.instance.score += 2; if (GameState.instance.gems % 20 == 0)
+		 * { if (GameState.instance.health < 10) GameState.instance.health++; }
+		 * } } }
+		 */
+		/*
+		 * for (int i = 0; i < signs.length; i++) { if (signs[i].staticPos.z >
+		 * walkZ || signs[i].staticPos.z + 2550 < walkZ) continue;
+		 * signs[i].setUserPosition(walkX, walkZ); signs[i].tick(); }
+		 */
+		if (attackTicks <= 0.01f) {
+			attackTicks = 0.0f;
+		} else {
+			attackTicks -= 0.07f;
+		}
+		GameState gs = new GameState();
+		gs.playerGUID = GameState.instance.playerGUID;
+		gs.gems = GameState.instance.gems;
+		gs.health = GameState.instance.health;
+		// gs.playerLocation = new P3D(walkX, 0, walkZ);
+		// gs.playerDelta = playerDelta;
+		gs.playerStage = GameState.instance.playerStage;
+		gs.score = GameState.instance.score;
+		Network.pushPlayerInfo(gs);
+	}
+
+	private Rand rand;
+
+	public static BufferedImage vignette;
+
 	public void resize(int width, int height) {
-		// terrain.setSize(getCompatabilityBuffer(), width, height);
-		player.getTesselator().setSize(getCompatabilityBuffer(),
-				getMain().getWidth(), getMain().getHeight());
+		vignette = Utility.generateVignette(getMain().getWidth(), getMain()
+				.getHeight());
+		scene.resize(width, height);
 		if (isFullscreen())
 			hideCursor();
 		else
@@ -194,87 +147,15 @@ public class Level extends Screen {
 	float theta = 0.0f;
 	float test = 0;
 
-	float walkX = 0.0f;
-	float walkZ = 0.0f;
-	float playerDelta = (float) (Math.PI / 180.0f * 90);
+	float attackTicks = 0.0f;
 
 	public void draw(Graphics g) {
 		g.setColor(Color.black);
 		g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());
-		//plane.getTesselator().setSize(getMain().getBuffer(), getMain().getWidth(), getMain().getHeight());
 		delta += 0.005f;
 		test += 0.05f;
-		for (int i = 0; i < gems.length; i++) {
-			if (gems[i].staticPos.z > walkZ || gems[i].staticPos.z + 2550 < walkZ)
-				continue;
-			if (gems[i].staticPos.x-1700 > walkX || gems[i].staticPos.x + 1700 < walkX)
-				continue;
-			gems[i].setPositon(new P3D(-walkX, 0, -walkZ));
-			gems[i].draw((int) (Math.sin(test) * 40));
-		}
-
-		player.setPlayerDelta(playerDelta);
-		GameState.FIXEDLOC = new P3D(-walkX, plane.getHeight(), -walkZ);
-		player.setPositon(new P3D(0, plane.getHeight(), -600));//was 0,-100,-500// CHANGEDTO-150
-		player.draw(0);//(int) (Math.sin(test) * 40));
-		float playH = 0.0f;//-plane.getHeight();
-		
-		if (Network.getPlayerGameState() != null) {
-			GameState other = Network.getPlayerGameState();
-			otherPlayer.setPlayerDelta(other.playerDelta);
-			otherPlayer.playerColor = other.playerColor;
-			//System.out.println(other.playerLocation);
-			otherPlayer.setPositon(new P3D(other.playerLocation.x+-walkX, -100,-walkZ+other.playerLocation.z+-500));//was 0,-100,-500// CHANGEDTO-150
-			otherPlayer.draw(0);
-		}
-
-		rock.setPositon(new P3D(-walkX, -300+playH, -50 + -walkZ));
-		rock.draw(0);
-
-		//enemy.setPositon(new P3D(-walkX, -200+playH, -500 + -walkZ));
-		//enemy.draw(0);
-		for (int i = 0; i < trees.length; i++) {
-			if (trees[i].staticPos.z > walkZ || trees[i].staticPos.z + 2550 < walkZ)
-				continue;
-			if (trees[i].staticPos.x-1700 > walkX || trees[i].staticPos.x + 1700 < walkX)
-				continue;
-			trees[i].setPositon(new P3D(-walkX, playH, -walkZ));
-			trees[i].draw(0);
-		}
-		for (int i = 0; i < grass.length; i++) {
-			if (grass[i].staticPos.z > walkZ || grass[i].staticPos.z + 2550 < walkZ)
-				continue;
-			if (grass[i].staticPos.x-1700 > walkX || grass[i].staticPos.x + 1700 < walkX)
-				continue;
-			grass[i].setPositon(new P3D(-walkX, playH, -walkZ));
-			grass[i].draw(0);//(int) (Math.sin(test) * 40));
-		}
-		
-		for (int i = 0; i < signs.length; i++) {
-			if (signs[i].staticPos.z > walkZ || signs[i].staticPos.z + 2550 < walkZ)
-				continue;
-			if (signs[i].staticPos.x-1700 > walkX || signs[i].staticPos.x + 1700 < walkX)
-				continue;
-			signs[i].setPositon(new P3D(-walkX, playH, -walkZ));
-			signs[i].draw(0);//(int) (Math.sin(test) * 40));
-		}
-		
-		plane.setPlayer(walkX, walkZ);
-		plane.setPositon(new P3D(-walkX, -390+playH, -500 + -walkZ));
-		plane.draw(0);
-		
-		walls.setPositon(new P3D(-walkX,playH,-walkZ));
-		walls.draw(0);
-		//water.draw(0);
-
-		// scene.fog(new Color(140,140,180), -1400, -1550);
-		// scene.fog(new Color(140,140,165), -1700, -1890);
-		Color fogColor = new Color(140, 140, 165);
-		scene.fog(fogColor, -2200, -2550);//-2300,-2550
-		scene.setReverseFogEquation(true);
-		//Utility.qS();
+		scene.setSceneDarkness(0);
 		scene.draw(g);
-		//Utility.qE();
 	}
 
 	public void mouseReleased(MouseEvent me) {
@@ -293,9 +174,9 @@ public class Level extends Screen {
 
 	public void keyReleased(KeyEvent ke) {
 		if (ke.getKeyCode() == KeyEvent.VK_Q) {
-			for (int i = 0; i < signs.length; i++) {
-				signs[i].qPressed();
-			}
+			/*
+			 * for (int i = 0; i < signs.length; i++) { signs[i].qPressed(); }
+			 */
 			if (displayFirstGUI) {
 				displayFirstGUI = false;
 				displaySecondGUI = true;
@@ -308,175 +189,121 @@ public class Level extends Screen {
 			} else if (displayThirdGUI) {
 				displayThirdGUI = false;
 			} else {
-				player.jump();
+				scene.getPlayer().jump();
 			}
 			if (GameState.instance.gems == 1 && !displayedFourthGUI)
 				displayedFourthGUI = true;
-		}
-		else if (ke.getKeyCode() == KeyEvent.VK_W || ke.getKeyCode() == KeyEvent.VK_S) {
-			player.moving = false;
-		}
-		else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+		} else if (ke.getKeyCode() == KeyEvent.VK_W
+				|| ke.getKeyCode() == KeyEvent.VK_S) {
+			scene.getPlayer().moving = false;
+		} else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			GameState.save();
 			getMain().setActiveScreen("mainmenu");
 		}
-	}
-
-	private float walkSpeed = 19;//was21
-
-	public void movePlayer(boolean forward) {
-		float te = GamePlane.WORLDSIZEHALF;
-		if (!SoundManager.playFootstep1 && !SoundManager.playFootstep2) {
-			if (rand.nextDouble() < 0.5)
-				SoundManager.playFootstep1 = true;
-			else
-				SoundManager.playFootstep2 = true;
-		}
-		if (forward) {
-			walkX += walkSpeed * Math.cos(playerDelta);
-			walkZ -= walkSpeed * Math.sin(playerDelta);
-		}
-		else {
-			walkX -= walkSpeed * Math.cos(playerDelta) * 0.75f;
-			walkZ += walkSpeed * Math.sin(playerDelta) * 0.75f;
-		}
-		for (int i = 0; i < trees.length; i++) {
-			if (trees[i].hit(player)) {
-				//walkX = walkX - Math.abs((walkX - prevWalkX) * 2);
-				//walkZ = walkZ - Math.abs((walkZ - prevWalkZ) * 2);
-				
-				break;
+		if (ke.getKeyCode() == KeyEvent.VK_M) {
+			showWorldMap = !showWorldMap;
+			if (showWorldMap) {
+				scene.getPlayer().moving = false;
+				scene.setPlayerMovable(false);
+			}
+			else {
+				scene.setPlayerMovable(true);
 			}
 		}
-		for (int i = 0; i < signs.length; i++) {
-			if (signs[i].hit(player)) {
-				walkX = walkX - Math.abs((walkX - prevWalkX) * 2);
-				walkZ = walkZ - Math.abs((walkZ - prevWalkZ) * 2);
-				break;
-			}
-		}
-		if (walkX < -te+500)
-			walkX = -te+500;
-		if (walkZ < -te+200)
-			walkZ = -te+200;
-		if (walkX > te-850)
-			walkX = te-850;
-		if (walkZ > te-310)
-			walkZ = te-310;
-		//System.out.println(walkX + "," + walkZ);
-		prevWalkX = walkX;
-		prevWalkZ = walkZ;
-		GameState.instance.playerLocation = new P3D(walkX, 0, walkZ);
-		player.moving = true;
 	}
 
 	public void keyDown(int code) {
-		if (!canMove)
+		if (!scene.canPlayerMove())
 			return;
 		if (code == KeyEvent.VK_W) {
-			movePlayer(true);
+			scene.movePlayer(true);
 		} else if (code == KeyEvent.VK_S) {
-			movePlayer(false);
+			scene.movePlayer(false);
 		} else if (code == KeyEvent.VK_A) {
-			playerDelta += 0.1f;
-			GameState.instance.playerDelta = playerDelta;
+			playerDelta = playerDelta + 0.1f;
 		} else if (code == KeyEvent.VK_D) {
-			playerDelta -= 0.1f;
-			GameState.instance.playerDelta = playerDelta;
+			playerDelta = playerDelta - 0.1f;
+		} else if (code == KeyEvent.VK_E) {
+			attackTicks = 1;
 		}
+		GameState.instance.playerDelta = playerDelta;
+		scene.setPlayerDelta(playerDelta);
 	}
-	
+
 	public void keyTyped(KeyEvent ke) {
 	}
 
+	private float playerDelta = 0.0f;
+	private float transition = 0.0f;
 	private boolean displayFirstGUI = true;
 	private boolean displaySecondGUI = false;
 	private boolean displayThirdGUI = false;
 	private boolean displayedFourthGUI = false;
+	private Flakes flakes;
+	private boolean showWorldMap = false;
 
 	public void drawHUD(Graphics g) {
-		for (int i = 0; i < parts.length; i++) {
-			Flake flake = parts[i];
-			g.setColor(new Color(255, 255, 255, 100));
-			flake.x += flake.dx * 0.3f;
-			flake.y += flake.size * 0.05f;
-			if (flake.dx < 0)
-				if (flake.x < 0) {
-					flake.x = (float) (getMain().getWidth() + (rand.nextDouble() * (getMain()
-							.getWidth() / 4.0f)));
-				} else if (flake.x > getMain().getWidth())
-					flake.x = (float) (-rand.nextDouble() * (getMain().getWidth() / 4.0f));
-			if (rand.nextDouble() < 0.005)
-				flake.size--;
-			if (flake.size <= 0) {
-				flake.y = (int) (rand.nextDouble() * getMain().getHeight());// (float)(-Math.random()
-																		// *
-																		// (getMain().getHeight()
-																		// *
-																		// 0.2f));
-				flake.size = (int) ((rand.nextDouble() * 3) + 4);
-			}
-			if (flake.size == 1)
-				g.drawLine((int) flake.x, (int) flake.y, (int) flake.x,
-					(int) flake.y);
-			else
-				g.drawOval((int) flake.x, (int) flake.y, flake.size, flake.size);
-		}
-
-		Utility.drawMap(g, getMain(), player, gems, trees,signs,null, walkX, walkZ);
-		
+		flakes.draw(g);
+		Utility.drawMap(g, getMain(), scene);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		boolean flagForMovable = false;
 		if (displayFirstGUI) {
-			Utility.showDialog("Hello " + GameState.instance.playerGUID
-					+ ". Press 'Q'.", g, getMain());
-			canMove = false;
+			Utility.showDialog("Welcome to Fi\u00E4ce Forest, "
+					+ GameState.instance.playerGUID + ". Press 'Q'.", g,
+					getMain());
 			flagForMovable = false;
 		} else if (displaySecondGUI) {
 			Utility.showDialog(
 					"Press 'Q' to skip the dialogues or jump."
 							+ "\nPress 'E' to attack.\nPress 'WASD' to move around.\nThe game automatically saves every 10 seconds, so there is no\nneed to save.",
 					g, getMain());
-			canMove = false;
 			flagForMovable = false;
 		} else if (displayThirdGUI
 				&& System.currentTimeMillis() - timeSinceTheSecondGUI > 4000) {
 			Utility.showDialog(
-					"You should try to find as many gems as you can.\nIf you encounter enemies along the way, remember to press 'E'.\nFind Aeda's Imperial Crown to move to the next level.",
+					"You should try to find as many gems as you can.\nIf you encounter enemies along the way, remember to press 'E'.\nFind Aeda's Imperial Crown Piece to open the door to Holm Village.",
 					g, getMain());
-			canMove = false;
 			flagForMovable = false;
 		} else if (GameState.instance.gems == 1 && !displayedFourthGUI) {
-			canMove = false;
 			flagForMovable = false;
 			Utility.showDialog(
 					"You collected a gem. Each time you collect 20 gems, your health   meter increases by 1.",
 					g, getMain());
 		} else
 			flagForMovable = true;
-		
+
 		for (int i = 0; i < signs.length; i++) {
-			if (signs[i].doSigns(g,getMain())) {
-				canMove = false;
+			if (signs[i].doSigns(g, getMain())) {
 				flagForMovable = false;
 			}
 		}
-		canMove = flagForMovable;
+		if (showWorldMap)
+			flagForMovable = false;
+		scene.setPlayerMovable(flagForMovable);
 
-		//Utility.drawHealth(g);
+		Utility.qS();
+		Utility.drawHealth(g);
+		if (GameState.doVignette)
+			g.drawImage(vignette, 0, 0, null);
+		mapDrawTime = Utility.qEL();
+		
+		if (showWorldMap) {
+			Utility.drawWorldMap(g,getMain());
+		}
 
 		g.setFont(new Font("Arial", 0, 12));
 		g.setColor(Color.white);
 		g.drawString("FPS:" + getMain().getFPS(), 0, 10);
 		if (getMain().isFullscreen()) {
-			g.drawString("Draw time: " + getMain().getDrawTime() + " ms", 0,getMain().getHeight()-3);
-		}
-		else {
-			g.drawString("Draw time: " + getMain().getDrawTime() + " ms", 0,getMain().getHeight()-30);
+			g.drawString("Draw time: " + getMain().getDrawTime() + " ms"
+					+ mapDrawTime, 0, getMain().getHeight() - 3);
+		} else {
+			g.drawString("Draw time: " + getMain().getDrawTime() + " ms"
+					+ mapDrawTime, 0, getMain().getHeight() - 30);
 		}
 
 		if (isFullscreen()) {
@@ -486,5 +313,15 @@ public class Level extends Screen {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_OFF);
+		if (transition >= 0.05f) {
+			transition -= 0.01f;
+			// player.moving = false;
+			// canMove = false;
+			scene.getPlayer().moving = false;
+			scene.setPlayerMovable(false);
+			g.setColor(new Color(0, 0, 0, MathCalculator
+					.colorLock(255 - (int) (255 * transition))));
+			g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());
+		}
 	}
 }

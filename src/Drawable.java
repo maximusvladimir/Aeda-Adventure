@@ -1,19 +1,45 @@
+import java.awt.Color;
 
 public abstract class Drawable {
 	private P3D boundStart;
 	private P3D boundEnd;
 	protected P3D pos;
-	public P3D staticPos = null;
+	private P3D staticPos = null;
 	private boolean visible = true;
-	private Player player;
-	public Drawable(P3D boundStart, P3D boundEnd) {
+	private Scene<Drawable> scene;
+	public Drawable(Scene<Drawable> scene, P3D boundStart, P3D boundEnd) {
 		this.boundStart = boundStart;
 		this.boundEnd = boundEnd;
 		pos = new P3D(0,0,0);
+		staticPos = new P3D(0,0,0);
+		this.scene = scene;
 	}
 	
-	public void setPositon(P3D pos) {
-		//this.pos = pos;
+	public void setInstanceLoc(P3D st) {
+		staticPos = st;
+	}
+	
+	public P3D getInstanceLoc() {
+		return staticPos;
+	}
+	
+	public Color getMapColor() {
+		return Color.blue;
+	}
+	
+	public boolean isCullable() {
+		return true;
+	}
+	
+	public Scene<Drawable> getScene() {
+		return scene;
+	}
+	
+	public void setPosition(float x, float y, float z) {
+		setPosition(new P3D(x,y,z));
+	}
+	
+	public void setPosition(P3D pos) {
 		if (staticPos !=null) {
 			this.pos = new P3D(pos.x+staticPos.x,pos.y+staticPos.y,pos.z+staticPos.z);
 		}
@@ -31,12 +57,6 @@ public abstract class Drawable {
 	
 	public boolean isVisible() {
 		return visible;
-	}
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-	public Player getPlayer() {
-		return player;
 	}
 	public abstract void draw(int darkness);
 	public abstract void tick();

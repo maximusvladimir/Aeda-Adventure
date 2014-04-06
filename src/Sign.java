@@ -5,8 +5,8 @@ import java.awt.Graphics;
 
 public class Sign extends Drawable {
 	private PointTesselator tesselator;
-	public Sign() {
-		super(new P3D(-75,-100,-10), new P3D(75,80,10));
+	public Sign(Scene<Drawable> scene) {
+		super(scene,new P3D(-75,-100,-10), new P3D(75,80,10));
 		tesselator = new PointTesselator();
 		tesselator.setDrawType(DrawType.Triangle);
 		tesselator.setSkipCullCheck(true);
@@ -82,9 +82,9 @@ public class Sign extends Drawable {
 	private boolean alreadyShown = false;
 	public void tick() {
 		//System.out.println(usz + "," + staticPos.z);
-		float dx = staticPos.x - usx;
+		float dx = getInstanceLoc().x - usx;
 		//float dy = pos.y;
-		float dz = (staticPos.z - usz)+850; // make it slightly in front of the sign.
+		float dz = (getInstanceLoc().z - usz)+850; // make it slightly in front of the sign.
 		float dist = (float)Math.sqrt(dx*dx+dz*dz);
 		//System.out.println(dist);
 		if (dist < 270 && !alreadyShown) {

@@ -22,14 +22,29 @@ public class Network {
 	private static final String group = "225.4.5.6";
 	private static final int port = 5201;
 	private static final long clientId = (long) (Long.MAX_VALUE * Math.random());
-
+	
+	private static Thread multiplayerThread;
+	private static Thread multiplayerThread2;
+	
+	public static void halt() {
+		RUNNING = false;
+		try {
+			// Give the runtime a chance to halt.
+			Thread.sleep(500);
+		}
+		catch (Throwable t) {
+			
+		}
+		multiplayerThread = null;
+		multiplayerThread2 = null;
+	}
 	public static void start() {
 		if (RUNNING)
 			return;
 		RUNNING = true;
 		connectionEstablished = false;
 
-		Thread multiplayerThread = new Thread(new Runnable() {
+		multiplayerThread = new Thread(new Runnable() {
 			public void run() {
 				workDataSend();
 			}
@@ -38,7 +53,7 @@ public class Network {
 		multiplayerThread.setName("MULTIPLAYERSEND0");
 		multiplayerThread.start();
 		multiplayerThread.setPriority(Thread.MIN_PRIORITY);
-		Thread multiplayerThread2 = new Thread(new Runnable() {
+		multiplayerThread2 = new Thread(new Runnable() {
 			public void run() {
 				workDataRecieve();
 			}
@@ -81,6 +96,7 @@ public class Network {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+		RUNNING = false;
 	}
 
 	private static void workDataRecieve() {
@@ -117,6 +133,7 @@ public class Network {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+		RUNNING = false;
 	}
 
 	private static byte[] send(String data) {

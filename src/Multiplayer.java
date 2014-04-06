@@ -67,7 +67,6 @@ public class Multiplayer extends Screen {
 		}
 		
 		SoundManager.start();
-		Network.start();
 	}
 
 	public void resize(int width, int height) {
@@ -134,6 +133,7 @@ public class Multiplayer extends Screen {
 	float theta = 0.0f;
 	float moon = 0.0f;
 	public void draw(Graphics g) {
+		Network.start();
 		if (Network.createLevelIsOkay) {
 			if (!getMain().screenExists("level")) {
 				getMain().removeScreen(getMain().getScreen("level"));
@@ -230,6 +230,7 @@ public class Multiplayer extends Screen {
 			if (inButton == 275) {
 				//SoundManager.playClick = true;
 				//System.exit(0);
+				Network.halt();
 				getMain().setActiveScreen("mainmenu");
 			}
 		}
