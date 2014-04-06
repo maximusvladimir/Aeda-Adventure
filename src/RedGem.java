@@ -16,6 +16,10 @@ public class RedGem extends Gem {
 			public void onHit(Drawable d0, Drawable d1, int indexd0, int indexd1) {
 				box.getDrawable().getScene().remove(box.getDrawable());
 				GameState.instance.gems += 10;
+				if (SoundManager.soundEnabled){
+					Sound gem = new Sound("ding");
+					gem.play();
+				}
 			}		
 		});
 		return box;

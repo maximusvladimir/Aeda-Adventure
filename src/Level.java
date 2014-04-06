@@ -174,8 +174,13 @@ public abstract class Level extends Screen {
 			Message contract = messages.get(i);
 			if (tagName.equals(contract.getName())) {
 				activeMessageIndex = i;
-				if (getScene() != null)
+				if (getScene() != null) {
 					getScene().setPlayerMovable(false);
+				}
+				if (SoundManager.soundEnabled){
+				Sound s = new Sound("click");
+				s.play();
+				}
 				break;
 			}
 		}
@@ -275,6 +280,10 @@ public abstract class Level extends Screen {
 		}
 		if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
 			if (scene != null) {
+				if (SoundManager.soundEnabled && Math.random() < 0.4){
+					Sound item = new Sound("hit");
+					item.play();
+				}
 				scene.getPlayer().hit();
 				scene.getPlayer().setHitNow();
 			}

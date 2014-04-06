@@ -30,6 +30,10 @@ public class Heart extends Drawable {
 	private void doDestroy() {
 		cnstart = cnnsr;
 		doingDestroy = true;
+		if (SoundManager.soundEnabled){
+		Sound item = new Sound("item");
+		item.play();
+		}
 		if ((int)GameState.instance.health < GameState.instance.healthPieces)
 			GameState.instance.health++;
 	}

@@ -138,6 +138,22 @@ public class SailorHarbour extends Level {
 		scene.setSceneDarkness(20);
 	}
 	
+	public void keyDown(int key) {
+		super.keyDown(key);
+		if (key == KeyEvent.VK_W || key == KeyEvent.VK_S)
+			adjustBalance();
+	}
+	
+	private void adjustBalance() {
+		if (SoundManager.backgroundSound != null) {
+			float a = getScene().getPlayerX() / (getScene().getGamePlane().getWorldSize()*0.5f);
+			if (a < 0)
+				a = 0;
+			SoundManager.backgroundSound.setVolume(a * 20);
+			SoundManager.backgroundSound.setPosition(a);
+		}
+	}
+	
 	private void movePlayer() {
 		if (raftMode) {
 			raft.handleMove();

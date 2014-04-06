@@ -25,6 +25,10 @@ public class Player extends Character {
 	private float hhblur = 0;
 	public void hitBlur() {
 		hhblur = 1;
+		if (SoundManager.soundEnabled){
+			Sound item = new Sound("hurt");
+			item.play();
+		}
 	}
 	
 	public void uponArrival() {

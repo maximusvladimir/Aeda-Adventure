@@ -141,4 +141,7 @@ public class SoundManager {
 	public static boolean playFootstep2 = false;
 	public static boolean playGem = false;
 	public static boolean runAudioSystem = true;
+	
+	public static Sound backgroundSound = null;
+	public static boolean soundEnabled = true;
 }

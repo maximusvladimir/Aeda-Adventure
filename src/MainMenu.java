@@ -291,6 +291,8 @@ public class MainMenu extends Screen {
 			if (id == 0) {
 				// SoundManager.playClick = true;
 				startFade = true;
+				Sound s = new Sound("click");
+				s.play();
 				// getMain().setActiveScreen(1);
 			}
 			if (id == 1) {

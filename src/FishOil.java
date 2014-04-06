@@ -17,6 +17,10 @@ public class FishOil extends Drawable {
 		box.setHitAction(new HitAction() {
 			public void onHit(Drawable d0, Drawable d1, int indexd0, int indexd1) {
 				//box.getDrawable().getScene().remove(box.getDrawable());
+				if (SoundManager.soundEnabled){
+				Sound item = new Sound("item");
+				item.play();
+				}
 				d0.getScene().getLevel().addMessage("You've found fish oil!\nYou can now use a lamp to go into dark places.", "FISHOILLAMPYAY");
 				d0.getScene().getLevel().setActiveMessage("FISHOILLAMPYAY");
 				GameState.instance.hasFishOil = true;

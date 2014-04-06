@@ -573,7 +573,7 @@ public class Utility {
 		if (evilTracker.indexOf(message) == -1) {
 			// This is evil in the sense that it stores already shown messages.
 			evilTracker.add(message);
-			SoundManager.playClick = true;
+			//SoundManager.playClick = true;
 		}
 		if (message.indexOf("¢") > -1)
 			message = message.replace("¢", "");
