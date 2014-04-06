@@ -21,6 +21,10 @@ public class Player extends Character {
 			isASheik = false;
 	}
 	
+	public void uponArrival() {
+		
+	}
+	
 	public void setFaceEmotion(FacialExpression f) {
 		switch (f) {
 		case EMOTION_ANGRY:

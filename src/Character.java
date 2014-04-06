@@ -38,6 +38,7 @@ public abstract class Character extends Drawable {
 	public void moveTowards(P3D p) {
 		if (movingTowards)
 			return;
+		firedArrival = false;
 		destX = p.x;
 		destZ = p.z;
 		p.y = 0;
@@ -73,8 +74,12 @@ public abstract class Character extends Drawable {
 		health += val;
 	}
 	
+	public abstract void uponArrival();
+	
 	protected boolean movingTowards = false;
 
+	private boolean firedArrival = false;
+	
 	public abstract void draw(int darkness);
 
 	public void tick() {
@@ -92,6 +97,10 @@ public abstract class Character extends Drawable {
 				 movingTowards = false;
 				 destX = 0;
 				 destZ = 0;
+				 if (!firedArrival) {
+					 firedArrival = true;
+					 uponArrival();
+				 }
 			 }
 		}
 	}

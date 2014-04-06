@@ -349,6 +349,8 @@ public class Utility {
 	}
 	
 	public static void drawEnemyData(Graphics g, IMain m, Scene<Drawable> scene) {
+		if (scene == null)
+			return;
 		ArrayList<Enemy> ens = scene.<Enemy>getObjectsByType(Enemy.class);
 		int w = m.getWidth() - (int) (m.getWidth() * 0.16f) - 16;
 		for (int i = 0; i < ens.size(); i++) {
@@ -363,6 +365,9 @@ public class Utility {
 	}
 
 	public static void drawMap(Graphics g, IMain m, Scene<Drawable> scene) {
+		if (scene == null)
+			return;
+		
 		int mapx = m.getWidth() - (int) (m.getWidth() * 0.16f) - 8;
 		int mapy = (int) (m.getWidth() * 0.02f);
 		int mapw2 = (int) (m.getWidth() * 0.14f);
@@ -587,12 +592,12 @@ public class Utility {
 
 	public static BufferedImage generateVignette(int width, int height) {
 		BufferedImage vignette = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_ARGB);
+				BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = (Graphics2D) vignette.getGraphics();
 		Point2D center = new Point2D.Float(width / 2, height / 2);
 		float radius = (float) Math.sqrt(width * width + height * height);
-		float[] dist = { 0.0f, 1.0f };
-		Color[] colors = { new Color(0, 0, 0, 0), new Color(0, 0, 0, 200) };
+		float[] dist = { 0.3f, 0.5f };
+		Color[] colors = { new Color(0, 0, 0, 0),new Color(0, 0, 0, 120) };
 		RadialGradientPaint p = new RadialGradientPaint(center, radius, dist,
 				colors);
 		g.setPaint(p);

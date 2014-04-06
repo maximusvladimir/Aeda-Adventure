@@ -17,6 +17,7 @@ public abstract class Screen {
 	private int mx = 0, my = 0;
 	private BufferedImage buffer;
 	private long timeSinceInit = -1;
+	private static long counter = 0;
 	public Screen(IMain inst) {
 		this.inst = inst;
 		buffer = new BufferedImage(inst.getWidth(),inst.getHeight(),BufferedImage.TYPE_INT_RGB);
@@ -86,7 +87,16 @@ public abstract class Screen {
 	public abstract void resize(int width, int height);
 	public abstract void draw(Graphics g);
 	public abstract void drawHUD(Graphics g);
-	public abstract String getName();
+	
+	private String n = "screen" + counter++;
+	
+	public void setName(String n) {
+		this.n = n;
+	}
+	
+	public String getName() {
+		return n;
+	}
 	
 	public void setMouse(int x, int y) {
 		if (isFullscreen()) {

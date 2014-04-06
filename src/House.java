@@ -140,7 +140,7 @@ public class House extends Drawable {
 	}
 
 	private static Font fontCache = new Font("Courier New", 0, 16);
-
+	
 	private boolean isShowing = false;
 	private boolean alreadyShown = false;
 	public void tick() {
@@ -149,7 +149,7 @@ public class House extends Drawable {
 		setInstanceLoc(getInstanceLoc().x,getInstanceLoc().z+500);
 		float dist = getDistToPlayer();
 		setInstanceLoc(getInstanceLoc().x,getInstanceLoc().z-500);
-		if (dist < 270 && !alreadyShown && !isShowing) {
+		if (dist < 290 && !alreadyShown && !isShowing) {
 			if (!lightsOn) {
 				isShowing = true;
 				getScene().getLevel().addMessage(getOwnerName() + " isn't home right now.", getHouseName());
@@ -161,7 +161,7 @@ public class House extends Drawable {
 				getScene().setPlayerZ(getScene().getPlayerZ()+400);
 			}
 		}
-		else if (dist > 270) {
+		else if (dist > 290) {
 			alreadyShown = false;
 			isShowing = false;
 			getScene().reportal();
@@ -285,10 +285,11 @@ public class House extends Drawable {
 		tesselator.point(bl.x, tr.y, tr.z);
 		tesselator.point(tr.x, tr.y, tr.z);
 	}
-
+private long offset = 0;
 	private void drawWindow(P3D bottomRight, P3D topLeft) {
 		P3D b = bottomRight;
 		P3D t = topLeft;
+		offset++;
 		float px = Math.abs(b.x - t.x) / 2;
 		if (t.x < b.x)
 			px = -px;
@@ -420,8 +421,12 @@ public class House extends Drawable {
 		tesselator.point(px - 15, t.y, t.z);
 		tesselator.point(px - 15, b.y, t.z);
 
-		if (lightsOn)
-			tesselator.color(236, 200, 55);
+		if (lightsOn) {
+			windowGlow += 0.01f * Math.random();
+			//tesselator.color(236, 200, 55);
+			tesselator.color(Utility.adjustBrightness(new Color(236,200,55), 
+					(int)(Math.cos(windowGlow+(offset%4)) * 30)));
+		}
 		else
 			tesselator.color(70, 70, 96);
 		tesselator.point(t.x - 30, b.y + 30, bh);
@@ -431,6 +436,8 @@ public class House extends Drawable {
 		tesselator.point(t.x - 30, t.y - 30, bh);
 		tesselator.point(t.x - 30, b.y + 30, bh);
 	}
+	
+	private float windowGlow = 0.0f;
 
 	public boolean lightsOn = false;
 

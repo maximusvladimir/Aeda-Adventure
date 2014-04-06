@@ -16,7 +16,7 @@ public class FiaceForest extends Level {
 
 	public void init() {
 		Gem[] gems = new Gem[40];// 40
-		Tree[] trees = new Tree[60];// 20
+		Tree[] trees = new Tree[500];// 20, LATEST: 60
 		Grass[] grass = new Grass[80];
 		Barrel[] barrel = new Barrel[20];
 		Sign[] signs = new Sign[10];
@@ -89,6 +89,7 @@ public class FiaceForest extends Level {
 		// Water feature = new Water(scene,10);
 		// feature.setInstanceLoc(new P3D(2000,-200,1300));
 		// scene.add(feature);
+		if (!GameState.instance.talkedToGrandmaFiace) {
 		Grandma grandma = new Grandma(scene) {
 			private boolean showingMessage = false;
 			private boolean askAnnoyingMessageAnymore = true;
@@ -165,6 +166,8 @@ public class FiaceForest extends Level {
 															new ActionListener() {
 																public void actionPerformed(
 																		ActionEvent arg0) {
+																	GameState.instance.talkedToGrandmaFiace = true;
+																	GameState.save();
 																	getScene()
 																			.getLevel()
 																			.addMessage(
@@ -196,6 +199,7 @@ public class FiaceForest extends Level {
 		};
 		grandma.setInstanceLoc(new P3D(2000, -350, 600));
 		scene.add(grandma);
+		}
 		// scene.add(new Windmill(scene));
 		/*
 		 * House h = new House(scene); h.setHouseName("-- Blacksmith --");

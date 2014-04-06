@@ -8,34 +8,44 @@ import java.util.ArrayList;
 
 public class HolmVillage extends Level {
 
+	private House[] houses;
+	private P3D lastLoc = new P3D();
+	
 	public HolmVillage(IMain inst) {
 		super(inst);
+	}
+	
+	public void reloadedLevel() {
+		super.reloadedLevel();
+		getScene().setPlayerX(GameState.ORIGINS.x);
+		getScene().setPlayerZ(GameState.ORIGINS.z);
+		/*getScene().setPlayerPosition(lastLoc);
+		GameState.instance.playerLocation = lastLoc;*/
 	}
 
 	public static long mapDrawTime = 0;
 
 	public void init() {
-		Gem[] gems = new Gem[40];// 40
-		Tree[] trees = new Tree[60];// 20
+		Tree[] trees = new Tree[120];// 20
 		Grass[] grass = new Grass[80];
 		Barrel[] barrel = new Barrel[5];
 		Sign[] signs = new Sign[2];
-		House[] houses = new House[4];
+		houses = new House[4];
 		Lamppost[] lamps = new Lamppost[10];
 		scene = new Scene<Drawable>(this, getRand());
-		GamePlane plane = new GamePlane(scene,getRand(),55, new Color(99,126,61).darker(), 14, 0.5f);
+		GamePlane plane = new GamePlane(scene, getRand(), 55, new Color(99,
+				126, 61).darker(), 14, 0.5f);
 		for (int x = 0; x < 55; x++) {
 			for (int z = 0; z < 55; z++) {
-				plane.setHeightPoint(x, z, plane.getHeightPoint(x,z)/4);
+				plane.setHeightPoint(x, z, plane.getHeightPoint(x, z) / 4);
 			}
 		}
 		scene.setPlane(plane);
 		for (int z = 0; z < 55; z++) {
-			int ds = 20;
 			plane.setColorPoint(26, z, getRoadColor(plane.getColorPoint(26, z)));
 			plane.setColorPoint(27, z, getRoadColor(plane.getColorPoint(27, z)));
 			plane.setColorPoint(28, z, getRoadColor(plane.getColorPoint(28, z)));
-			
+
 			plane.setColorPoint(z, 27, getRoadColor(plane.getColorPoint(z, 27)));
 			plane.setColorPoint(z, 28, getRoadColor(plane.getColorPoint(z, 28)));
 			plane.setColorPoint(z, 29, getRoadColor(plane.getColorPoint(z, 29)));
@@ -43,10 +53,6 @@ public class HolmVillage extends Level {
 		plane.genWorld();
 		scene.setFog(-2000, -2600);
 		scene.setFogColor(new Color(93, 109, 120));
-		for (int i = 0; i < gems.length; i++) {
-			gems[i] = new Gem(scene, getRand());
-			gems[i].setInstanceLoc(getRand().nextLocation(-170));
-		}
 		// an interesting grass placement algorithm that i came up with.
 		int currentGrass = 0;
 		while (currentGrass < grass.length) {
@@ -84,52 +90,108 @@ public class HolmVillage extends Level {
 		for (int i = 0; i < lamps.length; i++) {
 			lamps[i] = new Lamppost(scene);
 			if (i <= 5)
-				lamps[i].setInstanceLoc(-600,-375,plane.getWorldSizeHalf()/4 + (i * 1500));
+				lamps[i].setInstanceLoc(-600, -375, plane.getWorldSizeHalf()
+						/ 4 + (i * 1500));
 			else
-				lamps[i].setInstanceLoc(-600,-375,-(plane.getWorldSizeHalf()/4 + (i-5) * 1500));
-			
+				lamps[i].setInstanceLoc(-600, -375,
+						-(plane.getWorldSizeHalf() / 4 + (i - 5) * 1500));
+
 			lamps[i].updateInstLoc();
 		}
-		houses[0].setInstanceLoc(-1500,-350,-1000);
+		houses[0].setInstanceLoc(-1500, -350, -1000);
 		houses[0].setHouseName("Grandma Gwendolynn");
 		houses[0].setOwnerName("Grandma");
-		
+
 		if (!getMain().screenExists(houses[0].getHouseName())) {
-		InsideHouse ggH = new InsideHouse(houses[0].getHouseName(),getMain()) {
-			public void init() {
-				super.init();
-				// Additional init code goes here.
-			}
-		};
-		getMain().addScreen(ggH);
+			final InsideHouse ggH = new InsideHouse(houses[0].getHouseName(),
+					getMain()) {
+				public void init() {
+					setRootLevel(HolmVillage.this);
+					super.init();
+					Couch co = new Couch(scene);
+					co.setInstanceLoc(-1100,-300,-500);
+					co.setDelta(MathCalculator.PIOVER2);
+					co.getHitbox().rotate90deg();
+					getScene().add(co);
+					Couch co2 = new Couch(scene);
+					co2.setInstanceLoc(-500,-300,-500);
+					co2.setDelta(MathCalculator.PIOVER2+MathCalculator.PI);
+					co2.getHitbox().rotate270deg();
+					getScene().add(co2);
+					Couch co3 = new Couch(scene);
+					co3.setInstanceLoc(-850,-300,-800);
+					getScene().add(co3);
+					final Grandma grandma = new Grandma(getScene()) {
+						public void tick() {
+							super.tick();
+							walkDelta += 0.02f;
+							if (!isMovingTowards()) {
+								if (dx == 0 && dz == 0) {
+									P3D sampler = getRand().nextLocation(-150);
+									dx = sampler.x;
+									dz = sampler.z;
+									turn = MathCalculator.reduceTrig((float)(Math.atan2(dz - getInstanceLoc().z, dx - getInstanceLoc().x)) - MathCalculator.PI);
+									delta = MathCalculator.reduceTrig(delta);
+									//delta = 0;
+								}
+								if (turn < 0 && delta > turn)
+									delta -= 0.02f;
+								else if (turn > 0 && delta < turn)
+									delta += 0.02f;
+								else
+									alphaTele += 0.01f;
+								if (alphaTele > 1) {
+									moveTowards(dx,dz);
+									alphaTele = 0;
+									dx = 0;
+									dz = 0;
+								}
+							}
+							
+						}
+					};
+					grandma.setMoveSpeed(10.0f);
+					grandma.setInstanceLoc(200, -300, 100);
+					grandma.moveTowards(getRand().nextLocation(-300));
+					getScene().add(grandma);
+					// Additional init code goes here.
+				}
+			};
+			getMain().addScreen(ggH);
 		}
-		
-		houses[1].setInstanceLoc(1500,-350,-1000);
+
+		houses[1].setInstanceLoc(1500, -350, -1000);
 		houses[1].setHouseName("Swordsmaster Cassius");
 		houses[1].setOwnerName("Master Cassius");
-		
-		houses[2].setInstanceLoc(1500,-350,1000);
+
+		houses[2].setInstanceLoc(1500, -350, 1000);
 		houses[2].setHouseName("Count Charles");
 		houses[2].setOwnerName("Count Charles");
-		
-		houses[3].setInstanceLoc(-1500,-350,1000);
+
+		houses[3].setInstanceLoc(-1500, -350, 1000);
 		houses[3].setHouseName("Rulf's Shop");
 		houses[3].setOwnerName("Rulf");
+		houses[3].lightsOn = true;
 		
+		if (!getMain().screenExists(houses[3].getHouseName())) {
+			final Shop ssd = new Shop(houses[3].getHouseName(),getMain());
+			ssd.setSender(getName());
+			getMain().addScreen(ssd);
+		}
+
 		signs[0].setInstanceLoc(600, -220, 2500);
 		signs[0].setSignMessage(Strings.inst.HOLM_VILLAGE_SIGN);
-		
+
 		signs[1].setInstanceLoc(600, -220, -9800);
 		signs[1].setSignMessage(Strings.inst.HOLM_VILLAGE_NORTH_ENTRY);
-		
-		barrel[0].setInstanceLoc(600,-350,2000);
-		barrel[1].setInstanceLoc(-900,-350,2075);
-		barrel[2].setInstanceLoc(600,-350,3500);
-		
+
+		barrel[0].setInstanceLoc(600, -350, 2000);
+		barrel[1].setInstanceLoc(-900, -350, 2075);
+		barrel[2].setInstanceLoc(600, -350, 3500);
+
 		setSigns(signs);
 		scene.add(grass);
 		scene.add(houses);
-		scene.add(gems);
 		scene.add(trees);
 		scene.add(signs);
 		scene.add(barrel);
@@ -140,10 +202,13 @@ public class HolmVillage extends Level {
 		scene.add(windmill);
 		Well ohwell = new Well(scene) {
 			private boolean na = false;
+
 			public void tick() {
 				super.tick();
 				if (getDistToPlayer() < 400 && !na) {
-					addMessage("This old well is very deep and filled with water.\nSomething appears to be moving in it.","WELL0");
+					addMessage(
+							"This old well is very deep and filled with water.\nSomething appears to be moving in it.",
+							"WELL0");
 					setActiveMessage("WELL0");
 					na = true;
 				}
@@ -151,30 +216,38 @@ public class HolmVillage extends Level {
 					na = false;
 			}
 		};
-		ohwell.setInstanceLoc(-3000,-340,1000);
+		ohwell.setInstanceLoc(-3000, -340, 1000);
 		scene.add(ohwell);
-		
+
 		scene.setSceneDarkness(50);
 	}
-	
+
 	public void tick() {
-		getScene().setPlayerY(-100);
+		lastLoc = getScene().getPosition();
+		if (GameState.instance.talkedToGrandmaFiace) {
+			houses[0].lightsOn = true;
+		} else
+			houses[0].lightsOn = false;
+
 		super.tick();
 		if (isGameHalted())
 			return;
-			
-		if (getScene().getPlayerZ() > 9500 && getScene().getPlayerX() < 600 && getScene().getPlayerX() > -600 && getScene().canPortalize()) {
-			startTransition(getMain().getScreen("level"),new P3D(0,0,-9200),4.712388980384689f);
+
+		if (getScene().getPlayerZ() > 9500 && getScene().getPlayerX() < 600
+				&& getScene().getPlayerX() > -600 && getScene().canPortalize()) {
+			startTransition(getMain().getScreen("level"), new P3D(0, 0, -9200),
+					4.712388980384689f);
 			getScene().deportal();
 			GameState.instance.playerLevel = 0;
 			return;
 		}
-		if (getScene().getPlayerZ() < 9400 || getScene().getPlayerX() > 700 || getScene().getPlayerZ() < -700)
+		if (getScene().getPlayerZ() < 9400 || getScene().getPlayerX() > 700
+				|| getScene().getPlayerZ() < -700)
 			getScene().reportal();
 	}
-	
+
 	private Color getRoadColor(Color prev) {
-		return MathCalculator.lerp(new Color(132,117,98), prev, 0.5f);
+		return MathCalculator.lerp(new Color(132, 117, 98), prev, 0.5f);
 	}
 
 	public String getName() {
@@ -182,17 +255,16 @@ public class HolmVillage extends Level {
 	}
 
 	public void draw(Graphics g) {
-		g.setColor(Color.black);
-		g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());
 		scene.draw(g);
 	}
 
 	public void mouseReleased(MouseEvent me) {
 		super.mouseReleased(me);
-		ArrayList<House> houses = scene.<House> getObjectsByType(House.class);
-		for (int i = 0; i < houses.size(); i++) {
-			houses.get(i).lightsOn = !houses.get(i).lightsOn;
-		}
+		/*
+		 * ArrayList<House> houses = scene.<House>
+		 * getObjectsByType(House.class); for (int i = 0; i < houses.size();
+		 * i++) { houses.get(i).lightsOn = !houses.get(i).lightsOn; }
+		 */
 		ArrayList<Lamppost> lamps = scene
 				.<Lamppost> getObjectsByType(Lamppost.class);
 		for (int i = 0; i < lamps.size(); i++) {

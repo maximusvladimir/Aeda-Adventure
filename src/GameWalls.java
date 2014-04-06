@@ -1,10 +1,20 @@
+import java.awt.Color;
+
 
 public class GameWalls extends Drawable {
 	private PointTesselator tesselator;
+	private float height = 350;
+	private Color wc;
 	public GameWalls(Scene<Drawable> scene) {
+		this(scene,350,new Color(121, 121, 113));
+	}
+	
+	public GameWalls(Scene<Drawable> scene, float he, Color wallColor) {
 		super(scene,new Hitbox());
+		wc = wallColor;
 		tesselator = new PointTesselator();
 		tesselator.setDrawType(DrawType.Triangle);
+		height = he;
 	}
 
 	public boolean isCullable() {
@@ -16,11 +26,10 @@ public class GameWalls extends Drawable {
 		tesselator.translate(pos.x, pos.y, pos.z, false);
 		Rand rand = new Rand(453);
 		int dr = -d;
-		final float height = 350;
 		for (int i = 0; i < getScene().getWorldActual() / 2; i++) {
 			float over = -350;
 			int dns = rand.nextInt(-20, 10)+dr;
-			tesselator.color(121 + dns, 121 + dns, 113 + dns);
+			tesselator.color(Utility.adjustBrightness(wc, dns));
 			tesselator.point(-getScene().getWorldSizeHalf() + over, -600,
 					(getScene().getWorldSize() / (getScene().getWorldActual() / 2.0f) * i)
 							- getScene().getWorldSizeHalf());
@@ -31,7 +40,7 @@ public class GameWalls extends Drawable {
 					(getScene().getWorldSize() / (getScene().getWorldActual() / 2.0f) * (i - 1))
 							- getScene().getWorldSizeHalf());
 			dns = rand.nextInt(-20, 10)+dr;
-			tesselator.color(121 + dns, 121 + dns, 113 + dns);
+			tesselator.color(Utility.adjustBrightness(wc, dns));
 			tesselator.point(-getScene().getWorldSizeHalf() + over, height,
 					(getScene().getWorldSize() / (getScene().getWorldActual() / 2.0f) * (i - 1))
 							- getScene().getWorldSizeHalf());
@@ -47,7 +56,7 @@ public class GameWalls extends Drawable {
 			float over = -150;
 			float over2 = -450;
 			int dns = rand.nextInt(-20, 10)+dr;
-			tesselator.color(121 + dns, 121 + dns, 113 + dns);
+			tesselator.color(Utility.adjustBrightness(wc, dns));
 			tesselator.point(getScene().getWorldSizeHalf() + over, -600,
 					(getScene().getWorldSize() / (getScene().getWorldActual() / 2.0f) * i)
 							- getScene().getWorldSizeHalf()+over2);
@@ -58,7 +67,7 @@ public class GameWalls extends Drawable {
 					(getScene().getWorldSize() / (getScene().getWorldActual() / 2.0f) * (i - 1))
 							- getScene().getWorldSizeHalf()+over2);
 			dns = rand.nextInt(-20, 10)+dr;
-			tesselator.color(121 + dns, 121 + dns, 113 + dns);
+			tesselator.color(Utility.adjustBrightness(wc, dns));
 			tesselator.point(getScene().getWorldSizeHalf() + over, height,
 					(getScene().getWorldSize() / (getScene().getWorldActual() / 2.0f) * (i - 1))
 							- getScene().getWorldSizeHalf()+over2);
@@ -73,7 +82,7 @@ public class GameWalls extends Drawable {
 		for (int i = 0; i < (getScene().getWorldActual()+2) / 2; i++) {
 			float over = -700;
 			int dns = rand.nextInt(-20, 10)+dr;
-			tesselator.color(121 + dns, 121 + dns, 113 + dns);
+			tesselator.color(Utility.adjustBrightness(wc, dns));
 			tesselator.point(
 					(getScene().getWorldSize() / (getScene().getWorldActual() / 2.0f) * i)
 							- getScene().getWorldSizeHalf() + getScene().getWorldActual(), -600,-getScene().getWorldSizeHalf()
@@ -88,7 +97,7 @@ public class GameWalls extends Drawable {
 							-getScene().getWorldSizeHalf()
 							+ over);
 			dns = rand.nextInt(-20, 10)+dr;
-			tesselator.color(121 + dns, 121 + dns, 113 + dns);
+			tesselator.color(Utility.adjustBrightness(wc, dns));
 			tesselator.point(
 					(getScene().getWorldSize() / (getScene().getWorldActual() / 2.0f) * (i - 1))
 							- getScene().getWorldSizeHalf() + getScene().getWorldActual(), height,-getScene().getWorldSizeHalf()

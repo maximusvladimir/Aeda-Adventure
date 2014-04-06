@@ -59,7 +59,9 @@ public class Scene<T> {
 		plane = plane2;
 		plane.genWorld();
 		plane.setInstanceLoc(new P3D(0,-390,-500));
-		add(plane);
+		ArrayList<GamePlane> gp = (this.<GamePlane>getObjectsByType(GamePlane.class));
+		if (gp == null || gp.size() < 1)
+			add(plane);
 	}
 	
 	public Level getLevel() {
@@ -273,6 +275,10 @@ public class Scene<T> {
 		return darkness;
 	}
 	
+	public P3D getPosition() {
+		return new P3D(playerX,playerY,playerZ);
+	}
+	
 	private float dist = 0.0f;
 	public void tick() {
 		
@@ -313,15 +319,26 @@ public class Scene<T> {
 		GameState.TOTAL3DOBJECTS = total;
 		player.setPlayerDelta(playerDelta);
 		GameState.FIXEDLOC = new P3D(-playerX, playerY, -playerZ);
-		player.setPosition(new P3D(0, playerY, -625));
+		player.setPosition(new P3D(0, playerY, camDist));
 		player.draw(getSceneDarkness()+player.getIndividualDarkness()-lightningAmount);
 		
-		scene.fog(Utility.adjustBrightness(getFogColor(),lightningAmount*2), getFogStart(), getFogEnd());
+		if (getFogStart() != 0 || getFogEnd() != 0)
+			scene.fog(Utility.adjustBrightness(getFogColor(),lightningAmount*2), getFogStart(), getFogEnd());
 		scene.setReverseFogEquation(true);
 		scene.draw(g);
 		numTriangles = scene.getNumAvaiableTriangles();
 		skippedTriangles = scene.getNumOfLastSkippedTriangles();
 	}
+	
+	public float getCameraDistance() {
+		return camDist;
+	}
+	
+	public void setCameraDistance(float v) {
+		camDist = v;
+	}
+	
+	private float camDist = -625;
 	
 	public void makeLightning() {
 		lightn = 1;
@@ -335,6 +352,8 @@ public class Scene<T> {
 	}
 	
 	public boolean isVisible(Drawable d) {
+		if (getFogStart() == 0 && getFogEnd() == 0)
+			return true;
 		if (d.getInstanceLoc().z > playerZ || d.getInstanceLoc().z + -getFogEnd() < playerZ)
 			return false;
 		if (d.getInstanceLoc().x - 1700 > playerX || d.getInstanceLoc().x + 1700 < playerX)

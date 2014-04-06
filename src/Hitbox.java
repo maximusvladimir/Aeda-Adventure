@@ -41,6 +41,29 @@ public class Hitbox {
 		bounds = multiple;
 	}
 	
+	public void rotate90deg() {
+		for (int i = 0; i < bounds.length / 2; i++) {
+			float swap = bounds[(i*2)+0].z;
+			bounds[(i*2)+0].z = bounds[(i*2)+0].x;
+			bounds[(i*2)+0].x = swap;
+			
+			swap = bounds[(i*2)+1].z;
+			bounds[(i*2)+1].z = bounds[(i*2)+1].x;
+			bounds[(i*2)+1].x = swap;
+		}
+	}
+	
+	public void rotate180deg() {
+		rotate90deg();
+		rotate90deg();
+	}
+	
+	public void rotate270deg() {
+		rotate90deg();
+		rotate90deg();
+		rotate90deg();
+	}
+	
 	public void disable() {
 		enabled = false;
 	}
@@ -122,16 +145,18 @@ public class Hitbox {
 		P3D he = h1.adjustBoundToPosition(otherIndex * 2 + 1);
 		P3D hc = getCenter(hs, he);
 
-		float heighest = -10000;
+		/*float heighest = -10000;
 		if (hs.y > heighest)
 			heighest = hs.y;
 		if (he.y > heighest)
 			heighest = he.y;
-		if (ps.y > heighest) {
+		if (player.getDrawable().getScene().getPlayerY() > heighest) {
 			// place on top of the hitbox.
-			return new P3D(player.getLocation().x, heighest,
-					player.getLocation().z);
-		}
+			//return new P3D(player.getLocation().x, heighest,
+				//	player.getLocation().z);
+			player.getDrawable().getScene().getGamePlane().stopFall();
+			player.getDrawable().getScene().getGamePlane().setPlayerHeightOverride(heighest);
+		}*/
 
 		float alpha = (float) (Math.atan2(hc.z - pc.z, hc.x - pc.x) + Math.PI);
 		float dist = hc.dist(pc) * 0.1f;

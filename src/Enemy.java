@@ -288,6 +288,10 @@ public class Enemy extends Character {
 		}*/
 	}
 
+	public void uponArrival() {
+		
+	}
+	
 	boolean checker = false;
 	
 	public PointTesselator getTesselator() {

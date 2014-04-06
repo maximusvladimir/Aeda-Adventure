@@ -23,6 +23,8 @@ public class MainMenu extends Screen {
 	public MainMenu(IMain inst) {
 		super(inst);
 	}
+	
+	private float starDelta = 0.0f;
 
 	public void init() {
 		if (isFullscreen())
@@ -62,7 +64,7 @@ public class MainMenu extends Screen {
 			GameState.instance = new GameState();
 			String res = "";
 			while (res == null || res.equals("") || res.length() > 8) {
-				res = JOptionPane.showInputDialog(getMain(),
+				res = JOptionPane.showInputDialog((Main)getMain(),
 						"Please enter your name. (Less than 9 chars)");
 			}
 			res = Utility.capitalizeEnumerator(res);
@@ -77,7 +79,7 @@ public class MainMenu extends Screen {
 						|| (pC = Utility.validateColor(res)) == null) {
 					res = JOptionPane
 							.showInputDialog(
-									getMain(),
+									(Main)getMain(),
 									"Please enter your favorite color."
 											+ "\n(Red,Green,Blue,Orange,Yellow,Magneta)."
 											+ "\nYou can also enter an RGB like (no quotes): \"255,0,0\"");
@@ -212,7 +214,7 @@ public class MainMenu extends Screen {
 						* spacing);
 			}
 		}
-		Random te = new Random(509271);
+		Random te = new Random(50927);
 		for (int i = 0; i < clouds.length; i++) {
 			clouds[i] += 0.2f;
 			if (clouds[i] > getMain().getWidth() + 50)
@@ -221,6 +223,20 @@ public class MainMenu extends Screen {
 			g.setColor(new Color(50, 50, 50, 120));
 			g.fillOval((int) clouds[i], (i * 50) % 150 + te.nextInt(50),
 					te.nextInt(50) + 75, te.nextInt(15) + 5);
+		}
+		starDelta += 0.05f;
+		for (int v = 0; v < 20; v++) {
+			float fader = (float)Math.sin(starDelta * te.nextFloat() * 2 + te.nextFloat()); 
+			if (fader < 0)
+				fader = -fader;
+			g.setColor(new Color((int)(fader * 112)+112,(int)(fader * 119)+119,(int)(fader * 127)+127));
+			int sx = te.nextInt(getMain().getWidth()/2);
+			int sy = te.nextInt(getMain().getHeight());
+			int s = te.nextInt(4);
+			if (s == 0)
+				g.drawLine(sx,sy,sx,sy);
+			else
+				g.fillRect(sx, sy, s, s);
 		}
 		// scene.fog(new Color(230,230,230), 200,-50);
 		// scene.setReverseFogEquation(true);

@@ -11,6 +11,10 @@ public class GameState {
 	public int gems = 0;
 	public float playerDelta = 0.0f;
 	public Color playerColor = Color.blue;
+	public static P3D ORIGINS = new P3D(0,0,0);
+	
+	public boolean talkedToGrandmaFiace = false;
+	
 	public String toString() {
 		return "playerStage = " + playerStage + "\n" +
 				"playerLocation = " + playerLocation + "\n" + 
@@ -19,7 +23,8 @@ public class GameState {
 				"playerGUID = " + playerGUID + "\n" +
 				"playerDelta = "+playerDelta+ "\n"+
 				"gems = " + gems + "\n" +
-				"playerColor = " + playerColor;
+				"playerColor = " + playerColor + "\n" +
+				"grandFiace = " + talkedToGrandmaFiace;
 	}
 	public static GameState instance;
 	private static FileSave saver = new FileSave();

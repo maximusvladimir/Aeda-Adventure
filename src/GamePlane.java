@@ -22,6 +22,19 @@ public class GamePlane extends Drawable {
 	private int variability = 14;
 	private int variabilityhalf = variability / 2;
 	private float colorHeight = 0.5f;
+	private boolean stop = false;
+	
+	public void stopFall() {
+		stop = true;
+	}
+	
+	public void allowFall() {
+		stop = false;
+	}
+	
+	public boolean isFallingAllowed() {
+		return stop;
+	}
 	
 	public float getWorldSize() {
 		return WORLDSIZE;
@@ -79,12 +92,38 @@ public class GamePlane extends Drawable {
 	public float getPlayerLocation(float x, float z) {
 		float zshad = ((pz + WORLDSIZEHALF - 260) / WORLDSIZE * size);
 		float xshad = ((px + WORLDSIZEHALF) / WORLDSIZE * size);
+		if (pointsOverride) {
+			if (zshad > size)
+				zshad = size;
+			if (xshad > size)
+				xshad = size;
+			if (zshad < 0)
+				zshad = 0;
+			if (xshad < 0)
+				xshad = 0;
+			int fx = (int)xshad;
+			int fz = (int)zshad;
+			int ux = fx+1;
+			int uz = fz+1;
+			if (ux > size || uz > size)
+				return getHeightPoint(fx,fz);
+			else {
+				float dx = xshad - fx;
+				float dz = zshad - fz;
+				float lx = MathCalculator.lerp(getHeightPoint(fx,fz), getHeightPoint(ux,fz), dx);
+				float lz = MathCalculator.lerp(getHeightPoint(fx,fz), getHeightPoint(fx,uz), dz);
+				float a = ((lx + lz) * 0.5f);
+				return a;
+			}
+		}
 		return getLocationPoint(xshad, zshad);
 	}
 
 	float target = 0.0f;
 
 	private void setPlayer(float x, float z) {
+		if (stop)
+			return;
 		px = x;
 		pz = z;
 		target = getPlayerLocation(px, pz) - 100;
@@ -116,6 +155,10 @@ public class GamePlane extends Drawable {
 	private float playerHeight = 0;
 	private BufferedImage genWorld;
 
+	public void setPlayerHeightOverride(float h) {
+		playerHeight = h;
+	}
+	
 	public float getHeight() {
 		return playerHeight;
 	}
@@ -214,8 +257,11 @@ public class GamePlane extends Drawable {
 		int det = z * size + x;
 		if (det < 0 || det > points.length - 1)
 			return;
+		pointsOverride = true;
 		points[det] = height;
 	}
+	
+	private boolean pointsOverride = false;
 
 	// float sinz = 0.0f;
 	public float getHeightPoint(int x, int z) {
@@ -274,6 +320,10 @@ public class GamePlane extends Drawable {
 				/ WORLDSIZE * size);
 		int xshad = (int) ((px + WORLDSIZEHALF) / WORLDSIZE * size);
 		Random ds = new Random(52);
+		if (getScene().getFogEnd() == 0 && getScene().getFogStart() == 0) {
+			xmin = zmin = 0;
+			xlim = size;
+		}
 		for (int x = xmin; x < xlim; x++) {
 			for (int z = zmin; z < zlim; z++) {
 				int indi = getColor(x,z);

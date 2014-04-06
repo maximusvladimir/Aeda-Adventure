@@ -17,13 +17,16 @@ public abstract class Level extends Screen {
 	private Flakes flakes;
 	private Rand rand;
 	private static BufferedImage vignette = null;
-	
 	public Level(IMain screen) {
 		super(screen);
 		PointTesselator.removeAlpha = false;
 		if (vignette == null)
 			vignette = Utility.generateVignette(getMain().getWidth(), getMain()
 					.getHeight());
+	}
+	
+	public void reloadedLevel() {
+		gameHalt = false;
 	}
 
 	public Rand getRand() {
@@ -52,6 +55,10 @@ public abstract class Level extends Screen {
 
 	private boolean stTickLoad = false;
 	public void silentTick() {
+		if (getScene() == null)
+			return;
+		getScene().getGamePlane().allowFall();
+		getScene().setPlayerY(getScene().getGamePlane().getHeight());
 		if (getTimeSinceInit() == -1
 				|| System.currentTimeMillis() - getTimeSinceInit() < 500) {
 			getScene().setPlayerMovable(false);
@@ -137,7 +144,8 @@ public abstract class Level extends Screen {
 			Message contract = messages.get(i);
 			if (tagName.equals(contract.getName())) {
 				activeMessageIndex = i;
-				getScene().setPlayerMovable(false);
+				if (getScene() != null)
+					getScene().setPlayerMovable(false);
 				break;
 			}
 		}
@@ -153,7 +161,7 @@ public abstract class Level extends Screen {
 		if (isFullscreen())
 			hideCursor();
 		rand = new Rand(4);
-		flakes = new Flakes(getMain(), rand, 20);
+		flakes = new Flakes(getMain(), rand, 25);
 		playerDelta = GameState.instance.playerDelta;
 	}
 
@@ -172,7 +180,9 @@ public abstract class Level extends Screen {
 	}
 
 	public void keyDown(int code) {
-		if (!scene.canPlayerMove() || showWorldMap)
+		if (getScene() == null)
+			return;
+		if (!getScene().canPlayerMove() || showWorldMap)
 			return;
 		if (code == KeyEvent.VK_W) {
 			scene.movePlayer(true);
@@ -201,6 +211,10 @@ public abstract class Level extends Screen {
 		GameState.instance.playerDelta = playerDelta;
 		scene.setPlayerDelta(playerDelta);
 	}
+	
+	public int getMessageIndexer() {
+		return activeMessageIndex;
+	}
 
 	public void controllerUpdate(ControllerSupport cs) {
 		if (!scene.canPlayerMove())
@@ -224,7 +238,8 @@ public abstract class Level extends Screen {
 				Message message = messages.get(activeMessageIndex);
 				messages.remove(activeMessageIndex);
 				activeMessageIndex = -1;
-				getScene().setPlayerMovable(true);
+				if (getScene() != null)
+					getScene().setPlayerMovable(true);
 				message.doCloseEvent();
 			}
 			if (signs != null)
@@ -250,6 +265,9 @@ public abstract class Level extends Screen {
 		if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
 			scene.setPlayerSpeed(19);
 		}
+		if (ke.getKeyCode() == KeyEvent.VK_O) {
+			GameState.doVignette = !GameState.doVignette;
+		}
 		if (ke.getKeyCode() == KeyEvent.VK_W) {
 			if (activeMessageIndex != -1) {
 				messages.get(activeMessageIndex).toggleOption();
@@ -265,6 +283,7 @@ public abstract class Level extends Screen {
 		nextScreen = s;
 		nextDelta = playerDelta;
 		gameHalt = true;
+		GameState.ORIGINS = new P3D(getScene().getPosition());
 	}
 
 	private P3D nextPlayerLoc;
@@ -279,7 +298,10 @@ public abstract class Level extends Screen {
 	}
 
 	public void drawHUD(Graphics g) {
-		flakes.draw(g);
+		if (showFlakes)
+			flakes.draw(g);
+		if (GameState.doVignette)
+			g.drawImage(vignette, 0, 0, null);
 		Utility.drawMap(g, getMain(), scene);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -298,14 +320,13 @@ public abstract class Level extends Screen {
 			flagForMovable = false;
 		if (activeMessageIndex != -1)
 			flagForMovable = false;
-		scene.setPlayerMovable(flagForMovable);
+		if (scene != null)
+			scene.setPlayerMovable(flagForMovable);
 
 		Utility.drawEnemyData(g, getMain(), getScene());
 		Utility.drawHealth(g);
-		if (GameState.doVignette)
-			g.drawImage(vignette, 0, 0, null);
 
-		if (showWorldMap) {
+		if (showWorldMap && !(this instanceof InsideHouse)) {
 			Utility.drawWorldMap(g, getMain(), scene);
 		}
 
@@ -337,6 +358,7 @@ public abstract class Level extends Screen {
 			transition -= 0.008f;
 			// player.moving = false;
 			// canMove = false;
+			if (scene != null) {
 			scene.getPlayer().moving = false;
 			scene.setPlayerMovable(false);
 			g.setColor(Utility.adjustAlpha(getScene().getFogColor(), 
@@ -344,21 +366,33 @@ public abstract class Level extends Screen {
 			//g.setColor(new Color(10, 30, 10, MathCalculator
 				//	.colorLock(255 - (int) (255 * transition))));
 			g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());
+			}
+			else {
+				g.setColor(Utility.adjustAlpha(Color.black, 
+						MathCalculator.colorLock(255 - (int) (255 * transition))));
+				g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());
+
+			}
 			if (transition <= 0.00) {
 				transition = -10;
 				if (nextScreen != null) {
-					if (!getMain().screenExists(nextScreen.getName()))
+					boolean firstLoad = false;
+					if (!getMain().screenExists(nextScreen.getName())) {
 						getMain().addScreen(nextScreen);
+						firstLoad = true;
+					}
 					getMain().setActiveScreen(nextScreen.getName());
-					if (!getScene().isMoveOverriden())
+					if (getScene() != null && !getScene().isMoveOverriden())
 						GameState.instance.playerLocation = nextPlayerLoc;
-					if (nextScreen instanceof Level) {
+					if (nextScreen instanceof Level && ((Level)nextScreen).getScene() != null) {
 						Level lev = (Level)nextScreen;
 						lev.getScene().setPlayerPosition(nextPlayerLoc);
 						GameState.instance.playerDelta = nextDelta;
 						lev.getScene().setPlayerDelta(nextDelta);
-						gameHalt = false;
+						if (!firstLoad)
+							lev.reloadedLevel();
 					}
+					gameHalt = false;
 					//getScene().setPlayerPosition(nextPlayerLoc);
 				}
 			}
@@ -368,7 +402,5 @@ public abstract class Level extends Screen {
 	public boolean isMessageBeingShown() {
 		return activeMessageIndex != -1;
 	}
-
-	public abstract String getName();
 
 }

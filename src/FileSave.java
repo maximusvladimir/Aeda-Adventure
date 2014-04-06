@@ -58,6 +58,7 @@ public class FileSave {
 		writer.append(store("gEmS"+state.gems)+"\n");
 		writer.append(store("DELTA"+state.playerDelta)+"\n");
 		writer.append(store("LeV"+state.playerLevel)+"\n");
+		writer.append(store("grAndFiaCE"+state.talkedToGrandmaFiace) + "\n");
 		writer.append(store("COlor"+"(" + state.playerColor.getRed() + 
 				"," + state.playerColor.getGreen() + "," + state.playerColor.getBlue() + ")")+"\n");
 	}
@@ -144,6 +145,8 @@ public class FileSave {
 			    		state.playerDelta = Float.parseFloat(line.replace("DELTA",""));
 			    	} else if (line.indexOf("LeV") > -1) {
 			    		state.playerLevel = Integer.parseInt(line.replace("LeV", ""));
+			    	} else if (line.indexOf("grAndFiaCE") > -1) {
+			    		state.talkedToGrandmaFiace = Boolean.parseBoolean(line.replace("grAndFiaCE", ""));
 			    	} else if (line.indexOf("COlor") > -1) {
 			    		line = line.replace("COlor","");
 			    		line = line.replace("(", "");

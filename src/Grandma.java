@@ -17,11 +17,15 @@ public abstract class Grandma extends Character {
 		setMoveSpeed(0.5f);
 	}
 	
+	public void uponArrival() {
+		
+	}
+	
 	public void setDelta(float d) {
 		delta = d;
 	}
 
-	private float delta = 0;
+	protected float delta = 0;
 	private Rand ra;
 	private static final P3D[] trigDressCache = genDressCache();
 	private static final P3D[] trigHeadCache = genHeadCache();
@@ -209,7 +213,7 @@ public abstract class Grandma extends Character {
 		return new P3D(x * radius, (y * radius * 0.85f) + 235, zp);
 	}
 
-	private float walkDelta = 0.0f;
+	protected float walkDelta = 0.0f;
 
 	private void drawLeg(boolean side, Color oldLadyLeggings) {
 		byte bit = 1;
@@ -257,7 +261,9 @@ public abstract class Grandma extends Character {
 		tesselator.point(-20 * bit, 70, -15);
 	}
 
-	public abstract void tick();
+	public void tick() {
+		super.tick();
+	}
 	
 	public void doMovement() {
 		super.tick();
@@ -285,10 +291,10 @@ public abstract class Grandma extends Character {
 		}
 	}
 	
-	private float turn = 0;
-	private float dx = 0;
-	private float dz = 0;
-	private float alphaTele = 0.0f;
+	protected float turn = 0;
+	protected float dx = 0;
+	protected float dz = 0;
+	protected float alphaTele = 0.0f;
 
 	public PointTesselator getTesselator() {
 		return tesselator;

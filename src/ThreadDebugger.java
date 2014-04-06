@@ -72,6 +72,8 @@ public class ThreadDebugger extends JFrame {
 		addMouseMotionListener(yr);
 		panel.addMouseMotionListener(yr);
 	}
+	private float adder = 0;
+	private long amount = 0;
 	boolean mouseOver = false;
 	public void paint(Graphics g2) {
 		BufferedImage b = new BufferedImage(getWidth(), getHeight(),
@@ -178,6 +180,18 @@ public class ThreadDebugger extends JFrame {
 		long millis = (System.currentTimeMillis() - spinTime);
 		g.drawString("Game runtime:" + millis + " (seconds: " + (millis/1000) + ")", 215, 194);
 		g.drawString("Total distance overhead:" + (P3D.totalDistanceOverhead/1000000) + " ms", 215, 205);
+		g.drawString("Number of Jedi Knights: " + amount, 215, 216);
+		if (adder <= 0 && Math.random() < 0.01) {
+			adder = (float)(Math.random() * 10)+15;
+		}
+		else {
+			if (adder > 0) {
+			float lastAdder = adder;
+			adder = adder - 0.5f;
+			if ((int)adder != (int)lastAdder)
+				amount++;
+			}
+		}
 		g2.drawImage(b, 0, 0, null);
 	}
 }

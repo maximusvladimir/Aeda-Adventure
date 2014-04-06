@@ -59,6 +59,15 @@ public class PortalFront extends Drawable {
 		tesselator.point(-300,-500,depth);
 		tesselator.point(300,-500,depth);
 	}
+	private String name = "vbm";
+	private P3D gotoPos = new P3D(0,0,9000);
+	public void setLevelGotoName(String name) {
+		this.name = name;
+	}
+	
+	public void setLevelGotoPos(P3D pos) {
+		gotoPos = pos;
+	}
 
 	public void tick() {
 		if (getScene().getLevel().isGameHalted())
@@ -67,10 +76,10 @@ public class PortalFront extends Drawable {
 		float d = getDistToPlayer();
 		if (d < 300 && getScene().canPortalize()) {
 			IMain lev = getScene().getLevel().getMain();
-			if (lev.screenExists("vbm")) {
+			if (!lev.screenExists("vbm")) {
 				lev.addScreen(new HolmVillage(lev));
 			}
-			getScene().getLevel().startTransition(lev.getScreen("vbm"),new P3D(0,0,9500),4.712388980384f+MathCalculator.PI);
+			getScene().getLevel().startTransition(lev.getScreen(name),gotoPos,4.712388980384f+MathCalculator.PI);
 			GameState.instance.playerLevel = 1;
 			getScene().deportal();
 		}
