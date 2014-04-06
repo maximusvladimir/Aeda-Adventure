@@ -92,18 +92,18 @@ public class Main extends JFrame implements IMain {
 						leaveFullscreen();
 					else
 						goFullscreen();
-					if (active != null)
+					if (active != null && !active.isInConsoleMode())
 						active.keyReleased(arg0);
 				}
 				else {
-					if (active != null)
+					if (active != null && !active.isInConsoleMode())
 						active.keyReleased(arg0);
 				}
 				keys[arg0.getKeyCode()] = false;
 			}
 			
 			public void keyPressed(KeyEvent arg0) {
-				if (active != null)
+				if (active != null && !active.isInConsoleMode())
 					active.keyPressed(arg0);
 				keys[arg0.getKeyCode()] = true; 
 			}
@@ -167,7 +167,7 @@ public class Main extends JFrame implements IMain {
 		setActiveScreen(0);
 		Timer timer = new Timer(10,new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				if (active != null && active.isActiveScreen()) {
+				if (active != null && active.isActiveScreen() && !active.isInConsoleMode()) {
 					if (active instanceof Level)
 						((Level)active).silentTick();
 					active.tick();
@@ -182,7 +182,7 @@ public class Main extends JFrame implements IMain {
 			System.out.println("Valid controller found.");
 		Timer keyFire = new Timer(30,new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				if (active != null && active.isActiveScreen()) {
+				if (active != null && active.isActiveScreen() && !active.isInConsoleMode()) {
 					keyTicks++;
 					for (int i = 0; i < keys.length; i++) {
 						if (keys[i]) {
@@ -370,8 +370,10 @@ public class Main extends JFrame implements IMain {
 	}
 	
 	public void drawHUD(Graphics g) {
-		if (active != null && active.isActiveScreen())
+		if (active != null && active.isActiveScreen()) {
 			active.drawHUD(g);
+			active.drawConsole(g);
+		}
 	}
 	
 	public void paint(Graphics g2) {

@@ -20,8 +20,11 @@ public abstract class Drawable {
 	
 	public void dropGoodies() {
 		int csindexer = 0;
-		if (Math.random() < 0.8)
-			csindexer = (int) (Math.rint(Math.random() * 4) + 1);
+		if (Math.random() < 0.8) {
+			csindexer = (int) (Math.rint(Math.random() * 3) + 1);
+			if (Math.random() < 0.5)
+				csindexer++;
+		}
 		int heartsProvided = 0;
 		for (int i = 0; i < csindexer; i++) {
 			if (heartsProvided < 2 && GameState.instance.health < 5 && Math.random() < 0.4) {

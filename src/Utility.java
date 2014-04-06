@@ -143,7 +143,7 @@ public class Utility {
 		g.setColor(Color.black);
 		g.drawString("Holm Town", sx + (sw / 2) - (int) (0.8f * rectSizeHalf)
 				+ 5, sy + sh - rectSize - (rectSize / 2));
-		g.drawString("Sailor's Bay", sx + (sw / 3)
+		g.drawString("Sailor's Harbour", sx + (sw / 3)
 				- (int) (1.2f * rectSizeHalf) + 16, sy + sh - rectSize
 				- (rectSize / 2));
 		g.drawString("Fi\u00E4ce Forest", sx + (sw / 2) - rectSizeHalf + 9, sy

@@ -17,7 +17,6 @@ public class Grass extends Drawable {
 		for (int i = 0; i < r2.nextInt(10)+5;i++) {
 			drawStrand(new P3D(r2.nextInt(150)-75,0,r2.nextInt(150)-75),r2.nextInt(),darkness);
 		}
-		delta += 0.02f;
 	}
 	
 	private void drawStrand(P3D center,int seed,int darkness) {
@@ -54,7 +53,7 @@ public class Grass extends Drawable {
 	}
 
 	public void tick() {
-		
+		delta += 0.02f;
 	}
 
 	public PointTesselator getTesselator() {

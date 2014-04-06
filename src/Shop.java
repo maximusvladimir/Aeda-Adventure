@@ -22,12 +22,12 @@ public class Shop extends Level {
 
 	public void init() {
 		setFlakesVisible(false);
-		addMessage("Welcome to Rulf's Shop!\nI'm in the back, but you can toggle options with \"W\".\nYou can perform a transaction with \"E\".\nExit with \"ESC\".","shopEntryPoint",false,false, new ActionListener() {
+		addMessage(Strings.inst.SHOP_ENTRY_MSG,"shopEntryPoint",false,false, new ActionListener() {
 			public void actionPerformed(ActionEvent ar) {
 				shownMessage = true;
 			}
 		});
-		addMessage("Thanks for coming. Come again any time!", "shopExit", false, false,new ActionListener() {
+		addMessage(Strings.inst.SHOP_LEAVE_MSG, "shopExit", false, false,new ActionListener() {
 			public void actionPerformed(ActionEvent ar) {
 				startPrivateTransition = true;
 				setActiveMessage(null);
@@ -90,7 +90,7 @@ public class Shop extends Level {
 			windDelta += 0.01f;
 			drawRaft((Graphics2D)g,windDelta,20-(scaleAdjust*50), getMain().getHeight() * 0.37f, scale+scaleAdjust);
 			g.setColor(fontColor);
-			g.drawString("Raft (200 Gems)", 13, (int)(getMain().getHeight() * 0.52f));
+			g.drawString(Strings.inst.SHOP_DISPL_RAFT, 13, (int)(getMain().getHeight() * 0.52f));
 		}
 		else
 			drawRaft((Graphics2D)g,windDelta, 20, getMain().getHeight() * 0.37f, scale);
@@ -99,7 +99,7 @@ public class Shop extends Level {
 			glowDelta += 0.01f;
 			drawMoonstone(swap,(Graphics2D)g,150-(scaleAdjust*25),getMain().getHeight()*0.37f,scale+scaleAdjust);
 			g.setColor(fontColor);
-			g.drawString("Moonstone (400 Gems)", 125, (int)(getMain().getHeight() * 0.52f));
+			g.drawString(Strings.inst.SHOP_DISPL_MOON, 125, (int)(getMain().getHeight() * 0.52f));
 		}
 		else
 			drawMoonstone(swap,(Graphics2D)g,150,getMain().getHeight()*0.37f,scale);
@@ -107,7 +107,7 @@ public class Shop extends Level {
 		if (selectedItem % 4 == 2) {
 			drawLamp((Graphics2D)g,270-(scaleAdjust*23),getMain().getHeight()*0.37f,scale+scaleAdjust);
 			g.setColor(fontColor);
-			g.drawString("Lamp (600 Gems)", 260, (int)(getMain().getHeight() * 0.52f));
+			g.drawString(Strings.inst.SHOP_DISPL_LAMP, 260, (int)(getMain().getHeight() * 0.52f));
 			lampDelta += 0.01f * Math.random();
 		}
 		else
@@ -116,7 +116,7 @@ public class Shop extends Level {
 		if (selectedItem % 4 == 3) {
 			drawPiece((Graphics2D)g,450,getMain().getHeight()*0.37f,scale+scaleAdjust);
 			g.setColor(fontColor);
-			g.drawString("Heart Piece (800 Gems)", 385, (int)(getMain().getHeight() * 0.52f));
+			g.drawString(Strings.inst.SHOP_DISPL_HART, 385, (int)(getMain().getHeight() * 0.52f));
 		}
 		else
 			drawPiece((Graphics2D)g,450,getMain().getHeight()*0.37f,scale);
@@ -165,7 +165,7 @@ public class Shop extends Level {
 						setActiveMessage("RAFTHAVE");
 				}
 				else {
-					addMessage("Sorry. Insufficent funds.","RAFTBUYFAILURE");
+					addMessage(Strings.inst.SHOP_NO_FUNDS,"RAFTBUYFAILURE");
 					setActiveMessage("RAFTBUYFAILURE");
 				}
 			break;
@@ -188,7 +188,7 @@ public class Shop extends Level {
 					setActiveMessage("MOONHAVE");
 				}
 				else {
-					addMessage("Sorry. Insufficent funds.","MOONBUYFAILURE");
+					addMessage(Strings.inst.SHOP_NO_FUNDS,"MOONBUYFAILURE");
 					setActiveMessage("MOONBUYFAILURE");
 				}
 			break;
@@ -211,7 +211,7 @@ public class Shop extends Level {
 					setActiveMessage("LANHAVE");
 				}
 				else {
-					addMessage("Sorry. Insufficent funds.","LANBUYFAILURE");
+					addMessage(Strings.inst.SHOP_NO_FUNDS,"LANBUYFAILURE");
 					setActiveMessage("LANBUYFAILURE");
 				}
 			break;
@@ -230,7 +230,7 @@ public class Shop extends Level {
 					});
 					setActiveMessage("HEARTBUY");
 				} else {
-					addMessage("Sorry. Insufficent funds.","HEARTBUYFAILURE");
+					addMessage(Strings.inst.SHOP_NO_FUNDS,"HEARTBUYFAILURE");
 					setActiveMessage("HEARTBUYFAILURE");
 				}
 			break;

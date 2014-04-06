@@ -22,10 +22,9 @@ public class Flakes {
 		this.rand = rand;
 	}
 	
-	public void draw(Graphics g) {
+	public void tick() {
 		for (int i = 0; i < parts.length; i++) {
 			Flake flake = parts[i];
-			g.setColor(new Color(255, 255, 255, 100));
 			flake.x += flake.dx * 0.3f;
 			flake.y += flake.size * 0.05f;
 			if (flake.dx < 0)
@@ -41,6 +40,13 @@ public class Flakes {
 				flake.y = (int) (rand.nextDouble() * main.getHeight());
 				flake.size = (int) ((rand.nextDouble() * 3) + 4);
 			}
+		}
+	}
+	
+	public void draw(Graphics g) {
+		for (int i = 0; i < parts.length; i++) {
+			Flake flake = parts[i];
+			g.setColor(new Color(255, 255, 255, 100));
 			if (flake.size == 1)
 				g.drawLine((int) flake.x, (int) flake.y, (int) flake.x,
 						(int) flake.y);

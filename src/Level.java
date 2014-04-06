@@ -107,6 +107,9 @@ public abstract class Level extends Screen {
 			}
 		}
 		scene.getPlayer().setIndividualDarkness(darkBuilder);
+		
+		if (showFlakes)
+			flakes.tick();
 	}
 	
 	public void postSilentTick() {
@@ -164,7 +167,7 @@ public abstract class Level extends Screen {
 		}
 	}
 	
-	private ArrayList<Message> messages = new ArrayList<Message>();
+	public static ArrayList<Message> messages = new ArrayList<Message>();
 
 	long blinkTime = -1;
 	long lastBlink = 0;
@@ -215,9 +218,6 @@ public abstract class Level extends Screen {
 			transition = 1;
 		} else if (code == KeyEvent.VK_L) {
 			scene.makeLightning();
-		}
-		if (code == KeyEvent.VK_SHIFT) {
-			scene.setPlayerSpeed(50);
 		}
 		GameState.instance.playerDelta = playerDelta;
 		scene.setPlayerDelta(playerDelta);
@@ -296,12 +296,9 @@ public abstract class Level extends Screen {
 				scene.setPlayerMovable(true);
 			}
 		}
-		if (ke.getKeyCode() == KeyEvent.VK_SHIFT && getScene() != null) {
+		/*if (ke.getKeyCode() == KeyEvent.VK_SHIFT && getScene() != null) {
 			scene.setPlayerSpeed(19);
-		}
-		if (ke.getKeyCode() == KeyEvent.VK_O) {
-			GameState.doVignette = !GameState.doVignette;
-		}
+		}*/
 	}
 
 	public abstract void draw(Graphics g);

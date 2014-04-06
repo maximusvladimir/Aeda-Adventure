@@ -271,6 +271,11 @@ private long timeSinceLastHit = 0;
 	boolean persueHalt = false;
 	float lastHitDist = 0.0f;
 	
+	public void kill() {
+		dropGoodies();
+		getScene().remove(this);
+	}
+	
 	public void tick() {
 		if (getScene().getLevel().isMessageBeingShown())
 			return;
@@ -280,8 +285,7 @@ private long timeSinceLastHit = 0;
 			GameState.instance.score += 1;
 			addHealth(-0.05f);
 			if (getHealth() <= 0.00001) {
-				dropGoodies();
-				getScene().remove(this);
+				kill();
 			}
 			getScene().getPlayer().antiHit();
 		}

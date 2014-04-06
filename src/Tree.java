@@ -39,8 +39,6 @@ public class Tree extends Drawable {
 		ran = new Rand(34);
 		Color leaf = Utility.adjustBrightness(leafColor, -darkness);
 		float halfH = height/2.2f;
-		swayx+=0.02f;
-		swayz+=0.03f;
 		float asx = (float)(MathCalculator.cos(swayx)*swayr);
 		float asz = (float)(MathCalculator.sin(swayz)*swayr);
 		tesselator.color(85-darkness,62-darkness,47-darkness);
@@ -109,7 +107,8 @@ public class Tree extends Drawable {
 	}
 
 	public void tick() {
-		
+		swayx+=0.02f;
+		swayz+=0.03f;
 	}
 
 	public PointTesselator getTesselator() {

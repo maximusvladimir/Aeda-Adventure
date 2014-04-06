@@ -152,7 +152,11 @@ public class House extends Drawable {
 		if (dist < 290 && !alreadyShown && !isShowing) {
 			if (!lightsOn) {
 				isShowing = true;
-				getScene().getLevel().addMessage(getOwnerName() + " isn't home right now.", getHouseName());
+				if (getOwnerName().equals("Grandma")) {
+					getScene().getLevel().addMessage(getOwnerName() + " isn't here.\nPerhaps you should go back to Fiace Forest and get her.", getHouseName());
+				}
+				else
+					getScene().getLevel().addMessage(getOwnerName() + " isn't home right now.", getHouseName());
 				getScene().getLevel().setActiveMessage(getHouseName());
 			}
 			else if (getScene().canPortalize() && getScene().getLevel().getMain().screenExists(getHouseName())) {
@@ -285,7 +289,7 @@ public class House extends Drawable {
 		tesselator.point(bl.x, tr.y, tr.z);
 		tesselator.point(tr.x, tr.y, tr.z);
 	}
-private long offset = 0;
+	private long offset = 0;
 	private void drawWindow(P3D bottomRight, P3D topLeft) {
 		P3D b = bottomRight;
 		P3D t = topLeft;

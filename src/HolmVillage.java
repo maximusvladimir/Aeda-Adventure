@@ -112,12 +112,17 @@ public class HolmVillage extends Level {
 			lamps[i].updateInstLoc();
 		}
 		houses[0].setInstanceLoc(-1500, -350, -1000);
-		houses[0].setHouseName("Grandma Gwendolynn");
-		houses[0].setOwnerName("Grandma");
+		houses[0].setHouseName(Strings.inst.HOLM_VILLAGE_GRANDMA_H);
+		houses[0].setOwnerName(Strings.inst.HOLM_VILLAGE_GRANDMA_O);
 
 		if (!getMain().screenExists(houses[0].getHouseName())) {
 			final InsideHouse ggH = new InsideHouse(houses[0].getHouseName(),
 					getMain()) {
+				private Grandma grandma;
+				private boolean grandmaMessage = false;
+				public void reloadedLevel() {
+					grandmaMessage = false;
+				}
 				public void init() {
 					setRootLevel(HolmVillage.this);
 					super.init();
@@ -134,33 +139,22 @@ public class HolmVillage extends Level {
 					Couch co3 = new Couch(scene);
 					co3.setInstanceLoc(-850,-300,-800);
 					getScene().add(co3);
-					final Grandma grandma = new Grandma(getScene()) {
+					grandma = new Grandma(getScene()) {
+						private boolean shownMessage = false;
 						public void tick() {
 							super.tick();
-							walkDelta += 0.02f;
-							if (!isMovingTowards()) {
-								if (dx == 0 && dz == 0) {
-									P3D sampler = getRand().nextLocation(-150);
-									dx = sampler.x;
-									dz = sampler.z;
-									turn = MathCalculator.reduceTrig((float)(Math.atan2(dz - getInstanceLoc().z, dx - getInstanceLoc().x)) - MathCalculator.PI);
-									delta = MathCalculator.reduceTrig(delta);
-									//delta = 0;
+							float dist = getDistToPlayer();
+							if (dist < 400 && !grandmaMessage) {
+								grandmaMessage = true;
+								if (GameState.instance.hasRaft) {
+									addMessage(Strings.inst.HOLM_HAUZ_GRAND_PURCHASED_RAFT,"raftGrandma");
+									setActiveMessage("raftGrandma");
 								}
-								if (turn < 0 && delta > turn)
-									delta -= 0.02f;
-								else if (turn > 0 && delta < turn)
-									delta += 0.02f;
-								else
-									alphaTele += 0.01f;
-								if (alphaTele > 1) {
-									moveTowards(dx,dz);
-									alphaTele = 0;
-									dx = 0;
-									dz = 0;
+								else {
+									addMessage(Strings.inst.HOLM_HAUZ_GRAND_NOT_PURCHASED_RAFT, "antiRaftGrandma");
+									setActiveMessage("antiRaftGrandma");
 								}
 							}
-							
 						}
 					};
 					grandma.setMoveSpeed(10.0f);
@@ -174,16 +168,16 @@ public class HolmVillage extends Level {
 		}
 
 		houses[1].setInstanceLoc(1500, -350, -1000);
-		houses[1].setHouseName("Swordsmaster Cassius");
-		houses[1].setOwnerName("Master Cassius");
+		houses[1].setHouseName(Strings.inst.HOLM_VILLAGE_CASSIUS_H);
+		houses[1].setOwnerName(Strings.inst.HOLM_VILLAGE_CASSIUS_O);
 
 		houses[2].setInstanceLoc(1500, -350, 1000);
-		houses[2].setHouseName("Count Charles");
-		houses[2].setOwnerName("Count Charles");
+		houses[2].setHouseName(Strings.inst.HOLM_VILLAGE_CASSIUS_H);
+		houses[2].setOwnerName(Strings.inst.HOLM_VILLAGE_CASSIUS_O);
 
 		houses[3].setInstanceLoc(-1500, -350, 1000);
-		houses[3].setHouseName("Rulf's Shop");
-		houses[3].setOwnerName("Rulf");
+		houses[3].setHouseName(Strings.inst.HOLM_VILLAGE_RULF_H);
+		houses[3].setOwnerName(Strings.inst.HOLM_VILLAGE_RULF_O);
 		houses[3].lightsOn = true;
 		
 		if (!getMain().screenExists(houses[3].getHouseName())) {
@@ -229,9 +223,7 @@ public class HolmVillage extends Level {
 			public void tick() {
 				super.tick();
 				if (getDistToPlayer() < 400 && !na) {
-					addMessage(
-							"This old well is very deep and filled with water.\nSomething appears to be moving in it.",
-							"WELL0");
+					addMessage(Strings.inst.HOLM_VILLAGE_WELL_MSG_0,"WELL0");
 					setActiveMessage("WELL0");
 					na = true;
 				}

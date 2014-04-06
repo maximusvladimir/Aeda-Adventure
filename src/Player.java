@@ -139,12 +139,13 @@ public class Player extends Character {
 		tesselator.point(outward);
 		tesselator.point(startB0);
 	}
-	
+	private float uqpz = 0.0f;
 	public void draw(int d) {
 		if (!isVisible())
 			return;
 		va.setSeed(2);
 		delta = delta % re;
+		uqpz += 0.01f;
 		float feet = (float) (MathCalculator.sin(time2) * 80);
 		float feer = (float) (MathCalculator.cos(time2) * 10);
 		float feera = (float) (MathCalculator.cos(time2+(Math.PI)) * 10);
