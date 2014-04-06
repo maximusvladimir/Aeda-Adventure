@@ -1,14 +1,41 @@
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 public class Enemy extends Character {
 	private PointTesselator tesselator;
-
+	private static BufferedImage enemyImage = null;
 	public Enemy(Scene<Drawable> scene) {
 		super(scene, buildHitbox());
 		tesselator = new PointTesselator();
+		if (enemyImage == null) {
+			enemyImage = new BufferedImage(9,15,BufferedImage.TYPE_4BYTE_ABGR);
+			Graphics g = enemyImage.getGraphics();
+			g.setColor(new Color(205,205,0));
+			g.drawLine(2,0,2,0);
+			g.drawLine(6,0,6,0);
+			g.setColor(new Color(108,0,0));
+			g.drawLine(3,0,5,0);
+			g.setColor(new Color(48,0,0));
+			g.drawLine(2,1,6,1);
+			g.setColor(new Color(173,149,117));
+			g.fillRect(0,2,9,7);
+			g.setColor(new Color(153,129,97));
+			g.drawLine(0,9,0,15);
+			g.drawLine(1,9,1,12);
+			g.drawLine(2,9,2,10);
+			g.drawLine(8,9,8,15);
+			g.drawLine(7,9,7,12);
+			g.drawLine(6,9,6,10);
+		}
 		//tesselator.setTransparency(50);
 	}
-
+	
+	public BufferedImage getEnemyIcon() {
+		return enemyImage;
+	}
+private boolean alreadyHit = false;
+private long timeSinceLastHit = 0;
 	private static Hitbox buildHitbox() {
 		final Hitbox box = new Hitbox(new P3D(-80, 0, -140), new P3D(80, 250, 0));
 		box.setHitAction(new HitAction() {
@@ -21,16 +48,10 @@ public class Enemy extends Character {
 				else
 					en = (Enemy)d1;
 				en.persueHalt = true;
-				if (d0.getScene().getPlayer().isHitting()) {
-					if (Math.random() < 0.01) {
-						GameState.instance.score += 20;
-						en.addHealth(-0.2f);
-						if (en.getHealth() <= 0.00001)
-							en.getScene().remove(en);
-					}
-				}
-				else {
-					GameState.instance.health -= 0.0075f;
+				if (!en.alreadyHit){
+					GameState.instance.health -= 0.25f;
+					en.alreadyHit = true;
+					en.timeSinceLastHit = System.currentTimeMillis();
 					//Hitbox.getDefaultHitAction().onHit(d0, d1, indexd0, indexd1);
 				}
 			}		
@@ -254,14 +275,32 @@ public class Enemy extends Character {
 		if (getScene().getLevel().isMessageBeingShown())
 			return;
 		float dist = getDistToPlayer();
+		
+		if (dist < 400 && getScene().getPlayer().isPhysicallyHitting()) {
+			GameState.instance.score += 1;
+			addHealth(-0.05f);
+			if (getHealth() <= 0.00001) {
+				dropGoodies();
+				getScene().remove(this);
+			}
+			getScene().getPlayer().antiHit();
+		}
+		
 		if (dist > 300 && persueHalt) {
 			persueHalt = false;
+		}
+		if (dist > 400)
+			alreadyHit = false;
+		if (alreadyHit && System.currentTimeMillis() - timeSinceLastHit > 1000) {
+			alreadyHit = false;
 		}
 		setPersuingPlayer(dist <= 1000);
 		//if (dist <= 1500) {
 		delta = (float) Math.atan2((-getScene().getPlayerZ() + getInstanceLoc().z+500),
 					(-getScene().getPlayerX() + getInstanceLoc().x));
 		//}
+		if (alreadyHit)
+			return;
 		setMoveSpeed(2.1f);
 		if (isPersuingPlayer()) {
 			if (!checker)

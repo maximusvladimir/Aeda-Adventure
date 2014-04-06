@@ -171,6 +171,8 @@ public class Main extends JFrame implements IMain {
 					if (active instanceof Level)
 						((Level)active).silentTick();
 					active.tick();
+					if (active instanceof Level)
+						((Level)active).postSilentTick();
 				}
 			}
 		});

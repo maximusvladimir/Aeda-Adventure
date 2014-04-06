@@ -9,9 +9,18 @@ public class Message {
 	private ActionListener closeEvent = null;
 	private Level level;
 	private float characters = 0;
+	private boolean rem;
 	public Message(String tag,Level level) {
 		name = tag;
 		this.level = level;
+	}
+	
+	public void setRemoveAtFinish(boolean b) {
+		rem = b;
+	}
+	
+	public boolean removingAtFinish() {
+		return rem;
 	}
 	
 	public Level getLevel() {

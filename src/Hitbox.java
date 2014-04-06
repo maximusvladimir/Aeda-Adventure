@@ -9,6 +9,7 @@ public class Hitbox {
 				np.x += p.getScene().getPlayerX();
 				np.z += p.getScene().getPlayerZ();
 				p.getScene().setPlayerMovable(false);
+				p.setMoveSpeed(3.0f);
 				p.moveTowards(np);
 			} else if (d1 instanceof Player) {
 				Player p = (Player) d0;
@@ -16,6 +17,7 @@ public class Hitbox {
 				np.x += p.getScene().getPlayerX();
 				np.z += p.getScene().getPlayerZ();
 				p.getScene().setPlayerMovable(false);
+				p.setMoveSpeed(3.0f);
 				p.moveTowards(np);
 			}
 		}

@@ -109,23 +109,32 @@ public abstract class Level extends Screen {
 		scene.getPlayer().setIndividualDarkness(darkBuilder);
 	}
 	
+	public void postSilentTick() {
+		//getScene().getPlayer().antiHit();
+	}
+	
 	public void addMessage(String message, String tagName) {
 		addMessage(message,tagName,null);
 	}
 	
 	public void addMessage(String message, String tagName, boolean optionMessage) {
-		addMessage(message,tagName,optionMessage,null);
+		addMessage(message,tagName,optionMessage,true,null);
 	}
 	
 	public void addMessage(String message, String tagName, ActionListener listener) {
-		addMessage(message,tagName,false,listener);
+		addMessage(message,tagName,false,true,listener);
 	}
 	
-	public void addMessage(String message, String tagName, boolean optionMessage, ActionListener exitEvent) {
+	public void addMessage(String message, String tagName, boolean optionMessage, ActionListener listener) {
+		addMessage(message,tagName,optionMessage,true,listener);
+	}
+	
+	public void addMessage(String message, String tagName, boolean optionMessage, boolean removeAtFinish ,ActionListener exitEvent) {
 		Message mess = new Message(tagName.toLowerCase(),this);
 		mess.setMessage(message);
 		mess.setCloseEvent(exitEvent);
 		mess.setOptionMessage(optionMessage);
+		mess.setRemoveAtFinish(removeAtFinish);
 		for (int i = 0; i < messages.size(); i++) {
 			if (messages.get(i).getName().equals(mess.getName())) {
 				System.err.println("Message already added!");
@@ -137,6 +146,10 @@ public abstract class Level extends Screen {
 	
 	private int activeMessageIndex = -1;
 	public void setActiveMessage(String tagName) {
+		if (tagName == null) {
+			activeMessageIndex = -1;
+			return;
+		}
 		if (activeMessageIndex != -1)
 			return;
 		tagName = tagName.toLowerCase();
@@ -192,8 +205,6 @@ public abstract class Level extends Screen {
 			playerDelta = playerDelta + 0.1f;
 		} else if (code == KeyEvent.VK_D) {
 			playerDelta = playerDelta - 0.1f;
-		} else if (code == KeyEvent.VK_ENTER) {
-			scene.getPlayer().hit();
 		} else if (code == KeyEvent.VK_SPACE) {
 			scene.getPlayer().jump();
 		} else if (code == KeyEvent.VK_P) {
@@ -233,10 +244,16 @@ public abstract class Level extends Screen {
 	private float playerDelta = 0.0f;
 
 	public void keyReleased(KeyEvent ke) {
+		if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			GameState.save();
+			getMain().setActiveScreen("mainmenu");
+			return;
+		}
 		if (ke.getKeyCode() == KeyEvent.VK_Q) {
 			if (activeMessageIndex != -1) {
 				Message message = messages.get(activeMessageIndex);
-				messages.remove(activeMessageIndex);
+				if (message.removingAtFinish())
+					messages.remove(activeMessageIndex);
 				activeMessageIndex = -1;
 				if (getScene() != null)
 					getScene().setPlayerMovable(true);
@@ -246,14 +263,31 @@ public abstract class Level extends Screen {
 				for (int i = 0; i < signs.length; i++) {
 					signs[i].qPressed();
 				}
-		} else if (ke.getKeyCode() == KeyEvent.VK_W
-				|| ke.getKeyCode() == KeyEvent.VK_S) {
-			scene.getPlayer().moving = false;
-		} else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			GameState.save();
-			getMain().setActiveScreen("mainmenu");
+			return;
 		}
-		if (ke.getKeyCode() == KeyEvent.VK_M) {
+		if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+			if (scene != null) {
+				scene.getPlayer().hit();
+				scene.getPlayer().setHitNow();
+			}
+		}
+		if (ke.getKeyCode() == KeyEvent.VK_W) {
+			if (activeMessageIndex != -1) {
+				messages.get(activeMessageIndex).toggleOption();
+			}
+		}
+		if (activeMessageIndex != -1)
+			return;
+		if ((ke.getKeyCode() == KeyEvent.VK_W
+				|| ke.getKeyCode() == KeyEvent.VK_S) && getScene() != null) {
+			scene.getPlayer().moving = false;
+		} else if (ke.getKeyCode() == KeyEvent.VK_Z && GameState.instance.hasRaft) {
+			//if (!(this instanceof SailorBay)) {
+				addMessage("You can't use a raft here.","NOUSERAFT");
+				setActiveMessage("NOUSERAFT");
+			//}
+		}
+		if (ke.getKeyCode() == KeyEvent.VK_M && getScene() != null) {
 			showWorldMap = !showWorldMap;
 			if (showWorldMap) {
 				scene.getPlayer().moving = false;
@@ -262,16 +296,11 @@ public abstract class Level extends Screen {
 				scene.setPlayerMovable(true);
 			}
 		}
-		if (ke.getKeyCode() == KeyEvent.VK_SHIFT) {
+		if (ke.getKeyCode() == KeyEvent.VK_SHIFT && getScene() != null) {
 			scene.setPlayerSpeed(19);
 		}
 		if (ke.getKeyCode() == KeyEvent.VK_O) {
 			GameState.doVignette = !GameState.doVignette;
-		}
-		if (ke.getKeyCode() == KeyEvent.VK_W) {
-			if (activeMessageIndex != -1) {
-				messages.get(activeMessageIndex).toggleOption();
-			}
 		}
 	}
 
@@ -302,7 +331,15 @@ public abstract class Level extends Screen {
 			flakes.draw(g);
 		if (GameState.doVignette)
 			g.drawImage(vignette, 0, 0, null);
-		Utility.drawMap(g, getMain(), scene);
+		if (!(this instanceof InsideHouse) && !(this instanceof Shop)) {
+			Utility.drawMap(g, getMain(), scene);
+			
+			if (GameState.instance.hasRaft) {
+				int x092 = getMain().getWidth() - (int) (getMain().getWidth() * 0.14f) - 8;
+				int y558 = (int) (getMain().getWidth() * 0.17f);
+				g.drawImage(Shop.getRaftImage(), x092,y558,null);
+			}
+		}
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -326,7 +363,7 @@ public abstract class Level extends Screen {
 		Utility.drawEnemyData(g, getMain(), getScene());
 		Utility.drawHealth(g);
 
-		if (showWorldMap && !(this instanceof InsideHouse)) {
+		if (showWorldMap && !(this instanceof InsideHouse) && !(this instanceof Shop)) {
 			Utility.drawWorldMap(g, getMain(), scene);
 		}
 

@@ -18,6 +18,35 @@ public abstract class Drawable {
 		this.scene = scene;
 	}
 	
+	public void dropGoodies() {
+		int csindexer = 0;
+		if (Math.random() < 0.8)
+			csindexer = (int) (Math.rint(Math.random() * 4) + 1);
+		int heartsProvided = 0;
+		for (int i = 0; i < csindexer; i++) {
+			if (heartsProvided < 2 && GameState.instance.health < 5 && Math.random() < 0.4) {
+				heartsProvided++;
+				GameState.instance.health++;
+				continue;
+			}
+			else if (heartsProvided < 2 && Math.random() < 0.05) {
+				heartsProvided++;
+				GameState.instance.health++;
+				continue;
+			}
+			P3D poll = P3D.add(getInstanceLoc(), 
+					new P3D((float)(Math.random() * 400) - 200,0,(float)(Math.random() * 400) - 200));
+			poll.y = -170;
+			Gem gem = null;
+			if (Math.random() < 0.05)
+				gem = new RedGem(getScene(),new Rand());
+			else
+				gem = new Gem(getScene(),new Rand());
+			gem.setInstanceLoc(poll);
+			getScene().add(gem);
+		}
+	}
+	
 	public boolean dead() {
 		return dead;
 	}

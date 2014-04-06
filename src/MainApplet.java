@@ -42,6 +42,8 @@ public class MainApplet extends Applet implements IMain {
 					if (active instanceof Level)
 						((Level)active).silentTick();
 					active.tick();
+					if (active instanceof Level)
+						((Level)active).postSilentTick();
 				}
 			}
 		});

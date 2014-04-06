@@ -17,8 +17,6 @@ public class HolmVillage extends Level {
 	
 	public void reloadedLevel() {
 		super.reloadedLevel();
-		getScene().setPlayerX(GameState.ORIGINS.x);
-		getScene().setPlayerZ(GameState.ORIGINS.z);
 		/*getScene().setPlayerPosition(lastLoc);
 		GameState.instance.playerLocation = lastLoc;*/
 	}
@@ -32,6 +30,7 @@ public class HolmVillage extends Level {
 		Sign[] signs = new Sign[2];
 		houses = new House[4];
 		Lamppost[] lamps = new Lamppost[10];
+		Enemy[] enemies = new Enemy[4];
 		scene = new Scene<Drawable>(this, getRand());
 		GamePlane plane = new GamePlane(scene, getRand(), 55, new Color(99,
 				126, 61).darker(), 14, 0.5f);
@@ -76,7 +75,18 @@ public class HolmVillage extends Level {
 		}
 		for (int i = 0; i < trees.length; i++) {
 			trees[i] = new Tree(scene, getRand());
-			trees[i].setInstanceLoc(getRand().nextLocation(-400));
+			// Make sure the tree isn't in the middle of the road.
+			P3D treeLoc = getRand().nextLocation(-400);
+			boolean found = false;
+			while (!found) {
+				int[] pts = plane.getWorldPointAsGridPoint(treeLoc.x, treeLoc.z);
+				if ((pts[0] < 25 || pts[0] > 29) && (pts[1] < 26 || pts[1] > 30)) {
+					found = true;
+					break;
+				}
+				treeLoc = getRand().nextLocation(-400);
+			}
+			trees[i].setInstanceLoc(treeLoc);
 		}
 		for (int i = 0; i < signs.length; i++) {
 			signs[i] = new Sign(scene);
@@ -86,6 +96,9 @@ public class HolmVillage extends Level {
 		}
 		for (int i = 0; i < houses.length; i++) {
 			houses[i] = new House(scene);
+		}
+		for (int i = 0; i < enemies.length; i++) {
+			enemies[i] = new Enemy(scene);
 		}
 		for (int i = 0; i < lamps.length; i++) {
 			lamps[i] = new Lamppost(scene);
@@ -188,8 +201,19 @@ public class HolmVillage extends Level {
 		barrel[0].setInstanceLoc(600, -350, 2000);
 		barrel[1].setInstanceLoc(-900, -350, 2075);
 		barrel[2].setInstanceLoc(600, -350, 3500);
+		barrel[3].setInstanceLoc(850, -300, -450);
+		barrel[4].setInstanceLoc(-1000,-300,-450);
 
+		enemies[0].setInstanceLoc(0,-350,4000);
+		enemies[1].setInstanceLoc(0,-350,5000);
+		enemies[2].setInstanceLoc(0,-350,6000);
+		enemies[3].setInstanceLoc(0,-350,7000);
+		/*Horse horse = new Horse(scene);
+		horse.setInstanceLoc(0, 0, 0);
+		scene.add(horse);*/
+		
 		setSigns(signs);
+		scene.add(enemies);
 		scene.add(grass);
 		scene.add(houses);
 		scene.add(trees);
@@ -202,7 +226,6 @@ public class HolmVillage extends Level {
 		scene.add(windmill);
 		Well ohwell = new Well(scene) {
 			private boolean na = false;
-
 			public void tick() {
 				super.tick();
 				if (getDistToPlayer() < 400 && !na) {

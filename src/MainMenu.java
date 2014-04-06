@@ -89,6 +89,7 @@ public class MainMenu extends Screen {
 			GameState.save();
 		} else {
 			GameState.instance = save.load();
+			System.out.println(GameState.instance);
 		}
 
 		SoundManager.start();
@@ -314,6 +315,9 @@ public class MainMenu extends Screen {
 		inButton = 0;
 		if (GameState.instance == null || GameState.instance.playerStage == 0) {
 			drawButton(g, "Create new game", 125, 120, 250, 40);
+		} else if (getMain().getNumScreens() > 1){
+			drawButton(g, "Resume", 125, 120,
+					250, 40);
 		} else {
 			drawButton(g, "Play as " + GameState.instance.playerGUID, 125, 120,
 					250, 40);

@@ -61,6 +61,10 @@ public class FileSave {
 		writer.append(store("grAndFiaCE"+state.talkedToGrandmaFiace) + "\n");
 		writer.append(store("COlor"+"(" + state.playerColor.getRed() + 
 				"," + state.playerColor.getGreen() + "," + state.playerColor.getBlue() + ")")+"\n");
+		writer.append(store("mS" + state.hasMoonstone) + "\n");
+		writer.append(store("MAkeR" + state.hasRaft) + "\n");
+		writer.append(store("MaLntrn" + state.hasLantern) + "\n");
+		writer.append(store("TTTK" + state.healthPieces) + "\n");
 	}
 	
 	private String store(int value) {
@@ -155,6 +159,14 @@ public class FileSave {
 			    		state.playerColor = new Color(Integer.parseInt(pieces[0]),
 			    				Integer.parseInt(pieces[1]),
 			    				Integer.parseInt(pieces[2]));
+			    	} else if (line.indexOf("mS") > -1) {
+			    		state.hasMoonstone = Boolean.parseBoolean(line.replace("mS", ""));
+			    	} else if (line.indexOf("MAkeR") > -1) {
+			    		state.hasRaft = Boolean.parseBoolean(line.replace("MAkeR", ""));
+			    	} else if (line.indexOf("MaLntrn") > -1) {
+			    		state.hasLantern = Boolean.parseBoolean(line.replace("MaLntrn", ""));
+			    	} else if (line.indexOf("TTTK") > -1) {
+			    		state.healthPieces = Integer.parseInt(line.replace("TTTK", ""));
 			    	}
 			    }
 			}

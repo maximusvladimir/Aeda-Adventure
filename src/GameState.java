@@ -12,19 +12,27 @@ public class GameState {
 	public float playerDelta = 0.0f;
 	public Color playerColor = Color.blue;
 	public static P3D ORIGINS = new P3D(0,0,0);
+	public int healthPieces = 10;
 	
 	public boolean talkedToGrandmaFiace = false;
+	public boolean hasMoonstone = false;
+	public boolean hasRaft = false;
+	public boolean hasLantern = false;
 	
 	public String toString() {
-		return "playerStage = " + playerStage + "\n" +
+		return  "playerStage     = " + playerStage + "\n" +
 				"playerLocation = " + playerLocation + "\n" + 
-				"score = " + score + "\n" + 
-				"health = " + health + "\n" + 
-				"playerGUID = " + playerGUID + "\n" +
-				"playerDelta = "+playerDelta+ "\n"+
-				"gems = " + gems + "\n" +
-				"playerColor = " + playerColor + "\n" +
-				"grandFiace = " + talkedToGrandmaFiace;
+				"score          = " + score + "\n" + 
+				"health         = " + health + "\n" + 
+				"playerGUID     = " + playerGUID + "\n" +
+				"playerDelta    = " + playerDelta+ "\n"+
+				"gems           = " + gems + "\n" +
+				"playerColor    = " + playerColor + "\n" +
+				"grandFiace     = " + talkedToGrandmaFiace + "\n" +
+				"healthPieces   = " + healthPieces + "\n" +
+				"hasMoonstone   = " + hasMoonstone + "\n" +
+				"hasRaft        = " + hasRaft + "\n" +
+				"hasLantern     = " + hasLantern;
 	}
 	public static GameState instance;
 	private static FileSave saver = new FileSave();

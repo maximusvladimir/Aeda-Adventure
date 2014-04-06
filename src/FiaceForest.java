@@ -110,7 +110,7 @@ public class FiaceForest extends Level {
 					if (askAnnoyingMessageAnymore)
 						getScene().getLevel().addMessage(
 								"Could you please help me with an errand?",
-								"GRAND0", true, new ActionListener() {
+								"GRAND0", true, true, new ActionListener() {
 									public void actionPerformed(ActionEvent e) {
 										Message m = (Message) e.getSource();
 										if (m.getResult()) {

@@ -1,5 +1,6 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
@@ -10,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
 
 public class Shop extends Level {
 
@@ -19,14 +21,16 @@ public class Shop extends Level {
 	}
 
 	public void init() {
-		addMessage("Welcome to Rulf's Shop!\nI'm in the back, but you can toggle options with \"W\".\nYou can perform a transaction with \"Q\".\nExit with \"ESC\".","shopEntryPoint", new ActionListener() {
+		setFlakesVisible(false);
+		addMessage("Welcome to Rulf's Shop!\nI'm in the back, but you can toggle options with \"W\".\nYou can perform a transaction with \"E\".\nExit with \"ESC\".","shopEntryPoint",false,false, new ActionListener() {
 			public void actionPerformed(ActionEvent ar) {
 				shownMessage = true;
 			}
 		});
-		addMessage("Thanks for coming. Come again any time!", "shopExit", new ActionListener() {
+		addMessage("Thanks for coming. Come again any time!", "shopExit", false, false,new ActionListener() {
 			public void actionPerformed(ActionEvent ar) {
 				startPrivateTransition = true;
+				setActiveMessage(null);
 			}
 		});
 	}
@@ -84,12 +88,12 @@ public class Shop extends Level {
 		
 		if (selectedItem % 4 == 0) {
 			windDelta += 0.01f;
-			drawRaft((Graphics2D)g, 20-(scaleAdjust*50), getMain().getHeight() * 0.37f, scale+scaleAdjust);
+			drawRaft((Graphics2D)g,windDelta,20-(scaleAdjust*50), getMain().getHeight() * 0.37f, scale+scaleAdjust);
 			g.setColor(fontColor);
 			g.drawString("Raft (200 Gems)", 13, (int)(getMain().getHeight() * 0.52f));
 		}
 		else
-			drawRaft((Graphics2D)g, 20, getMain().getHeight() * 0.37f, scale);
+			drawRaft((Graphics2D)g,windDelta, 20, getMain().getHeight() * 0.37f, scale);
 		
 		if (selectedItem % 4 == 1) {
 			glowDelta += 0.01f;
@@ -133,14 +137,110 @@ public class Shop extends Level {
 			setActiveMessage("shopExit");
 			//this.startTransition(getMain().getScreen(sender), GameState.ORIGINS,0);
 		}
+		else if (ke.getKeyCode() == KeyEvent.VK_E && !isMessageBeingShown()) {
+			assertShop();
+		}
 		else
 			super.keyReleased(ke);
+	}
+	
+	private void assertShop() {
+		int item = ((int)selectedD) % 4;
+		switch (item) {
+			case 0:
+				if (GameState.instance.gems >= 200 && !GameState.instance.hasRaft) {
+					addMessage("Purchase a raft for 200 Gems?", "RAFTBUY",true,new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							Message m = (Message) arg0.getSource();
+							if (m.getResult()) {
+								GameState.instance.hasRaft = true;
+								GameState.instance.gems -= 200;
+								GameState.save();
+							}
+						}		
+					});
+					setActiveMessage("RAFTBUY");
+				} else if (GameState.instance.hasRaft) {
+						addMessage("You already have a raft.","RAFTHAVE");
+						setActiveMessage("RAFTHAVE");
+				}
+				else {
+					addMessage("Sorry. Insufficent funds.","RAFTBUYFAILURE");
+					setActiveMessage("RAFTBUYFAILURE");
+				}
+			break;
+			
+			case 1:
+				if (GameState.instance.gems >= 400 && !GameState.instance.hasMoonstone) {
+					addMessage("Purchase a moonstone for 400 Gems?", "MOONBUY",true,new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							Message m = (Message) arg0.getSource();
+							if (m.getResult()) {
+								GameState.instance.hasMoonstone = true;
+								GameState.instance.gems -= 400;
+								GameState.save();
+							}
+						}		
+					});
+					setActiveMessage("MOONBUY");
+				} else if (GameState.instance.hasMoonstone) {
+					addMessage("You already have a moonstone.","MOONHAVE");
+					setActiveMessage("MOONHAVE");
+				}
+				else {
+					addMessage("Sorry. Insufficent funds.","MOONBUYFAILURE");
+					setActiveMessage("MOONBUYFAILURE");
+				}
+			break;
+			
+			case 2:
+				if (GameState.instance.gems >= 600 && !GameState.instance.hasLantern) {
+					addMessage("Purchase a lantern for 600 Gems?", "LANBUY",true,new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							Message m = (Message) arg0.getSource();
+							if (m.getResult()) {
+								GameState.instance.hasLantern = true;
+								GameState.instance.gems -= 600;
+								GameState.save();
+							}
+						}		
+					});
+					setActiveMessage("LANBUY");
+				} else if (GameState.instance.hasLantern) {
+					addMessage("You already have a moonstone.","LANHAVE");
+					setActiveMessage("LANHAVE");
+				}
+				else {
+					addMessage("Sorry. Insufficent funds.","LANBUYFAILURE");
+					setActiveMessage("LANBUYFAILURE");
+				}
+			break;
+			
+			case 3:
+				if (GameState.instance.gems >= 800) {
+					addMessage("Purchase a heart piece for 800 Gems?", "HEARTBUY",true,new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							Message m = (Message) arg0.getSource();
+							if (m.getResult()) {
+								GameState.instance.healthPieces++;
+								GameState.instance.gems -= 800;
+								GameState.save();
+							}
+						}		
+					});
+					setActiveMessage("HEARTBUY");
+				} else {
+					addMessage("Sorry. Insufficent funds.","HEARTBUYFAILURE");
+					setActiveMessage("HEARTBUYFAILURE");
+				}
+			break;
+		}
 	}
 	
 	public void keyDown(int code) {
 		if (getMessageIndexer() != -1)
 			return;
-		if (code == KeyEvent.VK_D) {
+		if (code == KeyEvent.VK_W) {
 			//selectedItem++;
 			selectedD += 0.175f;
 			if ((int)selectedD != selectedItem) {
@@ -218,7 +318,7 @@ public class Shop extends Level {
 		g.drawOval((int)x,(int)(y-(scale*80)),(int)(scale*50),(int)(scale*100));
 	}
 
-	private void drawRaft(Graphics2D g, float x, float y, float scale) {
+	private static void drawRaft(Graphics2D g,float windDelta2, float x, float y, float scale) {
 		for (int i = 0; i < 5; i++) {
 			int offset = (int)(i * 4 * scale);
 			g.setColor(new Color(108, 91, 60));
@@ -232,9 +332,9 @@ public class Shop extends Level {
 				g.fillRect((int) (x-offset+(50 * scale)), (int)(y+offset-(scale*75)+(10 * scale)),(int)(scale*7),(int)(scale*75));
 			}
 		}
-		float wind = (float)(Math.sin(windDelta) * (scale*15));
-		float windY = (float)(Math.cos(windDelta * 0.5f) * (scale*10));
-		float windO = (float)(Math.cos(windDelta*0.59) * ((scale*3)));
+		float wind = (float)(Math.sin(windDelta2) * (scale*15));
+		float windY = (float)(Math.cos(windDelta2 * 0.5f) * (scale*10));
+		float windO = (float)(Math.cos(windDelta2*0.59) * ((scale*3)));
 		float offset = 8 * scale;
 		GeneralPath sail = new GeneralPath();
 		sail.moveTo((x-offset+(50 * scale))+3+windO, (y+offset-(scale*75)+(10 * scale)));
@@ -254,6 +354,34 @@ public class Shop extends Level {
 	private float glowDelta = 0.0f;
 	private float lampDelta = 0.0f;
 	private float transitionDelta = 0.0f;
+	private static BufferedImage lanternImage = null;
+	public static BufferedImage getLanternImage() {
+		if (lanternImage == null) {
+			
+		}
+		return lanternImage;
+	}
+	private static BufferedImage moonImage = null;
+	public static BufferedImage getMoonstoneImage() {
+		if (moonImage == null) {
+			
+		}
+		return moonImage;
+	}
+	private static BufferedImage raftImage = null;
+	public static BufferedImage getRaftImage() {
+		if (raftImage == null) {
+			raftImage = new BufferedImage(48,48,BufferedImage.TYPE_4BYTE_ABGR);
+			Graphics2D g = (Graphics2D)raftImage.getGraphics();
+			final float scaler = 48.0f / 200.0f * 1.5f;
+			drawRaft(g,98.4f,8,28,scaler);
+			g.setColor(Color.red);
+			g.setFont(new Font("Courier New",0,20));
+			g.drawString("Z",36,46);
+			g.dispose();
+		}
+		return raftImage;
+	}
 
 	public void drawHUD(Graphics g) {
 		super.drawHUD(g);
@@ -265,8 +393,8 @@ public class Shop extends Level {
 			if (transitionDelta >= 255.0f) {
 				startPrivateTransition = false;
 				transitionDelta = 0;
-				getMain().setActiveScreen(sender);
 				shownMessage = false;
+				getMain().setActiveScreen(sender);
 			}
 			g.setColor(Utility.adjustAlpha(Color.black, (int)(transitionDelta)));
 			g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());

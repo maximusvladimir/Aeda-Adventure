@@ -89,12 +89,22 @@ public class Player extends Character {
 		return eyesOpen;
 	}
 	private boolean eyesOpen = true;
-	public boolean isHitting() {
-		if (hitDelta <= 0.0001f) {
-			return false;
-		}
-		return true;
+	public boolean isPhysicallyHitting() {
+		return actualHitTick;
 	}
+	public boolean isHitting() {
+		if (hitDelta < 0.00001f)
+			return false;
+		else
+			return true;
+	}
+	public void setHitNow() {
+		actualHitTick = true;
+	}
+	public void antiHit() {
+		actualHitTick = false;
+	}
+	private boolean actualHitTick = false;
 	private float hitDelta = 0.0f;
 	public Color playerColor;
 	private final float ni = (float) (Math.PI / 180.0f * 90);
@@ -806,7 +816,6 @@ public class Player extends Character {
 	private float destAlt = 0.0f;
 	public void tick() {
 		if (movingTowards) {
-			setMoveSpeed(3.0f);
 			 float lx = startX - destX;
 			 float lz = startZ - destZ;
 			 float l = (float)(Math.sqrt(lx * lx + lz * lz));
@@ -821,10 +830,10 @@ public class Player extends Character {
 			 }
 		}
 		
-		time0 += 0.001f;
+		time0 += 0.002f;
 		if (moving) {
-			time2 += 0.04f;//was 0.025f
-			time1 += 0.09f;
+			time2 += 0.08f;//was 0.025f
+			time1 += 0.18f;
 			armsLag = (float)(Math.abs(Math.sin(time1*0.2)));
 		} else {
 			if (Math.sin(time2) < -0.1 || Math.sin(time2) > 0.1) {
@@ -832,7 +841,7 @@ public class Player extends Character {
 				// don't leave the player in a weird position when they
 				// stop moving.
 			}
-			time1 += 0.01f;
+			time1 += 0.02f;
 		}
 	}
 	

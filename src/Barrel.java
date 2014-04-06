@@ -146,14 +146,7 @@ public class Barrel extends Drawable {
 				rotateOver = 0;
 				GameState.instance.score += 20;
 				done = true;
-				for (int i = 0; i < (int)(Math.random() * 5.5)+2; i++) {
-					P3D poll = P3D.add(getInstanceLoc(), 
-							new P3D((float)(Math.random() * 400) - 200,0,(float)(Math.random() * 400) - 200));
-					poll.y = -170;
-					Gem gem = new Gem(getScene(),new Rand());
-					gem.setInstanceLoc(poll);
-					getScene().add(gem);
-				}
+				dropGoodies();
 				deadTime = System.currentTimeMillis();
 			}
 		}

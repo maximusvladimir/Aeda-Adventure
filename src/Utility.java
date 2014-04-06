@@ -353,13 +353,16 @@ public class Utility {
 			return;
 		ArrayList<Enemy> ens = scene.<Enemy>getObjectsByType(Enemy.class);
 		int w = m.getWidth() - (int) (m.getWidth() * 0.16f) - 16;
+		int gulf = 0;
 		for (int i = 0; i < ens.size(); i++) {
 			Enemy e = ens.get(i);
 			if (e.isPersuingPlayer()) {
 				g.setColor(MathCalculator.lerp(new Color(60,175,45), new Color(175,19,39), 1-e.getHealth()));
-				g.fillRect(w - 100,20*i+10,(int)(100 * e.getHealth()),15);
+				g.fillRect(w - 100,25*gulf+10,(int)(100 * e.getHealth()),15);
 				g.setColor(new Color(46,62,175));
-				g.drawRect(w - 100,20*i+10,100,15);
+				g.drawRect(w - 100,25*gulf+10,100,15);
+				g.drawImage(e.getEnemyIcon(), w - 114,25*gulf+10,null);
+				gulf++;
 			}
 		}
 	}
@@ -446,6 +449,7 @@ public class Utility {
 					.getWorldSizeHalf()) * mapw / scene.getWorldSize())/2;
 			g.fillRect(sx,sy,size,size);
 		}
+		
 		g.setColor(Color.white);
 		g.fillRect(
 				(int) ((scene.getPlayerX() + scene.getWorldSizeHalf()) * mapw / scene
@@ -460,6 +464,22 @@ public class Utility {
 				mapy
 						+ (int) ((scene.getPlayerZ() + scene.getWorldSizeHalf())
 								* mapw / scene.getWorldSize()) + 5, 3, 3);
+		
+		ArrayList<Enemy> enemiesOfTheRepublic = scene.<Enemy>getObjectsByType(Enemy.class);
+		g.setColor(Color.red);
+		for (int i = 0; i < enemiesOfTheRepublic.size(); i++) {
+			Enemy wat = enemiesOfTheRepublic.get(i);
+			if (!wat.isVisible() || !wat.isPersuingPlayer())
+				continue;
+			int entityx = (int) ((wat.getInstanceLoc().x + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int entityz = (int) ((wat.getInstanceLoc().z + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int sx = mapx + entityx + 5;
+			int sy = mapy + entityz + 5;
+			g.drawLine(sx - 1, sy, sx + 1, sy);
+			g.drawLine(sx, sy - 1, sx, sy + 1);
+		}
 	}
 
 	private static Polygon gem = null;

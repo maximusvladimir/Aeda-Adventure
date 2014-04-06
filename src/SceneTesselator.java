@@ -3,6 +3,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.Polygon;
+import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -295,6 +296,7 @@ public class SceneTesselator extends PointTesselator {
 						// g.setColor(t.font.color);
 						float size = (1 - Math.abs(t.zdepth))
 								* t.font.font.getSize() * 3;
+						//g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 						g.setFont(t.font.font.deriveFont(size));
 						String[] trims = new String[] { t.font.str };
 						if (t.font.str.indexOf("\n") > -1) {
@@ -304,6 +306,7 @@ public class SceneTesselator extends PointTesselator {
 							g.drawString(trims[b], tri[4], tri[5]
 									+ (int) ((size * b) + 1.2f));
 						}
+						//g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 					}
 				} else {
 					if (fogUsed) {

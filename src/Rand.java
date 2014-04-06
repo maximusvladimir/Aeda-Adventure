@@ -14,6 +14,13 @@ public class Rand extends Random {
 		this.scene = scene;
 	}
 	
+	public boolean chance(float probability) {
+		if (probability > 1 || probability < 0)
+			throw new IllegalArgumentException("Probability must be between 0 and 1");
+		
+		return nextFloat() < probability;
+	}
+	
 	public float next2PI() {
 		return (float)(nextDouble() * Math.PI * 2);
 	}
@@ -74,6 +81,13 @@ public class Rand extends Random {
 	public Color bright(Color base, int tolerance) {
 		int halfT = tolerance / 2;
 		int rgbreduction = nextInt(-halfT,halfT);
+		return new Color(MathCalculator.colorLock(rgbreduction+base.getRed()),
+				MathCalculator.colorLock(rgbreduction+base.getGreen()),
+				MathCalculator.colorLock(rgbreduction+base.getBlue()));
+	}
+	
+	public Color bright(Color base, int min,int max) {
+		int rgbreduction = nextInt(min,max);
 		return new Color(MathCalculator.colorLock(rgbreduction+base.getRed()),
 				MathCalculator.colorLock(rgbreduction+base.getGreen()),
 				MathCalculator.colorLock(rgbreduction+base.getBlue()));
