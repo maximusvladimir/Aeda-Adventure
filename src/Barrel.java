@@ -9,7 +9,7 @@ public class Barrel extends Drawable {
 	private static Color[] colors;
 	private float delta = 0.0f;
 	public Barrel(Scene<Drawable> scene, Rand rand) {
-		super(scene,null,null);
+		super(scene,new Hitbox());
 		tesselator = new PointTesselator();
 		tesselator.setDrawType(DrawType.Triangle);
 		tesselator.setSkipCullCheck(true);
@@ -33,14 +33,14 @@ public class Barrel extends Drawable {
 			    float nx = (float)Math.cos(theta * (i+1)) * radius;
 			    float nz = (float)Math.sin(theta * (i+1)) * radius;
 			    // top part of barrel.
-			    colors2.add(Utility.adjustBrightness(top, rand.nextInt(-10, 10)));
+			    colors2.add(Utility.adjustBrightness(top, rand.nextInt(-20, 5)));
 			    points.add(new P3D(x*0.8f,height-14,z*0.8f));
 			    points.add(new P3D(nx*0.8f,height-14,nz*0.8f));
 			    points.add(new P3D(0,height-14,0));
 			    
 			    float ext = 1.35f;
 			    // side of barrel.
-			    Color sidePane = Utility.adjustBrightness(rand.variate(side, 10),rand.nextInt(-12, 12));
+			    Color sidePane = Utility.adjustBrightness(rand.variate(side, 10),rand.nextInt(-20, 4));
 			    colors2.add(sidePane);
 			    points.add(new P3D(x,height,z));
 			    points.add(new P3D(nx,height,nz));

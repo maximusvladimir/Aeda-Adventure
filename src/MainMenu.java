@@ -275,7 +275,7 @@ public class MainMenu extends Screen {
 			if (fade >= 250) {
 				if (GameState.instance.playerLevel == 0) {
 					if (!getMain().screenExists("level")) {
-						getMain().addScreen(new Level(getMain()));
+						getMain().addScreen(new FiaceForest(getMain()));
 					}
 					getMain().setActiveScreen("level");
 				}

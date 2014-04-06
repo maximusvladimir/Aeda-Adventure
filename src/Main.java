@@ -48,6 +48,7 @@ public class Main extends JFrame {
 	private int drawTime;
 	private long keyTicks = 0;
 	private boolean[] keys = new boolean[525];
+	private ControllerSupport cnt;
 	public static void main(String[] args) {
 		new Main();
 		System.out.println("Shutting down.");
@@ -158,11 +159,17 @@ public class Main extends JFrame {
 		setActiveScreen(0);
 		Timer timer = new Timer(10,new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
-				if (active != null)
+				if (active != null) {
+					if (active instanceof Level)
+						((Level)active).silentTick();
 					active.tick();
+				}
 			}
 		});
 		timer.start();
+		cnt = new ControllerSupport();
+		if (cnt.isAvaliable())
+			System.out.println("Valid controller found.");
 		Timer keyFire = new Timer(30,new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				if (active != null) {
@@ -171,6 +178,10 @@ public class Main extends JFrame {
 						if (keys[i]) {
 							active.keyDown(i);
 						}
+					}
+					if (cnt.isAvaliable()) {
+						cnt.update();
+						active.controllerUpdate(cnt);
 					}
 				}
 			}
@@ -303,8 +314,9 @@ public class Main extends JFrame {
 	
 	public void setActiveScreen(int index) {
 		Screen s = screens.get(index);
-		if (!s.isInited())
+		if (!s.isInited()) {
 			s.internalInit();
+		}
 		active = s;
 	}
 	

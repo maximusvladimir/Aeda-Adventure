@@ -27,7 +27,8 @@ public class MathCalculator {
 	public static Color lerp(Color c0, Color c1, float amount) {
 		return new Color((int)lerp(c0.getRed(),c1.getRed(),amount),
 				(int)lerp(c0.getGreen(),c1.getGreen(),amount),
-				(int)lerp(c0.getBlue(),c1.getBlue(),amount));
+				(int)lerp(c0.getBlue(),c1.getBlue(),amount),
+				(int)lerp(c0.getAlpha(),c1.getAlpha(),amount));
 	}
 	
 	public static float volumeCube(P3D frontTopLeftPoint,

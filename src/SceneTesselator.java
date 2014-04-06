@@ -53,12 +53,14 @@ public class SceneTesselator extends PointTesselator {
 	public void addTesselator(PointTesselator tesselator) {
 		sceneObjects.add(tesselator);
 	}
-	
+
 	public void removeTesselator(PointTesselator tesselator) {
 		sceneObjects.remove(tesselator);
 	}
 
 	public PointTesselator getTesselator(int index) {
+		if (index >= sceneObjects.size())
+			return null;
 		return sceneObjects.get(index);
 	}
 
@@ -79,14 +81,21 @@ public class SceneTesselator extends PointTesselator {
 			g.fillRect(0, 0, maxWidth, maxHeight);
 		}
 		for (int i = 0; i < size(); i++) {
-			getTesselator(i).translate(translatePreX, translatePreY,
-					translatePreZ, true);
-			getTesselator(i).translate(translatePostX, translatePostY,
-					translatePostZ, false);
-			getTesselator(i).rotate(rotationX, rotationY, rotationZ);
-			getTesselator(i).scale(getScale().x, getScale().y, getScale().z);
-			getTesselator(i).partialDraw(g);
-			triangles.addAll(getTesselator(i).getTriangles());
+			try {
+				getTesselator(i).translate(translatePreX, translatePreY,
+						translatePreZ, true);
+				getTesselator(i).translate(translatePostX, translatePostY,
+						translatePostZ, false);
+				getTesselator(i).rotate(rotationX, rotationY, rotationZ);
+				getTesselator(i)
+						.scale(getScale().x, getScale().y, getScale().z);
+				getTesselator(i).partialDraw(g);
+				triangles.addAll(getTesselator(i).getTriangles());
+			} catch (Throwable t) {
+				System.err
+						.println("Failed to perform render on object. The object was probably removed without respect to this thread: "
+								+ Thread.currentThread().getName());
+			}
 		}
 
 		// rare bug:

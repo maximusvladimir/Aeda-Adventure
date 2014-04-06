@@ -4,7 +4,7 @@ public class WaterFeature extends Drawable {
 	private P3D[] controlPoints;
 	private P3D center;
 	public WaterFeature(Scene<Drawable> scene,P3D[] controlPoints) {
-		super(scene,null,null);
+		super(scene,new Hitbox());
 		tesselator = new PointTesselator();
 		this.controlPoints = controlPoints;
 		float avgx = 0.0f;

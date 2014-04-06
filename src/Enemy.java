@@ -5,8 +5,12 @@ public class Enemy extends Drawable {
 	private float px = 0.0f;
 	private float pz = 0.0f;
 	public Enemy(Scene<Drawable> scene) {
-		super(scene,new P3D(-100,0,0),new P3D(100,100,0));
-		tesselator =new PointTesselator();
+		super(scene,new Hitbox(new P3D(-100,0,0),new P3D(100,100,0)));
+		tesselator = new PointTesselator();
+	}
+	
+	public Enemy getThis() {
+		return this;
 	}
 	
 	public void draw(int darkness) {

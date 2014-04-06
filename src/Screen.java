@@ -16,6 +16,7 @@ public abstract class Screen {
 	private boolean inited = false;
 	private int mx = 0, my = 0;
 	private BufferedImage buffer;
+	private long timeSinceInit = -1;
 	public Screen(Main inst) {
 		this.inst = inst;
 		buffer = new BufferedImage(inst.getWidth(),inst.getHeight(),BufferedImage.TYPE_INT_RGB);
@@ -23,6 +24,14 @@ public abstract class Screen {
 	
 	public float lerp(float a0, float a1, float amount) {
 		return a0 + (amount * (a1 - a0));
+	}
+	
+	public long getTimeSinceInit() {
+		return timeSinceInit;
+	}
+	
+	public void controllerUpdate(ControllerSupport controller) {
+		
 	}
 	
 	public void keyDown(int i) {
@@ -50,7 +59,11 @@ public abstract class Screen {
 	
 	public void internalInit() {
 		inited = true;
+		if (this instanceof Level) {
+			((Level)this).silentInit();
+		}
 		init();
+		timeSinceInit = System.currentTimeMillis();
 	}
 	
 	public BufferedImage getCompatabilityBuffer() {

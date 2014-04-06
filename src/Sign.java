@@ -6,7 +6,7 @@ import java.awt.Graphics;
 public class Sign extends Drawable {
 	private PointTesselator tesselator;
 	public Sign(Scene<Drawable> scene) {
-		super(scene,new P3D(-75,-100,-10), new P3D(75,80,10));
+		super(scene,new Hitbox(new P3D(-75,-100,-10), new P3D(75,80,10)));
 		tesselator = new PointTesselator();
 		tesselator.setDrawType(DrawType.Triangle);
 		tesselator.setSkipCullCheck(true);

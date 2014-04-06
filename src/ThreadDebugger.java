@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
@@ -44,7 +45,7 @@ public class ThreadDebugger extends JFrame {
 		add(panel, BorderLayout.NORTH);
 		new ComponentMover(this, panel);
 		MouseAdapter st = new MouseAdapter() {
-			public void mouseReleased(MouseEvent me) {
+			public void mousePressed(MouseEvent me) {
 				if (me.getX() > getWidth() - 50 && me.getX() < getWidth()
 						&& me.getY() <= 30) {
 					setVisible(false);
@@ -54,8 +55,23 @@ public class ThreadDebugger extends JFrame {
 		};
 		addMouseListener(st);
 		panel.addMouseListener(st);
+		MouseMotionAdapter yr = new MouseMotionAdapter() {
+			public void mouseMoved(MouseEvent me) {
+				boolean prevState = mouseOver;
+				if (me.getX() > getWidth() - 50 && me.getY() <= 30) {
+					mouseOver = true;
+				}
+				else {
+					mouseOver = false;
+				}
+				if (prevState != mouseOver)
+					repaint();
+			}
+		};
+		addMouseMotionListener(yr);
+		panel.addMouseMotionListener(yr);
 	}
-
+	boolean mouseOver = false;
 	public void paint(Graphics g2) {
 		BufferedImage b = new BufferedImage(getWidth(), getHeight(),
 				BufferedImage.TYPE_INT_RGB);
@@ -66,10 +82,16 @@ public class ThreadDebugger extends JFrame {
 		g.setColor(new Color(50, 50, 50));
 		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
 
+		//Graphics2D g3 = (Graphics2D)g;
+		//g3.setPaint(new LinearGradientPaint(0,0,0,30,new float[]{0.0f,1.0f},new Color[]{new Color(70,70,70),new Color(60,60,60)}));
 		g.setColor(Color.darkGray);
-		g.fillRect(0, 0, getWidth(), 30);
+		g.fillRect(0,0,getWidth(),30);
+		//g3.fillRect(0, 0, getWidth(), 30);
 
-		g.setColor(new Color(190, 45, 45));
+		if (!mouseOver)
+			g.setColor(new Color(190, 45, 45));
+		else
+			g.setColor(new Color(190, 45, 45).darker());
 		g.fillRect(getWidth() - 50, 0, 50, 30);
 		g.setColor(Color.white);
 		g.drawString("x", getWidth() - 30, 18);
@@ -87,6 +109,8 @@ public class ThreadDebugger extends JFrame {
 		g.drawString("Threads ("+num+"):", 8, 40);
 		for (int i = 0; i < threads.length; i++) {
 			ThreadInfo thread = threads[i];
+			if (thread == null) // Very rare bug.
+				continue;
 			if (Utility.isStringAllUpper(thread.getThreadName())) {
 				g.setColor(Color.red);
 			}

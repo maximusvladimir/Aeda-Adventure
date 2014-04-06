@@ -38,8 +38,8 @@ public class GamePlane extends Drawable {
 		return size;
 	}
 	
-	public GamePlane(Scene scene,Rand rand, int levelsize, Color baseColor, int colorVariance, float colorHeightMix) {
-		super(scene,null, null);
+	public GamePlane(Scene<Drawable> scene,Rand rand, int levelsize, Color baseColor, int colorVariance, float colorHeightMix) {
+		super(scene,new Hitbox());
 		random = rand;
 		colorHeight = colorHeightMix;
 		tesselator = new PointTesselator();

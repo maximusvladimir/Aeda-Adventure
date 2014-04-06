@@ -6,10 +6,21 @@ public class Gem extends Drawable {
 	private float spinOffset;
 	private float dark = 0.0f;
 	public Gem(Scene<Drawable> scene, Rand rand) {
-		super(scene,new P3D(-50,-40,-25),new P3D(50,40,25));
+		super(scene,buildHitbox());
 		tesselator = new PointTesselator();
 		spinOffset = (float)(rand.nextDouble() * Math.PI *2);
 		dark = (float)(rand.nextDouble() * Math.PI *2);
+	}
+	
+	private static Hitbox buildHitbox() {
+		final Hitbox box = new Hitbox(new P3D(-50,-40,-25),new P3D(50,40,25));
+		box.setHitAction(new HitAction() {
+			public void onHit(Drawable d0, Drawable d1, int indexd0, int indexd1) {
+				box.getDrawable().getScene().remove(box.getDrawable());
+				GameState.instance.gems++;
+			}		
+		});
+		return box;
 	}
 
 	public PointTesselator getTesselator() {

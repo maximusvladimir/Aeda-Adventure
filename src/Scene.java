@@ -19,6 +19,8 @@ public class Scene<T> {
 	private GamePlane plane;
 	private boolean canMove = true;
 	private Screen screen;
+	private float playerDestX = 0.0f;
+	private float playerDestZ = 0.0f;
 	public Scene(Screen screen, Rand rand,int levelsize,Color baseTerrainColor, int colorVariance, float colorMix) {
 		playerX = GameState.instance.playerLocation.x;
 		playerZ = GameState.instance.playerLocation.z;
@@ -28,7 +30,7 @@ public class Scene<T> {
 		player = new Player(getThis());
 		player.playerColor = GameState.instance.playerColor;
 		playerDelta = GameState.instance.playerDelta;
-		plane = new GamePlane(this,rand,levelsize,baseTerrainColor,colorVariance,colorMix);
+		plane = new GamePlane(getThis(),rand,levelsize,baseTerrainColor,colorVariance,colorMix);
 		plane.genWorld();
 		plane.setInstanceLoc(new P3D(0,-390,-500));
 		scene = new SceneTesselator();
@@ -204,8 +206,24 @@ public class Scene<T> {
 		return darkness;
 	}
 	
+	float dist = 0.0f;
 	public void tick() {
-		
+		if (playerDestX != 0.0f || playerDestZ != 0.0f) {
+			float lx = playerDestX - playerX;
+			float lz = playerDestZ - playerZ;
+			float length = (float)(Math.sqrt(lx * lx + lz * lz));
+			float unitPDX = lx / length;
+			float unitPDZ = lz / length;
+			playerX = playerX + unitPDX * dist;
+			playerZ = playerZ + unitPDZ * dist;
+			dist += 0.5f;
+			if (dist >= 10) {
+				playerDestX = 0.0f;
+				playerDestZ = 0.0f;
+				dist = 0.0f;
+				setPlayerMovable(true);
+			}
+		}
 	}
 	
 	public GamePlane getGamePlane() {
@@ -253,5 +271,15 @@ public class Scene<T> {
 		if (d.getInstanceLoc().x - 1700 > playerX || d.getInstanceLoc().x + 1700 < playerX)
 			return false;
 		return true;
+	}
+
+	public void setPlayerPosition(P3D pos) {
+		playerX = pos.x;
+		playerZ = pos.z;
+	}
+	
+	public void movePlayerTo(P3D pos) {
+		playerDestX = pos.x;
+		playerDestZ = pos.z;
 	}
 }

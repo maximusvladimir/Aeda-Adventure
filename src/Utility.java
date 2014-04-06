@@ -24,6 +24,38 @@ public class Utility {
 		return new P3D(px * 0.333333f, py * 0.333333f, pz * 0.333333f);
 	}
 	
+	public static float parseMoveDir(Scene<Drawable> scene, ControllerSupport cs, float playerDelta) {
+		if (cs.getMoveDir() == 1.0) {
+			playerDelta = playerDelta + 0.1f;
+		}
+		else if (cs.getMoveDir() == 0.125) {
+			playerDelta = playerDelta + 0.05f;
+			scene.movePlayer(true);
+		}
+		else if (cs.getMoveDir() == 0.25) {
+			scene.movePlayer(true);
+		}
+		else if (cs.getMoveDir() == 0.375) {
+			scene.movePlayer(true);
+			playerDelta = playerDelta - 0.05f;
+		}
+		else if (cs.getMoveDir() == 0.5) {
+			playerDelta = playerDelta - 0.1f;
+		}
+		else if (cs.getMoveDir() == 0.625) {
+			playerDelta = playerDelta - 0.05f;
+			scene.movePlayer(false);
+		}
+		else if (cs.getMoveDir() == 0.75) {
+			scene.movePlayer(false);
+		}
+		else if (cs.getMoveDir() == 0.875){
+			playerDelta = playerDelta - 0.1f;
+			scene.movePlayer(false);
+		}
+		return playerDelta;
+	}
+	
 	public static boolean isStringAllUpper(String test) {
 		try {
 			test = test.replaceAll("[0-9]","");
@@ -38,7 +70,7 @@ public class Utility {
 		}
 	}
 	
-	public static void drawWorldMap(Graphics g,Main m) {
+	public static void drawWorldMap(Graphics g,Main m,Scene<Drawable> s) {
 		g.setColor(new Color(0,0,0, 175));
 		int sx = (int)(m.getWidth()*0.075f);
 		int sy = (int)(m.getHeight()*0.075f);
@@ -48,13 +80,50 @@ public class Utility {
 		g.setColor(new Color(255,255,255));
 		g.setFont(new Font("Arial",0,14));
 		g.drawString("Fi\u00E4ce Forest", sx+6,sy+18);
-		
+		g.setFont(new Font("Arial",0,9));
+		Color current = new Color(255,255,255,45);
+		current = MathCalculator.lerp(current, new Color(255,255,255,200), (float)Math.abs(Math.sin(flash)));
 		int rectSize = (int)(m.getWidth()*0.14f);
 		int rectSizeHalf = rectSize/2;
-		drawBorderRect(g,new Color(255,255,255,45),new Color(255,0,0,125),sx+(sw/2)-rectSizeHalf,sy+sh-rectSize,rectSize,rectSize,5);
-		drawBorderRect(g,new Color(255,255,255,45),new Color(0,255,0,125),sx+(sw/2)-(int)(0.7f*rectSizeHalf),sy+sh-rectSize-rectSize,(int)(0.7f*rectSize),rectSize,5);
+		drawBorderRect(g,current,new Color(255,0,0,125),sx+(sw/2)-rectSizeHalf,sy+sh-rectSize,rectSize,rectSize,3);
+		drawBorderRect(g,new Color(255,255,255,45),new Color(0,255,0,125),sx+(sw/2)-(int)(0.8f*rectSizeHalf),sy+sh-rectSize-rectSize,(int)(0.8f*rectSize),rectSize,3);
+		drawBorderRect(g,new Color(255,255,255,45),new Color(30,40,255,125),sx+(sw/3)-(int)(1.2f*rectSizeHalf)+1,sy+sh-rectSize-rectSize,(int)(1.2f*rectSize),rectSize,3);
+		flash += 0.013f;
+		
+		int entityx = (int) ((s.getPlayerX() + s.getWorldSizeHalf()) * rectSize / s.getWorldSize());
+		int entityz = (int) ((s.getPlayerZ() + s.getWorldSizeHalf()) * rectSize / s.getWorldSize());
+		entityx += sx+(sw/2)-rectSizeHalf;
+		entityz += sy+sh-rectSize;
+		g.setColor(Color.yellow);
+		Polygon p = new Polygon();
+		float delt = -(float)(s.getPlayerDelta() + Math.PI/2);
+		p.addPoint(rotatePointX(-3,entityx,-5,entityz,delt),rotatePointY(-3,entityx,-5,entityz,delt));
+		p.addPoint(rotatePointX(3,entityx,-5,entityz,delt),rotatePointY(3,entityx,-5,entityz,delt));
+		p.addPoint(rotatePointX(0,entityx,5,entityz,delt),rotatePointY(0,entityx,5,entityz,delt));
+		g.fillPolygon(p);
+		g.setColor(Color.black);
+		g.drawPolygon(p);
+		
+		g.setColor(Color.black);
+		g.drawString("Bog Town", sx+(sw/2)-(int)(0.8f*rectSizeHalf)+8,sy+sh-rectSize-(rectSize/2));
+		g.drawString("Sailor's Bay", sx+(sw/3)-(int)(1.2f*rectSizeHalf)+16,sy+sh-rectSize-(rectSize/2));
+		g.drawString("Fi\u00E4ce Forest", sx+(sw/2)-rectSizeHalf+9,sy+sh-(rectSize/2));
 	}
-	
+	public static int rotatePointX(int x, int cx, int y, int cy, double rad) {
+	    double cosAngle = Math.cos(rad);
+	    double sinAngle = Math.sin(rad);
+	    double dx = x;
+	    double dy = y;
+	    return cx + (int) (dx*cosAngle-dy*sinAngle);
+	}
+	public static int rotatePointY(int x, int cx, int y, int cy, double rad) {
+	    double cosAngle = Math.cos(rad);
+	    double sinAngle = Math.sin(rad);
+	    double dx = x;
+	    double dy = y;
+	    return cy + (int) (dx*sinAngle+dy*cosAngle);
+	}
+	private static float flash = 0.0f;
 	public static void drawBorderRect(Graphics g,Color border, Color fore, int x, int y, int w, int h, int s) {
 		g.setColor(border);
 		g.fillRect(x,y,w,h);

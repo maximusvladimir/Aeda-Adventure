@@ -8,17 +8,44 @@ public class Player extends Drawable {
 	private FacialExpression mouthExpression;
 	private FacialExpression eyeExpression;
 	public Player(Scene<Drawable> scene) {
-		super(scene, new P3D(-110, -225, -40), new P3D(110, 140, 40));
+		super(scene, new Hitbox(new P3D(-110, -225, -40), new P3D(110, 140, 40)));
 		tesselator = new PointTesselator();
 		tesselator.setDrawType(DrawType.Triangle);
-		mouthExpression = FacialExpression.EYEBROWS_NEUTRAL;
-		eyeExpression = FacialExpression.EYEBROWS_NEUTRAL;
+		mouthExpression = FacialExpression.MOUTH_SMILE;
+		eyeExpression = FacialExpression.EYEBROWS_INNOCENTLIKE;
+	}
+	
+	public void setMouthExpression(FacialExpression f) {
+		mouthExpression = f;
+	}
+	
+	public void setEyebrowExpression(FacialExpression f) {
+		eyeExpression = f;
+	}
+	
+	public FacialExpression getMouthExpression() {
+		return mouthExpression;
+	}
+	
+	public FacialExpression getEyebrowExpression() {
+		return eyeExpression;
 	}
 
 	public void setPlayerDelta(float d) {
 		delta = d + ni;
 	}
-
+	
+	public void hit() {
+		hitDelta = 1.0f;
+	}
+	
+	public boolean isHitting() {
+		if (hitDelta <= 0.0001f) {
+			return false;
+		}
+		return true;
+	}
+	private float hitDelta = 0.0f;
 	public Color playerColor;
 	private final float ni = (float) (Math.PI / 180.0f * 90);
 	private final float re = (float) (Math.PI * 2);
@@ -79,11 +106,19 @@ public class Player extends Drawable {
 		else if (eyeExpression == FacialExpression.EYEBROWS_INNOCENTLIKE)
 			offsetEyes = -4;
 		else
-			offsetEyes = 6;
+			offsetEyes = 2;
 		float wind = (float) (Math.sin(time0 * 50.4) * 9);
 		// float wind =0.0f;
 		//float mouth = (float) (Math.sin(time0 * 39) * 10);
+		float armLift = 0.0f;
 		float arm1 = (float) (Math.sin(time2) * 20);
+		if (hitDelta > 0.0f) {
+			hitDelta -= 0.04f;
+			arm1 = -Math.abs((float)(hitDelta * 100));
+			armLift = Math.abs((float)(hitDelta * 40));
+			if (hitDelta <= 0.05f)
+				hitDelta = 0.0f;
+		}
 		float arm2 = (float) (Math.sin(time2 + Math.PI) * 20);
 		//if (mouth < 0)
 			//mouth = -mouth;
@@ -181,23 +216,23 @@ public class Player extends Drawable {
 		tesselator.color(skinBase);
 		tesselator.point(40, 100, -50);
 		tesselator.point(40, 25, -50);
-		tesselator.point(35, 25, 49);
+		tesselator.point(35, 25, 30);
 
-		tesselator.point(35, 25, 49);
+		tesselator.point(35, 25, 30);
 		tesselator.point(40, 100, 50);
 		tesselator.point(40, 100, -50);
 
-		tesselator.point(35, 25, 49);
-		tesselator.point(-35, 25, 49);
+		tesselator.point(35, 25, 30);
+		tesselator.point(-35, 25, 30);
 		tesselator.point(-40, 100, 50);
 
 		tesselator.point(-40, 100, 50);
 		tesselator.point(40, 100, 50);
-		tesselator.point(35, 25, 49);
+		tesselator.point(35, 25, 30);//49
 
 		tesselator.point(35, 25, -41);
 		tesselator.point(-35, 25, -41);
-		tesselator.point(-40, 100, -50);
+		tesselator.point(-40, 100, -30);
 
 		tesselator.point(-40, 100, -50);
 		tesselator.point(40, 100, -50);
@@ -205,10 +240,10 @@ public class Player extends Drawable {
 
 		tesselator.point(-40, 100, -50);
 		tesselator.point(-40, 25, -50);
-		tesselator.point(-35, 25, 49);
+		tesselator.point(-35, 25, 30);
 
-		tesselator.point(-35, 25, 49);
-		tesselator.point(-40, 100, 50);
+		tesselator.point(-35, 25, 30);
+		tesselator.point(-40, 100, 30);
 		tesselator.point(-40, 100, -50);
 
 		// face
@@ -250,8 +285,8 @@ public class Player extends Drawable {
 			tesselator.point(10,48,-60);
 			tesselator.point(0,38,-60);
 		}
-		else if (mouthExpression == FacialExpression.EYEBROWS_INNOCENTLIKE) {
-			tesselator.point(-20,48,-60);
+		else if (mouthExpression == FacialExpression.MOUTH_SMILE) {
+			tesselator.point(-25,52,-60);
 			tesselator.point(-10,38,-60);
 			tesselator.point(0,48,-60);
 			tesselator.point(-10,38,-60);
@@ -479,31 +514,31 @@ public class Player extends Drawable {
 		tesselator.point(110, -10, -20);
 
 		tesselator.point(65, -10, -20);
-		tesselator.point(95, -90, -20 + arm1);
-		tesselator.point(95, -90, 20 + arm1);
-		tesselator.point(95, -90, 20 + arm1);
+		tesselator.point(95, -90+armLift, -20 + arm1);
+		tesselator.point(95, -90+armLift, 20 + arm1);
+		tesselator.point(95, -90+armLift, 20 + arm1);
 		tesselator.point(65, -10, 20);
 		tesselator.point(65, -10, -20);
 
 		tesselator.point(110, -10, -20);
-		tesselator.point(120, -100, -20 + arm1);
-		tesselator.point(120, -100, 20 + arm1);
-		tesselator.point(120, -100, 20 + arm1);
+		tesselator.point(120, -100+armLift, -20 + arm1);
+		tesselator.point(120, -100+armLift, 20 + arm1);
+		tesselator.point(120, -100+armLift, 20 + arm1);
 		tesselator.point(110, -10, 20);
 		tesselator.point(110, -10, -20);
 
 		tesselator.point(110, -10, -20);
 		tesselator.point(65, -10, -20);
-		tesselator.point(95, -100, -20 + arm1);
-		tesselator.point(95, -100, -20 + arm1);
-		tesselator.point(120, -100, -20 + arm1);
+		tesselator.point(95, -100+armLift, -20 + arm1);
+		tesselator.point(95, -100+armLift, -20 + arm1);
+		tesselator.point(120, -100+armLift, -20 + arm1);
 		tesselator.point(110, -10, -20);
 
 		tesselator.point(110, -10, 20);
 		tesselator.point(65, -10, 20);
-		tesselator.point(95, -100, 20 + arm1);
-		tesselator.point(95, -100, 20 + arm1);
-		tesselator.point(120, -100, 20 + arm1);
+		tesselator.point(95, -100+armLift, 20 + arm1);
+		tesselator.point(95, -100+armLift, 20 + arm1);
+		tesselator.point(120, -100+armLift, 20 + arm1);
 		tesselator.point(110, -10, 20);
 
 		// arm2

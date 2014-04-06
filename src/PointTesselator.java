@@ -674,6 +674,7 @@ public class PointTesselator {
 									if (font != null) {
 										//System.out.println(tri[4]+","+tri[5]);
 										ttr.font = font;
+										ttr.zdepth = screenZ;
 									}
 								triangles.add(ttr);
 								zdepthsum += tri0ZT + tri1ZT + point.z;

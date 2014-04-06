@@ -2,7 +2,7 @@
 public class GameWalls extends Drawable {
 	private PointTesselator tesselator;
 	public GameWalls(Scene<Drawable> scene) {
-		super(scene,null, null);
+		super(scene,new Hitbox());
 		tesselator = new PointTesselator();
 		tesselator.setDrawType(DrawType.Triangle);
 	}

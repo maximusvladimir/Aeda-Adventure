@@ -138,7 +138,7 @@ public class Multiplayer extends Screen {
 			if (!getMain().screenExists("level")) {
 				getMain().removeScreen(getMain().getScreen("level"));
 			}
-			getMain().addScreen(new Level(getMain()));
+			getMain().addScreen(new FiaceForest(getMain()));
 			getMain().setActiveScreen("level");
 			Network.createLevelIsOkay = false;
 		}
@@ -274,7 +274,7 @@ public class Multiplayer extends Screen {
 		if (startFade) {
 			if (fade >= 250) {
 				if (getMain().getNumScreens() == 1)
-					getMain().addScreen(new Level(getMain()));
+					getMain().addScreen(new FiaceForest(getMain()));
 				getMain().setActiveScreen("level");
 			}
 			g.setColor(new Color(0,0,0,(int)fade));
