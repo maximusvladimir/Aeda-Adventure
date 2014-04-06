@@ -16,9 +16,10 @@ public class Horse extends Drawable {
 	public void draw(int darkness) {
 		// tesselator.rotate(0, MathCalculator.PIOVER2, 0);
 		tesselator.translate(pos.x, pos.y, pos.z, false);
-
+		tesselator.rotate(0,rot,0);
 		// Color horseColor = Utility.adjustBrightness(new Color(233,235,234),
 		// -darkness);
+		float t = (float)(Math.cos(tail) * 50);
 		Color horseColor = Utility.adjustBrightness(new Color(100,68,30),
 				-darkness);
 		Color myColor = horseColor;
@@ -4559,8 +4560,25 @@ public class Horse extends Drawable {
 		tesselator.point(mid, -150, z + fana);
 	}
 
+	private float rot = 0;
+	private float tar = 0;
+	private Rand rand = new Rand();
+	private float tail = 0;
 	public void tick() {
-
+		if (tar == 0 && rand.nextDouble() < 0.006) {
+			tar = rand.next2PI() * rand.nextNegate();
+		}
+		if (tar != 0) {
+			if (tar > rot) {
+				rot += 0.01f;
+			}
+			if (tar < rot) {
+				rot -= 0.01f;
+			}
+			if (Math.abs(tar - rot) < 0.1)
+				tar = 0;
+		}
+		tail += 0.02f;
 	}
 
 	public PointTesselator getTesselator() {

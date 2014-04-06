@@ -37,6 +37,8 @@ public class FileSave {
 		return builder.toString();
 	}
 	
+	private static long startTime = System.currentTimeMillis();
+	
 	public void save(GameState state) {
 		PrintWriter writer = null;
 		try {
@@ -56,6 +58,8 @@ public class FileSave {
 	}
 	
 	public void save(GameState state,StringBuilder writer) {
+		state.timePlayed += (System.currentTimeMillis() - startTime);
+		startTime = System.currentTimeMillis();
 		writer.append("# ENCRYPTED FILE SAVE. PLEASE DO NOT PLAY WITH.\n");
 		writer.append(store("loc"+state.playerLocation)+"\n");
 		writer.append(store("guid"+state.playerGUID)+"\n");
@@ -72,6 +76,8 @@ public class FileSave {
 		writer.append(store("MAkeR" + state.hasRaft) + "\n");
 		writer.append(store("MaLntrn" + state.hasLantern) + "\n");
 		writer.append(store("TTTK" + state.healthPieces) + "\n");
+		writer.append(store("SvaNOqio" + state.timePlayed) + "\n");
+		writer.append(store("germanyEnglndFrance" + state.hasFishOil) + "\n");
 	}
 	
 	private String store(int value) {
@@ -174,6 +180,10 @@ public class FileSave {
 			    		state.hasLantern = Boolean.parseBoolean(line.replace("MaLntrn", ""));
 			    	} else if (line.indexOf("TTTK") > -1) {
 			    		state.healthPieces = Integer.parseInt(line.replace("TTTK", ""));
+			    	} else if (line.indexOf("SvaNOqio") > -1) {
+			    		state.timePlayed = Long.parseLong(line.replace("SvaNOqio",""));
+			    	} else if (line.indexOf("germanyEnglndFrance") > -1) {
+			    		state.hasFishOil = Boolean.parseBoolean(line.replace("germanyEnglndFrance",""));
 			    	}
 			    }
 			}

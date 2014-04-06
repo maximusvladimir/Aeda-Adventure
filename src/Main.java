@@ -57,6 +57,7 @@ public class Main extends JFrame implements IMain {
 	private ControllerSupport cnt;
 	public static boolean antialias = false;
 	public static float blurAmount = 0;
+	public static float redAmount = 0;
 	private int activeIndex = -1;
 	private boolean paused = false;
 	private static float[] cel;
@@ -299,7 +300,7 @@ public class Main extends JFrame implements IMain {
 					bufferedGraphics.dispose();
 					
 					if (blurAmount > 0.001) {
-						GaussianFilter filter = new GaussianFilter(10.0f);
+						GaussianFilter filter = new GaussianFilter(blurAmount);
 						BufferedImage dest = new BufferedImage(buffer.getWidth(),buffer.getHeight(),BufferedImage.TYPE_INT_RGB);
 						filter.filter(buffer, dest);
 						internalGraphics.drawImage(dest,0,0,null);
@@ -417,6 +418,10 @@ public class Main extends JFrame implements IMain {
 		} else {
 			g.setColor(Color.black);
 			g.fillRect(0,0,getWidth(),getHeight());
+		}
+		if (redAmount > 0.0001f) {
+			g.setColor(new Color(254,219,18,(int)(redAmount * 150)));
+			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 	}
 	

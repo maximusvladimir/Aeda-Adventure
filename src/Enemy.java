@@ -4,38 +4,55 @@ import java.awt.image.BufferedImage;
 
 public class Enemy extends Character {
 	private PointTesselator tesselator;
-	private static BufferedImage enemyImage = null;
-	public Enemy(Scene<Drawable> scene) {
-		super(scene, buildHitbox());
+	protected BufferedImage enemyImage = null;
+	private float speed = 2.11f;
+	
+	public Enemy(Scene<Drawable> scene,Hitbox hitbox) {
+		super(scene, hitbox);
 		tesselator = new PointTesselator();
-		if (enemyImage == null) {
-			enemyImage = new BufferedImage(9,15,BufferedImage.TYPE_4BYTE_ABGR);
-			Graphics g = enemyImage.getGraphics();
-			g.setColor(new Color(205,205,0));
-			g.drawLine(2,0,2,0);
-			g.drawLine(6,0,6,0);
-			g.setColor(new Color(108,0,0));
-			g.drawLine(3,0,5,0);
-			g.setColor(new Color(48,0,0));
-			g.drawLine(2,1,6,1);
-			g.setColor(new Color(173,149,117));
-			g.fillRect(0,2,9,7);
-			g.setColor(new Color(153,129,97));
-			g.drawLine(0,9,0,15);
-			g.drawLine(1,9,1,12);
-			g.drawLine(2,9,2,10);
-			g.drawLine(8,9,8,15);
-			g.drawLine(7,9,7,12);
-			g.drawLine(6,9,6,10);
-		}
+		createPic();
 		//tesselator.setTransparency(50);
+	}
+	
+	public void setSpeed(float speed) {
+		this.speed = speed;
+	}
+	
+	public float getSpeed() {
+		return speed;
+	}
+	
+	public Enemy(Scene<Drawable> scene) {
+		this(scene,buildHitbox());
+		//tesselator.setTransparency(50);
+	}
+	
+	public void createPic() {
+		enemyImage = new BufferedImage(9,15,BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics g = enemyImage.getGraphics();
+		g.setColor(new Color(205,205,0));
+		g.drawLine(2,0,2,0);
+		g.drawLine(6,0,6,0);
+		g.setColor(new Color(108,0,0));
+		g.drawLine(3,0,5,0);
+		g.setColor(new Color(48,0,0));
+		g.drawLine(2,1,6,1);
+		g.setColor(new Color(173,149,117));
+		g.fillRect(0,2,9,7);
+		g.setColor(new Color(153,129,97));
+		g.drawLine(0,9,0,15);
+		g.drawLine(1,9,1,12);
+		g.drawLine(2,9,2,10);
+		g.drawLine(8,9,8,15);
+		g.drawLine(7,9,7,12);
+		g.drawLine(6,9,6,10);
 	}
 	
 	public BufferedImage getEnemyIcon() {
 		return enemyImage;
 	}
-private boolean alreadyHit = false;
-private long timeSinceLastHit = 0;
+	boolean alreadyHit = false;
+	long timeSinceLastHit = 0;
 	private static Hitbox buildHitbox() {
 		final Hitbox box = new Hitbox(new P3D(-80, 0, -140), new P3D(80, 250, 0));
 		box.setHitAction(new HitAction() {
@@ -50,6 +67,7 @@ private long timeSinceLastHit = 0;
 				en.persueHalt = true;
 				if (!en.alreadyHit){
 					GameState.instance.health -= 0.25f;
+					en.getScene().getPlayer().hitBlur();
 					en.alreadyHit = true;
 					en.timeSinceLastHit = System.currentTimeMillis();
 					//Hitbox.getDefaultHitAction().onHit(d0, d1, indexd0, indexd1);
@@ -268,15 +286,36 @@ private long timeSinceLastHit = 0;
 	Rand rand = new Rand(3);
 	boolean persueHalt = false;
 	float lastHitDist = 0.0f;
+	private float healthLoss = -0.05f;
 	
+	public void setHealthLoss(float hl) {
+		healthLoss = hl;
+	}
+	
+	public float getHealthLoss() {
+		return healthLoss;
+	}
+	
+	private float fader = 0.0f;
+	private boolean dead = false;
 	public void kill() {
+		dead = true;
 		dropGoodies();
-		getScene().remove(this);
+		fader = 1;
+		getHitbox().disable();
 	}
 	
 	private long timeSinceLastHit2 = 0;
 	
 	public void tick() {
+		if (dead) {
+			fader -= 0.0075f;
+			if (fader <= 0.01f) {
+				getScene().remove(this);
+			}
+			getTesselator().setTransparency((int)(fader * 255));
+			return;
+		}
 		if (getScene().getLevel().isMessageBeingShown())
 			return;
 		if (isPersuingPlayer()) {
@@ -289,7 +328,7 @@ private long timeSinceLastHit = 0;
 		
 		if (dist < 400 && getScene().getPlayer().isPhysicallyHitting()) {
 			GameState.instance.score += 1;
-			addHealth(-0.05f);
+			addHealth(healthLoss);
 			if (getHealth() <= 0.00001) {
 				kill();
 			}
@@ -312,7 +351,7 @@ private long timeSinceLastHit = 0;
 		//}
 		if (alreadyHit)
 			return;
-		setMoveSpeed(2.1f);
+		setMoveSpeed(speed);
 		if (isPersuingPlayer()) {
 			if (!checker)
 				moveTowards(new P3D(getScene().getPlayerX(),0,getScene().getPlayerZ()-500));

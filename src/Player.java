@@ -22,6 +22,11 @@ public class Player extends Character {
 			isASheik = false;
 	}
 	
+	private float hhblur = 0;
+	public void hitBlur() {
+		hhblur = 1;
+	}
+	
 	public void uponArrival() {
 		
 	}
@@ -823,6 +828,17 @@ public class Player extends Character {
 	private float dist = 0.0f;
 	private float destAlt = 0.0f;
 	public void tick() {
+		if (hhblur > 0.0001f) {
+			hhblur -= 0.005f;
+			if (hhblur > 0.5) {
+				Main.redAmount = ((hhblur - 0.5f) * 2);// * 12);
+				Main.blurAmount = Main.redAmount * 10;
+			}
+			else {
+				Main.redAmount = (hhblur * 2 );//* 12);
+				Main.blurAmount = Main.redAmount * 10;
+			}
+		}
 		if (movingTowards) {
 			 float lx = startX - destX;
 			 float lz = startZ - destZ;

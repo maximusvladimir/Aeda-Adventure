@@ -13,11 +13,13 @@ public class GameState {
 	public Color playerColor = Color.green.darker();
 	public static P3D ORIGINS = new P3D(0,0,0);
 	public int healthPieces = 10;
+	public long timePlayed = 0;
 	
 	public boolean talkedToGrandmaFiace = false;
 	public boolean hasMoonstone = false;
 	public boolean hasRaft = false;
 	public boolean hasLantern = false;
+	public boolean hasFishOil = false;
 	
 	public String toString() {
 		return  "playerStage     = " + playerStage + "\n" +
@@ -32,7 +34,9 @@ public class GameState {
 				"healthPieces   = " + healthPieces + "\n" +
 				"hasMoonstone   = " + hasMoonstone + "\n" +
 				"hasRaft        = " + hasRaft + "\n" +
-				"hasLantern     = " + hasLantern;
+				"hasLantern     = " + hasLantern + "\n" +
+				"timePlayed     = " + timePlayed + "\n" + 
+				"hasFishOil     = " + hasFishOil;
 	}
 	public static GameState instance;
 	private static FileSave saver = new FileSave();
@@ -43,6 +47,7 @@ public class GameState {
 	public static int TOTAL3DOBJECTS = 0;
 	public static int DTIME = 0;
 	public static String appletInstance = null;
+	public static final boolean DEBUGMODE = true;
 	public static void save() {
 		if (instance == null || Network.RUNNING)
 			return;

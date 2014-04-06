@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -90,7 +91,7 @@ public class Message {
 					oth += "Yes >No<  (Press W to toggle)";
 				}
 			}
-			Utility.showDialog(oth, g, m);
+			Utility.showDialog(oth,Color.black, g, m);
 		}
 		else {
 			if (optionMessage) {
@@ -102,7 +103,7 @@ public class Message {
 					messageBuilder += "Yes >No<  (Press W to toggle)";
 				}
 			}
-			Utility.showDialog(messageBuilder, g, m);
+			Utility.showDialog(messageBuilder,Color.black, g, m);
 		}
 	}
 }

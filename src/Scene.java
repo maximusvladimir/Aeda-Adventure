@@ -96,6 +96,22 @@ public class Scene<T> {
 		return builder;
 	}
 	
+	/**
+	 * Gets all objects by the type, or if they inherit that type.
+	 * @param klass The class type to search for.
+	 * @return An arraylist containing the found elements.
+	 */
+	@SuppressWarnings("unchecked")
+	public <E> ArrayList<E> getObjectsByTypeAndParented(Class<E> klass) {
+		ArrayList<E> builder = new ArrayList<E>();
+		for (int i = 0; i < getSceneSize(); i++) {
+			if (get(i).getClass().equals(klass) || klass.isInstance(get(i))) {
+				builder.add((E) get(i));
+			}
+		}
+		return builder;
+	}
+
 	public Screen getScreen() {
 		return screen;
 	}

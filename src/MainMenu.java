@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.Random;
@@ -53,12 +54,17 @@ public class MainMenu extends Screen {
 				getMain().getHeight());
 		heightInit();
 
-		FileSave save = new FileSave();
 		if (MainApplet.isApplet)
 			return;
+		doFinalInit();
+	}
+	
+	public void doFinalInit() {
+		FileSave save = new FileSave();
 		if (!save.exists()) {
+			isDisplayingPrompt++;
 			GameState.instance = new GameState();
-			String res = "";
+			/*String res = "";
 			while (res == null || res.equals("") || res.length() > 8) {
 				res = JOptionPane.showInputDialog((Main)getMain(),
 						"Please enter your name. (Less than 9 chars)");
@@ -82,12 +88,11 @@ public class MainMenu extends Screen {
 				}
 			}
 			GameState.instance.playerColor = pC;
-			GameState.save();
+			GameState.save();*/
 		} else {
 			GameState.instance = save.load();
 			System.out.println(GameState.instance);
 		}
-
 		SoundManager.start();
 	}
 
@@ -165,6 +170,9 @@ public class MainMenu extends Screen {
 	float moon = 0.0f;
 
 	public void draw(Graphics g) {
+		// Remove any bluring or redding.
+		Main.blurAmount = 0;
+		Main.redAmount = 0;
 		// Network.RUNNING = false;
 		g.setColor(Color.black);
 		g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());
@@ -275,6 +283,8 @@ public class MainMenu extends Screen {
 	private float fade = 0.0f;
 
 	public void mouseReleased(MouseEvent me) {
+		if (isDisplayingPrompt != 0)
+			return;
 		if (inButton != 0) {
 			int id = (inButton - 120) / 60;
 			// System.out.println("you pressed button# " + id);
@@ -302,7 +312,71 @@ public class MainMenu extends Screen {
 			}
 		}
 	}
-
+	
+	private String storageBuffer = "";
+	private int isDisplayingPrompt = 0;
+	private long flasher = 0;
+	private boolean flasherOn = false;
+	private void displayMsg(Graphics g) {
+		String flash = "";
+		if (flasher % 20 == 0)
+			flasherOn = !flasherOn;
+		flasher++;
+		if (flasherOn)
+			flash = "_";
+		if (isDisplayingPrompt == 1) {
+			storageBuffer = Utility.capitalizeEnumerator(storageBuffer);
+			if (storageBuffer.length() > 8)
+				storageBuffer = storageBuffer.substring(0,8);
+			Utility.showDialog("Please enter your name. \nYou can enter a secret code here to unlock a special character.\n(Less than 9 chars):\n" + storageBuffer+flash+"\nPress enter when ready.",Color.black, g, getMain());
+		}
+		if (isDisplayingPrompt == 2) {
+			Color parser = Utility.validateColor(storageBuffer);
+			if (parser == null)
+				parser = Color.black;
+			Utility.showDialog("Please enter your favorite color." +
+					"\n(Red,Green,Blue,Orange,Yellow,Magneta)." +
+					"\nYou can also enter an RGB like (no quotes): \"255,0,0\"\n" + storageBuffer + flash,parser, g, getMain());
+		}
+	}
+	
+	public void keyTyped(KeyEvent arg0) {
+		super.keyTyped(arg0);
+		char c = arg0.getKeyChar();
+		if (c == '\u0008' && storageBuffer.length() >= 1)
+			storageBuffer = storageBuffer.substring(0,storageBuffer.length() - 1);
+		else if (c == '\n' || c == '\r') {
+			// DONE
+			if (storageBuffer.length() == 0)
+				return;
+			if (isDisplayingPrompt == 1) {
+				GameState.instance.playerGUID = Utility.capitalizeEnumerator(storageBuffer);
+				if (GameState.instance.playerGUID.equals("Sheik")
+						|| GameState.instance.playerGUID.equals("Zelda")) {
+					GameState.instance.playerColor = new Color(50, 127, 218);
+					isDisplayingPrompt = 0;
+					return;
+				}
+				storageBuffer = "";
+			}
+			if (isDisplayingPrompt == 2) {
+				Color parsed = Utility.validateColor(storageBuffer);
+				if (parsed != null) {
+					GameState.instance.playerColor = parsed;
+					isDisplayingPrompt = 0;
+					return;
+				}
+				else
+					return;
+			}
+			isDisplayingPrompt++;
+			//storageBuffer = "";
+		}
+		else if (java.lang.Character.isLetterOrDigit(c) || c == ',') {	
+			storageBuffer += arg0.getKeyChar();
+		}
+	}
+	
 	public void drawHUD(Graphics g) {
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -335,7 +409,7 @@ public class MainMenu extends Screen {
 
 		g.setFont(new Font("Levenim MT", 0, 48));
 		g.drawString("Aeda Adventure", 50, 70);
-
+		displayMsg(g);
 		if (isFullscreen()) {
 			drawCursor(g);
 		}

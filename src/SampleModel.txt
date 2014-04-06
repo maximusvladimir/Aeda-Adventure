@@ -1,5 +1,9 @@
 // I am a comment. I like to explain things that are happening here.
 
+// Attach a texture (can be link, base64 png, local file (not recommended))
+
+tx data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==
+
 // This model is a simple, three color triangle.
 
 // Draw as triangles.
@@ -16,3 +20,6 @@ p (100, -100,-300)
 // blue
 c (0, 0, 255)
 p (0, 100, -300)
+
+// end of file.
+end

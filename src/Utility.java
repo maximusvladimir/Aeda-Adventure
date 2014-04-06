@@ -7,6 +7,8 @@ import java.awt.RadialGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
@@ -17,7 +19,7 @@ import java.util.Enumeration;
 
 public class Utility {
 	private static NetworkInterface interfacer;
-
+	
 	public static final P3D findMidpoint(P3D p0, P3D p1, P3D p2) {
 		float px = p0.x + p1.x + p2.x;
 		float py = p0.y + p1.y + p2.y;
@@ -351,7 +353,7 @@ public class Utility {
 	public static void drawEnemyData(Graphics g, IMain m, Scene<Drawable> scene) {
 		if (scene == null)
 			return;
-		ArrayList<Enemy> ens = scene.<Enemy>getObjectsByType(Enemy.class);
+		ArrayList<Enemy> ens = scene.<Enemy>getObjectsByTypeAndParented(Enemy.class);
 		int w = m.getWidth() - (int) (m.getWidth() * 0.16f) - 16;
 		int gulf = 0;
 		for (int i = 0; i < ens.size(); i++) {
@@ -479,7 +481,7 @@ public class Utility {
 						+ (int) ((scene.getPlayerZ() + scene.getWorldSizeHalf())
 								* mapw / scene.getWorldSize()) + 5, 3, 3);
 		
-		ArrayList<Enemy> enemiesOfTheRepublic = scene.<Enemy>getObjectsByType(Enemy.class);
+		ArrayList<Enemy> enemiesOfTheRepublic = scene.<Enemy>getObjectsByTypeAndParented(Enemy.class);
 		g.setColor(Color.red);
 		for (int i = 0; i < enemiesOfTheRepublic.size(); i++) {
 			Enemy wat = enemiesOfTheRepublic.get(i);
@@ -539,11 +541,12 @@ public class Utility {
 		}
 		g.setColor(Color.black);
 		g.drawPolygon(healthThing);
-
+		
 		g.setFont(new Font("Courier New", 0, 14));
-		g.drawString((int) (GameState.instance.health) + "", 34, 42);
+		String health = MathCalculator.reduceDigits(GameState.instance.health, 1);
+		g.drawString(health, 34, 42);
 		g.setColor(Color.white);
-		g.drawString((int) (GameState.instance.health) + "", 33, 43);
+		g.drawString(health, 33, 43);
 		g.setFont(new Font("Courier New", 0, 20));
 		g.drawString(GameState.instance.gems + "", 40, 86);
 		g.drawString(GameState.instance.score + "", 40, 108);
@@ -566,7 +569,7 @@ public class Utility {
 	private static ArrayList<String> evilTracker = new ArrayList<String>();
 	private static Font messageFont = new Font("Courier New", 0, 12);
 
-	public static void showDialog(String message, Graphics g, IMain mainInst) {
+	public static void showDialog(String message, Color textColor, Graphics g, IMain mainInst) {
 		if (evilTracker.indexOf(message) == -1) {
 			// This is evil in the sense that it stores already shown messages.
 			evilTracker.add(message);
@@ -581,7 +584,7 @@ public class Utility {
 		g.fillRoundRect(13, mainInst.getHeight() - 122,
 				mainInst.getWidth() - 33, 78, 8, 8);
 		g.setFont(messageFont);
-		g.setColor(Color.black);
+		g.setColor(textColor);
 		if (message.indexOf('\n') == -1) {
 			if (message.length() <= 66) {
 				g.drawString(message, 21, mainInst.getHeight() - 106);

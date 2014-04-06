@@ -103,22 +103,29 @@ public class SailorHarbour extends Level {
 			}
 			trees[i].setInstanceLoc(treeLoc);
 		}
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 20; i++) {
 			Enemy enemyOfTheRepublic = new Enemy(scene);
 			float x = 0;
 			float z = 0;
 			boolean found = false;
+			float height = -250;
 			while (!found) {
 				x = (float) (getRand().nextDouble() * -(scene.getWorldSize()-1200)) + scene.getWorldSizeHalf()-600;
 				z = (float) (getRand().nextDouble() * -(scene.getWorldSize()-1200)) + scene.getWorldSizeHalf()-600;
-				System.out.println(x+","+((((x/scene.getWorldSize())+1)/2)*scene.getWorldActual()) );
+				//System.out.println(x+","+((((x/scene.getWorldSize())+1)/2)*scene.getWorldActual()) );
 				if (((((x/scene.getWorldSize())+1)/2)*scene.getWorldActual()) > waterStart) {
+					found = true;
+					break;
+				}
+				else {
+					enemyOfTheRepublic = new Dunp(scene);
+					height = 0;
 					found = true;
 					break;
 				}
 			}
 			float y = getScene().getTerrainHeight(x, z);
-			enemyOfTheRepublic.setInstanceLoc(x,y-350,z);
+			enemyOfTheRepublic.setInstanceLoc(x,y+height,z);
 			getScene().add(enemyOfTheRepublic);
 		}
 		scene.add(grass);

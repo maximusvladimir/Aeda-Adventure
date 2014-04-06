@@ -25,6 +25,10 @@ public class Rand extends Random {
 		return (float)(nextDouble() * Math.PI * 2);
 	}
 	
+	public int nextNegate() {
+		return nextBoolean() ? -1 : 1;
+	}
+	
 	public Rand() {
 		super();
 	}

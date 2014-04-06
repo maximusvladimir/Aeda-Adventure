@@ -351,6 +351,12 @@ public abstract class Level extends Screen {
 				int y558 = (int) (getMain().getWidth() * 0.17f);
 				g.drawImage(Shop.getRaftImage(), x092,y558,null);
 			}
+			
+			if (GameState.instance.hasFishOil) {
+				int x092 = getMain().getWidth() - (int) (getMain().getWidth() * 0.14f) - 8;
+				int y558 = (int) (getMain().getWidth() * 0.17f + 56);
+				g.drawImage(Shop.getOilImage(), x092,y558,null);
+			}
 		}
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);

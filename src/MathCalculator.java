@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.math.BigDecimal;
 
 public class MathCalculator {
 	private static final int SCALE = 2000;
@@ -11,6 +12,57 @@ public class MathCalculator {
 			sinTable[i] = (float)Math.sin(PI_SLICE * (double)i);
 			cosTable[i] = (float)Math.cos(PI_SLICE * (double)i);
 		}
+	}
+	
+	public static String reduceDigits(double num, int digits) {
+		String asStr = num+"";
+		if (asStr.indexOf('.') < 0) {
+			String zeroBuilder = "";
+			for (int i = 0; i < digits; i++) {
+				zeroBuilder += "0";
+			}
+			asStr += "." + zeroBuilder;
+		}
+		else {
+			String backslice = asStr.substring(asStr.indexOf('.')+1);
+			if (backslice.length() < digits) {
+				int change = digits - backslice.length();
+				for (int i = 0; i < change; i++) {
+					asStr += "0";
+				}
+			}
+			else if (backslice.length() > digits) {
+				backslice = backslice.substring(0,digits);
+				asStr = asStr.substring(0,asStr.indexOf('.')+1) + backslice;
+			}
+		}
+		return asStr;
+	}
+
+	
+	public static String reduceDigits(BigDecimal num, int digits) {
+		String asStr = num.toPlainString()+"";
+		if (asStr.indexOf('.') < 0) {
+			String zeroBuilder = "";
+			for (int i = 0; i < digits; i++) {
+				zeroBuilder += "0";
+			}
+			asStr += "." + zeroBuilder;
+		}
+		else {
+			String backslice = asStr.substring(asStr.indexOf('.')+1);
+			if (backslice.length() < digits) {
+				int change = digits - backslice.length();
+				for (int i = 0; i < change; i++) {
+					asStr += "0";
+				}
+			}
+			else if (backslice.length() > digits) {
+				backslice = backslice.substring(0,digits);
+				asStr = asStr.substring(0,asStr.indexOf('.')+1) + backslice;
+			}
+		}
+		return asStr;
 	}
 
 	/*public static float sin(double radiant) {

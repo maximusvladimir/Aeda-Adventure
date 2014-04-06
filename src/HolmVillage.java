@@ -238,6 +238,8 @@ public class HolmVillage extends Level {
 		scene.add(barrel);
 		scene.add(lamps);
 		scene.add(new GameWalls(scene));
+		scene.add(new Dunp(scene));
+		scene.add(new FishOil(scene));
 		Windmill windmill = new Windmill(getScene());
 		windmill.setInstanceLoc(-1500, -350, 4000);
 		scene.add(windmill);

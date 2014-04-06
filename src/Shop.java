@@ -153,6 +153,8 @@ public class Shop extends Level {
 						public void actionPerformed(ActionEvent arg0) {
 							Message m = (Message) arg0.getSource();
 							if (m.getResult()) {
+								addMessage("Congradulations! You now have a raft!\nPress 'Z' in water to use your raft.", "RAFTINFO");
+								setActiveMessage("RAFTINFO");
 								GameState.instance.hasRaft = true;
 								GameState.instance.gems -= 200;
 								GameState.save();
@@ -381,6 +383,35 @@ public class Shop extends Level {
 			g.dispose();
 		}
 		return raftImage;
+	}
+	private static BufferedImage oilImage = null;
+	public static BufferedImage getOilImage() {
+		if (oilImage == null) {
+			oilImage = new BufferedImage(48,48,BufferedImage.TYPE_4BYTE_ABGR);
+			Graphics2D g = (Graphics2D)oilImage.getGraphics();
+			float s = 48;
+			// This neat hack sets the clipping plane in the shape of a tear drop,
+			// so when you go to draw the pixels, they fit nicely inside.
+			GeneralPath p = new GeneralPath();
+			p.moveTo(s * 0.5f, 0);
+			p.lineTo(s * 0.25f,s * 0.75f);
+			p.curveTo(s * 0.25f,s * 0.75f,s * 0.5f, s, s * 0.75f, s * 0.75f);
+			p.lineTo(s * 0.75f, s * 0.75f);
+			p.lineTo(s * 0.5f, 0);
+			g.setClip(p);
+			for (int x = 0; x < 48; x++) {
+				for (int y = 0; y < 48; y++) {
+					g.setColor(Utility.adjustAlpha(FishOil.adjust(x*0.3f,y*0.3f),(int)(Math.random()*100)+125));
+					g.drawLine(x,y,x,y);
+				}
+			}
+			g.setClip(0, 0, 48, 48);
+			g.setColor(Color.red);
+			g.setFont(new Font("Courier New",0,20));
+			g.drawString("X",36,46);
+			g.dispose();
+		}
+		return oilImage;
 	}
 
 	public void drawHUD(Graphics g) {

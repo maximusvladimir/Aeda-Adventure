@@ -92,7 +92,12 @@ public abstract class Character extends Drawable {
 			 destAlt += getMoveSpeed();
 			// System.out.println(ux+","+uz+","+destAlt+","+startX);
 			 //System.out.println(destAlt + "," + destDist);
-			 setInstanceLoc(startX - ux * destAlt, startZ - uz * destAlt);
+			 float y = getInstanceLoc().y;
+			 if (!(this instanceof Player)) {
+				float yd = getInstanceLoc().y - getScene().getGamePlane().getPlayerLocation(startX,startZ);
+				y = getScene().getGamePlane().getPlayerLocation(startX - ux * destAlt, startZ - uz * destAlt) + yd;
+			 }
+			 setInstanceLoc(startX - ux * destAlt, y, startZ - uz * destAlt);
 			 if (destAlt >= destDist) {
 				 movingTowards = false;
 				 destX = 0;

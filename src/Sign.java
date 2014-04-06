@@ -73,7 +73,7 @@ public class Sign extends Drawable {
 	}
 	public boolean doSigns(Graphics g, IMain main) {
 		if (isShowing)
-			Utility.showDialog(getSignMessage(), g,main);
+			Utility.showDialog(getSignMessage(), Color.black,g,main);
 		return isShowing;
 	}
 

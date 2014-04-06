@@ -49,6 +49,8 @@ public abstract class Screen {
 			wordsToColor.put("fog", new Color(91,107,117));
 			wordsToColor.put("antialias", new Color(120,150,255));
 			wordsToColor.put("modelmerger",new Color(45,100,200));
+			wordsToColor.put("whoami",Color.magenta.darker());
+			wordsToColor.put("time", new Color(122,59,155));
 			final Color numerics = Color.red;
 			wordsToColor.put("0",numerics);
 			wordsToColor.put("1",numerics);
@@ -186,8 +188,12 @@ public abstract class Screen {
 	}
 	
 	public void consoleDisplay(String str) {
+		//System.out.println(str.length());
 		consoleDisplay = str;
 		consoleDisplayTime = System.currentTimeMillis();
+		messageTime = (long)(str.length() * 28.7f);
+		if (messageTime < 8000)
+			messageTime = 8000;
 	}
 	
 	public boolean isInConsoleMode() {
@@ -205,10 +211,14 @@ public abstract class Screen {
 		else if (noSpace.equals("gem"))
 			consoleDisplay(GameState.instance.gems+"");
 		else if (noSpace.equals("garrote")) {
+			if (!GameState.DEBUGMODE) {
+				consoleDisplay("You cannot garrote enemies in non debugging mode.");
+				return;
+			}
 			if (this instanceof Level) {
 				Level l = (Level)this;
 				if (l.getScene() != null) {
-					ArrayList<Enemy> ens = l.getScene().getObjectsByType(Enemy.class);
+					ArrayList<Enemy> ens = l.getScene().getObjectsByTypeAndParented(Enemy.class);
 					for (int e = 0; e < ens.size(); e++) {
 						ens.get(e).kill();
 					}
@@ -231,7 +241,12 @@ public abstract class Screen {
 			}
 		}
 		else if (noSpace.startsWith("teleport")) {
+			if (!GameState.DEBUGMODE) {
+				consoleDisplay("You cannot teleport in non debugging mode.");
+				return;
+			}
 			String hs = noSpace.replace("teleport", "");
+			String telNames = "Try: \"teleport <name of location>\" (no quotes)\nThe following is acceptable:\nholm, fiace, sailor, harbour, harbor";
 			try {
 				if (hs.indexOf("holm") > -1) {
 					if (this instanceof HolmVillage)
@@ -259,15 +274,32 @@ public abstract class Screen {
 						}
 					}
 				}
+				else if (hs.indexOf("sailor") > -1 || hs.indexOf("harbour") > -1 || hs.indexOf("harbor") > -1) {
+					if (this instanceof SailorHarbour)
+						consoleDisplay("You are already there/here.");
+					else {
+						if (getMain().screenExists("yLENIN")) {
+							getMain().setActiveScreen("yLENIN");
+						}
+						else {
+							getMain().addScreen(new SailorHarbour(getMain()));
+							getMain().setActiveScreen("yLENIN");
+						}
+					}
+				}
 				else {
-					consoleDisplay("Try: \"teleport <name of location>\" (no quotes)");
+					consoleDisplay(telNames);
 				}
 			}
 			catch (Throwable t) {
-				consoleDisplay("Try: \"teleport <name of location>\" (no quotes)");
+				consoleDisplay(telNames);
 			}
 		}
 		else if (noSpace.startsWith("health")) {
+			if (!GameState.DEBUGMODE) {
+				consoleDisplay("You cannot set health in non debugging mode.");
+				return;
+			}
 			String hs = noSpace.replace("health", "");
 			try {
 				float h = Float.parseFloat(hs);
@@ -279,6 +311,10 @@ public abstract class Screen {
 			}
 		}
 		else if (noSpace.startsWith("score")) {
+			if (!GameState.DEBUGMODE) {
+				consoleDisplay("You cannot set score in non debugging mode.");
+				return;
+			}
 			String hs = noSpace.replace("score", "");
 			try {
 				int h = (int)Float.parseFloat(hs);
@@ -290,6 +326,10 @@ public abstract class Screen {
 			}
 		}
 		else if (noSpace.startsWith("speed")) {
+			if (!GameState.DEBUGMODE) {
+				consoleDisplay("You cannot set speed in non debugging mode.");
+				return;
+			}
 			String hs = noSpace.replace("speed", "");
 			try {
 				float h = Float.parseFloat(hs);
@@ -306,6 +346,10 @@ public abstract class Screen {
 			}
 		}
 		else if (noSpace.startsWith("gem")) {
+			if (!GameState.DEBUGMODE) {
+				consoleDisplay("You cannot set gems in non debugging mode.");
+				return;
+			}
 			String hs = noSpace.replace("gem", "");
 			try {
 				int h = (int)Float.parseFloat(hs);
@@ -383,15 +427,27 @@ public abstract class Screen {
 				}
 			}
 		}
+		else if (noSpace.equals("whoami")) {
+			consoleDisplay("You are " + GameState.instance.playerGUID + ".");
+		}
+		else if (noSpace.equals("time")) {
+			int seconds = (int) (GameState.instance.timePlayed / 1000) % 60 ;
+			int minutes = (int) ((GameState.instance.timePlayed / 60000) % 60);
+			int hours   = (int) ((GameState.instance.timePlayed / 3600000) % 24);
+			consoleDisplay("You have played for (updated every 10 seconds):\n" + hours + " hour(s) " + minutes + " minute(s) " + seconds + " second(s)");
+		}
 		else if (noSpace.equals("help")) {
-			consoleDisplay("-Aeda Adventure Console-\nhealth - gets or sets health.\ngem - gets or sets number of gems.\nscore - gets or sets score.\nspeed - gets or sets player speed.\nvignette - enables or disables vignette.\nhelp - displays this message.\nmessages - displays any active messages.\nsave - force saves the game.\nteleport - teleports you to a location.\ngarrote - kills all enemies\nfog - toggles fog on or off.\nlightning - makes lightning.\nwireframe - toggles wireframe moded on or off.\nantialias - turns on or off antialiasing\nmodelmerger - Opens the model converting utility.");
+			String additive = "";
+			if (!GameState.DEBUGMODE)
+				additive = "\nNOTICE: You are not in debug mode, which disables some console features.";
+			consoleDisplay("-Aeda Adventure Console-"+additive+"\nhealth - gets or sets health.\ngem - gets or sets number of gems.\nscore - gets or sets score.\nspeed - gets or sets player speed.\nvignette - enables or disables vignette.\nhelp - displays this message.\nmessages - displays any active messages.\nsave - force saves the game.\nteleport - teleports you to a location.\ngarrote - kills all enemies.\nfog - toggles fog on or off.\nlightning - makes lightning.\nwireframe - toggles wireframe moded on or off.\nantialias - turns on or off antialiasing\nmodelmerger - Opens the model converting utility.\nwhoami - determines player name.\ntime - indicates how long the game has been played.");
 		}
 		else
-			consoleDisplay("Sorry, I didn't understand your command.\nType 'help' (no quotes) for help.");
+			consoleDisplay("Sorry, I didn't understand \""+cmd+"\".\nType 'help' (no quotes) for help, or press '/' to exit the console.");
 	}
 	
 	private static Hashtable<String,Color> wordsToColor;
-	
+	private long messageTime = 8000;
 	public void drawConsole(Graphics g) {
 		if (consoleMode) {
 			consoleFlash += 0.05f;
@@ -434,7 +490,7 @@ public abstract class Screen {
 				g.drawLine(len, y+14,len+7,y+14);
 			}
 			long disTime = System.currentTimeMillis() - consoleDisplayTime;
-			if (consoleDisplay != null && disTime < 8000) {
+			if (consoleDisplay != null && disTime < messageTime) {
 				String[] trs = consoleDisplay.split("\n");
 				for (int i = 0; i < trs.length; i++) {
 					int sn = (14 * (trs.length-1)) - (i * 14);
@@ -442,9 +498,9 @@ public abstract class Screen {
 					int l = g.getFontMetrics().stringWidth(sa);
 					int alp = 200;
 					int al2 = 255;
-					if (disTime > 6000) {
-						alp = 200 - (int)(((disTime-6000) * 200) / 2000);
-						al2 = 255 - (int)(((disTime-6000) * 255) / 2000);
+					if (disTime > (messageTime-2000)) {
+						alp = 200 - (int)(((disTime-(messageTime-2000)) * 200) / 2000);
+						al2 = 255 - (int)(((disTime-(messageTime-2000)) * 255) / 2000);
 					}
 					g.setColor(new Color(255,255,0,alp));
 					g.fillRect(0,y-14-sn,l,14);

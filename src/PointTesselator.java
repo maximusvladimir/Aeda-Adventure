@@ -370,6 +370,10 @@ public static boolean removeAlpha = true;
 		c = new Color(c.getRed(), c.getGreen(), c.getBlue());
 		operationStack.enqueue(new C3D(c));
 	}
+	
+	public void color(C3D c) {
+		operationStack.enqueue(c);
+	}
 
 	public void color(int r, int g, int b) {
 		operationStack.enqueue(new C3D(r, g, b));
