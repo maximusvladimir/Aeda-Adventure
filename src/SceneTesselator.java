@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
 import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,7 +77,8 @@ public class SceneTesselator extends PointTesselator {
 
 	private Polygon p = new Polygon();
 
-	public void draw(Graphics g) {
+	public void draw(Graphics g2) {
+		Graphics2D g = (Graphics2D)g2;
 		// Compiler.disable();
 		if (fogUsed) {
 			g.setColor(fogColor);
@@ -267,7 +270,21 @@ public class SceneTesselator extends PointTesselator {
 						p.addPoint(tri[0], tri[1]);
 						p.addPoint(tri[2], tri[3]);
 						p.addPoint(tri[4], tri[5]);
+						int w = tri[0]+1;
+						if (tri[2] > w)
+							w = tri[2];
+						if (tri[4] > w)
+							w = tri[4];
+						int h = tri[1];
+						if (tri[1] > h)
+							h = tri[1];
+						if (tri[3] > h)
+							h = tri[3];
+						if (tri[5] > h)
+							h = tri[5];
 						// p.addPoint(tri[0], tri[1]);
+						//Color swapColor = g.getColor();
+						//g.setPaint(new LinearGradientPaint(0,0,w,h,new float[]{0,1},new Color[]{swapColor.brighter(),swapColor.darker()}));
 						g.fillPolygon(p);
 						if (useWireframeAdditionally) {
 							g.setColor(g.getColor().darker());

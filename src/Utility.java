@@ -337,6 +337,20 @@ public class Utility {
 		int cz = x0 * y1 - y0 * x1;
 		return new int[] { cx, cy };
 	}
+	
+	public static void drawEnemyData(Graphics g, Main m, Scene<Drawable> scene) {
+		ArrayList<Enemy> ens = scene.<Enemy>getObjectsByType(Enemy.class);
+		int w = m.getWidth() - (int) (m.getWidth() * 0.16f) - 16;
+		for (int i = 0; i < ens.size(); i++) {
+			Enemy e = ens.get(i);
+			if (e.isPersuingPlayer()) {
+				g.setColor(MathCalculator.lerp(new Color(60,175,45), new Color(175,19,39), 1-e.getHealth()));
+				g.fillRect(w - 100,20*i+10,(int)(100 * e.getHealth()),15);
+				g.setColor(new Color(46,62,175));
+				g.drawRect(w - 100,20*i+10,100,15);
+			}
+		}
+	}
 
 	public static void drawMap(Graphics g, Main m, Scene<Drawable> scene) {
 		int mapx = m.getWidth() - (int) (m.getWidth() * 0.16f) - 8;
@@ -386,6 +400,22 @@ public class Utility {
 			int sy = mapy + entityz + 5;
 			g.drawLine(sx - 1, sy, sx + 1, sy);
 			g.drawLine(sx, sy - 1, sx, sy + 1);
+		}
+		g.setColor(Color.red);
+		ArrayList<Water> water = scene.<Water>getObjectsByType(Water.class); 
+		for (int i = 0; i < water.size(); i++) {
+			Water wat = water.get(i);
+			if (!wat.isVisible())
+				continue;
+			int entityx = (int) ((wat.getInstanceLoc().x-(wat.getSequence()*wat.getSize()*0.5f) + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int entityz = (int) ((wat.getInstanceLoc().z-(wat.getSequence()*wat.getSize()*0.5f) + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int sx = mapx + entityx + 5;
+			int sy = mapy + entityz + 5;
+			int size = (int)(((wat.getSize()) + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize())/2;
+			g.fillRect(sx,sy,size,size);
 		}
 		g.setColor(Color.white);
 		g.fillRect(

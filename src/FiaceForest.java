@@ -28,7 +28,7 @@ public class FiaceForest extends Level {
 		Tree[] trees = new Tree[60];// 20
 		Grass[] grass = new Grass[80];
 		Barrel[] barrel = new Barrel[20];
-		Sign[] signs = new Sign[5];
+		Sign[] signs = new Sign[10];
 		scene = new Scene<Drawable>(this, getRand(), 55, new Color(110, 130, 110),
 				14, 0.5f);
 		scene.setFog(-2100, -2600);// -2550);
@@ -65,7 +65,7 @@ public class FiaceForest extends Level {
 		}
 		for (int i = 0; i < signs.length; i++) {
 			signs[i] = new Sign(scene);
-			signs[i].setInstanceLoc(getRand().nextLocation(-180));
+			signs[i].setInstanceLoc(getRand().nextLocation(-220));
 			signs[i].setSignMessage("Sign #" + (i + 1));
 		}
 		for (int i = 0; i < barrel.length; i++) {
@@ -85,9 +85,16 @@ public class FiaceForest extends Level {
 		Lamppost lamp = new Lamppost(scene);
 		lamp.setInstanceLoc(new P3D(2000,-300,0));
 		scene.add(lamp);
+		
 		Well well = new Well(scene);
 		well.setInstanceLoc(new P3D(2000,-300,300));
 		scene.add(well);
+		//Water feature = new Water(scene,10);
+		//feature.setInstanceLoc(new P3D(2000,-200,1300));
+		//scene.add(feature);
+		Grandma grandma = new Grandma(scene);
+		grandma.setInstanceLoc(new P3D(2000,-350,600));
+		scene.add(grandma);
 		//scene.add(new Windmill(scene));
 		/*House h = new House(scene);
 		h.setHouseName("-- Blacksmith --");
@@ -137,8 +144,6 @@ public class FiaceForest extends Level {
 				timeSinceTheSecondGUI = System.currentTimeMillis();
 			} else if (displayThirdGUI) {
 				displayThirdGUI = false;
-			} else {
-				scene.getPlayer().jump();
 			}
 			if (GameState.instance.gems == 1 && !displayedFourthGUI)
 				displayedFourthGUI = true;
@@ -148,8 +153,6 @@ public class FiaceForest extends Level {
 		}
 	}
 	
-	private int menum = 0;
-	private int eenum = 0;
 	private boolean displayFirstGUI = true;
 	private boolean displaySecondGUI = false;
 	private boolean displayThirdGUI = false;

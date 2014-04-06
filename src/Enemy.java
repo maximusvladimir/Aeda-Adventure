@@ -1,15 +1,14 @@
 import java.awt.Color;
 
-public class Enemy extends Drawable {
+public class Enemy extends Character {
 	private PointTesselator tesselator;
-	private boolean persuingPlayer = false;
 
 	public Enemy(Scene<Drawable> scene) {
 		super(scene, buildHitbox());
 		tesselator = new PointTesselator();
 		//tesselator.setTransparency(50);
 	}
-	private int health = 3;
+
 	private static Hitbox buildHitbox() {
 		final Hitbox box = new Hitbox(new P3D(-80, 0, -140), new P3D(80, 250, 0));
 		box.setHitAction(new HitAction() {
@@ -21,19 +20,18 @@ public class Enemy extends Drawable {
 					en = (Enemy)d0;
 				else
 					en = (Enemy)d1;
+				en.persueHalt = true;
 				if (d0.getScene().getPlayer().isHitting()) {
 					if (Math.random() < 0.01) {
 						GameState.instance.score += 20;
-						en.health--;
-						if (en.health == 0)
+						en.addHealth(-0.2f);
+						if (en.getHealth() <= 0.00001)
 							en.getScene().remove(en);
 					}
-					en.persueHalt = true;
 				}
 				else {
 					GameState.instance.health -= 0.0075f;
 					//Hitbox.getDefaultHitAction().onHit(d0, d1, indexd0, indexd1);
-					en.persueHalt = false;
 				}
 			}		
 		});
@@ -51,12 +49,12 @@ public class Enemy extends Drawable {
 		// tesselator.rotate(0, (float)(Math.PI / 2.5f), 0);
 		int d = darkness;
 		tesselator.rotate(0, -delta - (3.1415926535f/2), 0);
-		if (persuingPlayer)
+		if (isPersuingPlayer())
 			tesselator.color(255, 0, 0);
 		else
 			tesselator.color(0, 200, 160);
 
-		if (persuingPlayer)
+		if (isPersuingPlayer())
 			theta += 0.05f;
 		P3D toe1 = new P3D(-70, 0, -40);
 		P3D toe2 = new P3D(70, 0, -40);
@@ -222,7 +220,7 @@ public class Enemy extends Drawable {
 		tesselator.point(-35,210+bod+hn,-90);
 		
 		//eyes
-		if (persuingPlayer) {
+		if (isPersuingPlayer()) {
 			if (interpolator < 1.0f) {
 				interpolator += 0.0075f;
 				if (interpolator > 1)
@@ -250,28 +248,43 @@ public class Enemy extends Drawable {
 	float interpolator = 0.0f;
 	Rand rand = new Rand(3);
 	boolean persueHalt = false;
-
+	float lastHitDist = 0.0f;
+	
 	public void tick() {
 		float dist = getDistToPlayer();
-		if (dist <= 1000) {
-			persuingPlayer = true;
-		} else
-			persuingPlayer = false;
+		if (dist > 300 && persueHalt) {
+			persueHalt = false;
+		}
+		setPersuingPlayer(dist <= 1000);
 		//if (dist <= 1500) {
-			delta = (float) Math.atan2((-getScene().getPlayerZ() + getInstanceLoc().z+500),
+		delta = (float) Math.atan2((-getScene().getPlayerZ() + getInstanceLoc().z+500),
 					(-getScene().getPlayerX() + getInstanceLoc().x));
 		//}
-		if (persuingPlayer && !persueHalt) {
-			getInstanceLoc().x -= 5 * Math.cos(delta);
-			getInstanceLoc().z -= 5 * Math.sin(delta);
+		setMoveSpeed(2.1f);
+		if (isPersuingPlayer()) {
+			if (!checker)
+				moveTowards(new P3D(getScene().getPlayerX(),0,getScene().getPlayerZ()-500));
+			super.tick();
+			checker = true;
+			if (!isMovingTowards())
+				checker = false;
+		}
+		/*if (isPersuingPlayer() && !persueHalt) {
+			if (!checker)
+				moveTowards(new P3D(getScene().getPlayerX(),0,getScene().getPlayerZ()));
+			super.tick();
+			checker = true;
 			getScene().getPlayer().setFaceEmotion(FacialExpression.EMOTION_SAD);
 			// TODO see if legal.
 		}
 		else {
+			checker = false;
 			getScene().getPlayer().setFaceEmotion(FacialExpression.EMOTION_PLAIN);
-		}
+		}*/
 	}
 
+	boolean checker = false;
+	
 	public PointTesselator getTesselator() {
 		return tesselator;
 	}

@@ -51,9 +51,11 @@ public class Sign extends Drawable {
 		font.color = Color.black;
 		font.loc = new P3D(-70,80,20);
 		font.font = fontCache;
-		//font.str = "\uFB39\uFB31\uFB40\uFB44\uFB1F\n\uFB2A\uFB48\uFB4F\n\uFB20\uFB2A\uFB2E\uFB41\uFB49\uFB4E";
+		font.str = "\uFB39\uFB31\uFB40\uFB44\uFB1F\n\uFB2A\uFB48\uFB4F\n\uFB20\uFB2A\uFB2E\uFB41\uFB49\uFB4E";
 		// Says "I am a sign" in Greek.
-		font.str="\u0395\u03AF\u03BC\u03B1\u03B9\n\u03AD\u03BD\u03B1\n\u03C3\u03B7\u03BC\u03AC\u03B4\u03B9";
+		//font.str="\u0395\u03AF\u03BC\u03B1\u03B9\n\u03AD\u03BD\u03B1\n\u03C3\u03B7\u03BC\u03AC\u03B4\u03B9";
+		// Says "Hello there" in Arabic.
+		//font.str = "\u0645\u0631\u062D\u0628\u0627\n\u0647\u0646\u0627\u0643";
 		tesselator.text(font);
 	}
 	private Font fontCache = new Font("Courier New",0,13);

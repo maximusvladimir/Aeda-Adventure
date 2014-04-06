@@ -9,14 +9,14 @@ public class Hitbox {
 				np.x += p.getScene().getPlayerX();
 				np.z += p.getScene().getPlayerZ();
 				p.getScene().setPlayerMovable(false);
-				p.getScene().movePlayerTo(np);
+				p.moveTowards(np);
 			} else if (d1 instanceof Player) {
 				Player p = (Player) d0;
 				P3D np = Hitbox.resolvePlayer(p.getHitbox(), d1.getHitbox(),indexd0);
 				np.x += p.getScene().getPlayerX();
 				np.z += p.getScene().getPlayerZ();
 				p.getScene().setPlayerMovable(false);
-				p.getScene().movePlayerTo(np);
+				p.moveTowards(np);
 			}
 		}
 	};
@@ -75,6 +75,26 @@ public class Hitbox {
 	public P3D adjustBoundToPosition(int boundIndex) {
 		return new P3D(location.x + bounds[boundIndex].x, location.y
 				+ bounds[boundIndex].y, location.z + bounds[boundIndex].z);
+		/*float w = 0;
+		float h = 0;
+		float d = 0;
+		if (boundIndex % 2 == 0) {
+			w = Math.abs(bounds[boundIndex].x) + Math.abs(bounds[boundIndex+1].x);
+			h = Math.abs(bounds[boundIndex].y) + Math.abs(bounds[boundIndex+1].y);
+			d = Math.abs(bounds[boundIndex].z) + Math.abs(bounds[boundIndex+1].z);
+		}
+		else  {
+			w = Math.abs(bounds[boundIndex-1].x) + Math.abs(bounds[boundIndex].x);
+			h = Math.abs(bounds[boundIndex-1].y) + Math.abs(bounds[boundIndex].y);
+			d = Math.abs(bounds[boundIndex-1].z) + Math.abs(bounds[boundIndex].z);
+		}
+		//System.out.println(w+","+h+","+d);
+		float x = location.x - (w/2) + bounds[boundIndex].x;
+		float y = location.y - (h/2) + bounds[boundIndex].y;
+		float z = location.z - (d/2) + bounds[boundIndex].z;
+		//System.out.println(x+","+y+","+z);
+		
+		return new P3D(x,y,z);*/
 	}
 
 	public static P3D resolvePlayer(Hitbox player, Hitbox h1, int otherIndex) {
@@ -101,9 +121,9 @@ public class Hitbox {
 		}
 
 		float alpha = (float) (Math.atan2(hc.z - pc.z, hc.x - pc.x) + Math.PI);
-		float dist = hc.dist(pc);
-		return new P3D((float) (Math.cos(alpha) * dist * 1.2f),
-				player.getLocation().y, (float) (Math.sin(alpha) * dist * 1.2f));
+		float dist = hc.dist(pc) * 0.1f;
+		return new P3D((float) (Math.cos(alpha) * dist),
+				player.getLocation().y, (float) (Math.sin(alpha) * dist));
 	}
 
 	private Drawable drawable;

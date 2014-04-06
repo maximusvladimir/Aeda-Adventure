@@ -2,6 +2,7 @@ import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.DisplayMode;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.ImageCapabilities;
@@ -258,7 +259,9 @@ public class Main extends JFrame {
 						timeSinceUpdate = System.currentTimeMillis();
 					}
 					long qSt = System.currentTimeMillis();
-					draw(buffer.getGraphics());
+					Graphics bufferedGraphics = buffer.getGraphics();
+					draw(bufferedGraphics);
+					bufferedGraphics.dispose();
 					internalGraphics.drawImage(buffer,0,0,null);
 					if (framesDrawn == 2) {
 						drawTime = (int)(System.currentTimeMillis()-qSt);
@@ -345,11 +348,14 @@ public class Main extends JFrame {
 			active.drawHUD(g);
 	}
 	
-	public void paint(Graphics g) {
+	public void paint(Graphics g2) {
+		Graphics2D g = (Graphics2D)g2;
 		if (fullscreen)
 			g.drawImage(vRAMBuffer, 0, 0, this);
-		else
+		else {
 			g.drawImage(vRAMBuffer, 3, 25, this);
+			//g.drawImage(vRAMBuffer, 3, 25, getWidth(), getHeight()/2, this);
+		}
 		painting = false;
 	}
 	
@@ -368,6 +374,7 @@ public class Main extends JFrame {
 			}
 			System.exit(0);*/
 			device.setDisplayMode(new DisplayMode(512,384,32,60));
+			//device.setDisplayMode(new DisplayMode(1280,768,32,60));
 			justEnteredFullscreen = true;
 			fullscreen = true;
 		}

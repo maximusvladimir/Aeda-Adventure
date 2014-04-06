@@ -1,12 +1,13 @@
 import java.awt.Color;
 import java.util.Random;
 
-public class Player extends Drawable {
+public class Player extends Character {
 	// The player currently has 62 triangles, which is 186 points.
 
 	private PointTesselator tesselator;
 	private FacialExpression mouthExpression;
 	private FacialExpression eyeExpression;
+	private float armsLag = 0.0f;
 	public Player(Scene<Drawable> scene) {
 		super(scene, new Hitbox(new P3D(-110, -225, -40), new P3D(110, 140, 40)));
 		tesselator = new PointTesselator();
@@ -134,6 +135,7 @@ public class Player extends Drawable {
 		if (moving) {
 			time2 += 0.04f;//was 0.025f
 			time1 += 0.09f;
+			armsLag = (float)(Math.abs(Math.sin(time1*0.2)));
 		} else {
 			if (Math.sin(time2) < -0.1 || Math.sin(time2) > 0.1) {
 				time2 += 0.053f;
@@ -571,12 +573,12 @@ public class Player extends Drawable {
 		if (isASheik) {
 			foreArmColor = sheikWhite;
 		}
-		drawArm(foreArmColor,clothBase,skinBase,arm1,0.0f,true);
-		drawArm(foreArmColor,clothBase,skinBase,arm2,1-hitDelta,false);
+		drawArm(foreArmColor,clothBase,skinBase,arm1,0.0f+armsLag,true,d);
+		drawArm(foreArmColor,clothBase,skinBase,arm2,1-hitDelta,false,d);
 	}
 	private static final Color sheikWhite = new Color(242,225,208);
 
-	private void drawArm(Color bootsBase, Color clothBase, Color skinBase, float arm1, float amount909, boolean left) {
+	private void drawArm(Color bootsBase, Color clothBase, Color skinBase, float arm1, float amount909, boolean left,int dar) {
 		float delta909 = amount909;
 		float armPosX2 = -((float)(Math.abs(Math.cos(delta909)) * 40));
 		float armPosY2 = -(float)(Math.abs(Math.sin(delta909)) * 50)+50;
@@ -683,6 +685,19 @@ public class Player extends Drawable {
 		tesselator.point(bit*-110,-60,20+armSwayMid);
 		tesselator.point(bit*-100,-120+armPosY,20+armSwayMid+armPosX);
 		tesselator.point(bit*-75,-120+armPosY,20+armSwayMid+armPosX);
+		
+		if (!left)
+			return;
+		final Color shieldBase = Utility.adjustBrightness(new Color(80,90,80), -dar);
+		tesselator.color(va.bright(shieldBase, 20));
+		tesselator.point(bit*-130,-120+(armPosY*1.3f),35+(armSwayMid+armPosX)*1.3f);
+		tesselator.point(bit*-93,-60+(armPosY*1.3f),5+(armSwayMid+armPosX)*1.3f);
+		tesselator.point(bit*-55,-120+(armPosY*1.3f),35+(armSwayMid+armPosX)*1.3f);
+		
+		tesselator.color(va.bright(shieldBase, 20));
+		tesselator.point(bit*-130,-120+(armPosY*1.3f),35+(armSwayMid+armPosX)*1.3f);
+		tesselator.point(bit*-93,-200+(armPosY*1.3f),50+(armSwayMid+armPosX)*1.3f);
+		tesselator.point(bit*-55,-120+(armPosY*1.3f),35+(armSwayMid+armPosX)*1.3f);
 	}
 	
 	private void drawLeg(Color pants, Color bootsBase, float adj1, float alt1, float feetHeight, float feetTotal,float feer,
@@ -792,8 +807,39 @@ public class Player extends Drawable {
 		}
 	}
 
+	private float destX = 0.0f;
+	private float destZ = 0.0f;
+	private float startX = 0.0f;
+	private float startZ = 0.0f;
+	private float dist = 0.0f;
+	private float destAlt = 0.0f;
 	public void tick() {
-
+		if (movingTowards) {
+			setMoveSpeed(3.0f);
+			 float lx = startX - destX;
+			 float lz = startZ - destZ;
+			 float l = (float)(Math.sqrt(lx * lx + lz * lz));
+			 float ux = lx / l;
+			 float uz = lz / l;
+			 destAlt += getMoveSpeed();
+			 getScene().setPlayerPosition(new P3D(startX - ux * destAlt, 0,startZ - uz * destAlt));
+			 if (destAlt >= dist) {
+				 movingTowards = false;
+				 destX = 0;
+				 destZ = 0;
+			 }
+		}
+	}
+	
+	public void moveTowards(P3D p) {
+		destX = p.x;
+		destZ = p.z;
+		p.y = 0;
+		startX = getScene().getPlayerX();
+		startZ = getScene().getPlayerZ();
+		dist = p.dist(new P3D(getScene().getPlayerX(),0,getScene().getPlayerZ()));
+		destAlt = 0;
+		movingTowards = true;
 	}
 
 	@Override

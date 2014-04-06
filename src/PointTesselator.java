@@ -52,6 +52,7 @@ import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.Random;
 
 public class PointTesselator {
@@ -1602,8 +1603,46 @@ public static boolean removeAlpha = true;
 	private static final float halfPI = (float) (Math.PI * 0.5);
 	private static final float threeHalvesPI = (float) (Math.PI * 1.5);
 
+	private IdentityHashMap<TRIGSTORE,P3D> trigCache = new IdentityHashMap<TRIGSTORE,P3D>();
+	class TRIGSTORE {
+		public float x, y, z, dx, dy, dz;
+		public boolean equals(Object o2) {
+			TRIGSTORE o = (TRIGSTORE)o2;
+			final float elip = 2.001f;
+			/*if (o.dx > dx - elip && o.dx < dx + elip
+					&& o.dy > dy - elip && o.dy < dy + elip &&
+					o.dz > dz - elip && o.dz < dz + elip &&
+					o.x > x - elip && o.x < x + elip
+					&& o.y > y - elip && o.y < y + elip &&
+					o.z > z - elip && o.z < z + elip) {*/
+			if (o.dx == dx && o.dy == dy && o.dz == dz && o.x == x && o.y == y && o.z == z) {
+				System.out.println("Equal");
+				return true;
+			}
+			else
+				return false;
+		}
+	}
+	
 	private void dealWithRotation(float x, float y, float z, float dx,
 			float dy, float dz) {
+		
+		/*TRIGSTORE t = new TRIGSTORE();
+		t.x = (int)x;
+		t.y = (int)y;
+		t.z = (int)z;
+		t.dx = (int)dx;
+		t.dy = (int)dy;
+		t.dz = (int)dz;
+		if (trigCache.size() > 8000)
+			trigCache.clear();
+		if (trigCache.containsKey(t)) {
+			P3D sample = trigCache.get(t);
+			rotationX = sample.x;
+			rotationY = sample.y;
+			rotationZ = sample.z;
+			return;
+		}*/
 		/*
 		 * dx += 0.0001f; dy += 0.0001f; dz += 0.0001f;
 		 */
@@ -1643,6 +1682,7 @@ public static boolean removeAlpha = true;
 		else {
 			rotateXZ(x,y,z,0.0001f,0.0001f);
 		}
+		//trigCache.put(t, new P3D(rotationX,rotationY,rotationZ));
 	}
 
 	private float angleX = 0, angleY = 0, angleZ = 0, radiusX = 0, radiusY = 0,

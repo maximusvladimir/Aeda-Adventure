@@ -5,7 +5,7 @@ public class Well extends Drawable {
 	private PointTesselator tesselator;
 	private static P3D[] trigCache;
 	public Well(Scene<Drawable> scene) {
-		super(scene,new Hitbox(new P3D(-165,0,-165),new P3D(165,300,165)));
+		super(scene,new Hitbox(new P3D(-145,0,-145),new P3D(145,300,75)));
 		tesselator = new PointTesselator();
 		tesselator.setSkipCullCheck(true);
 		tesselator.setDrawType(DrawType.Triangle);
@@ -22,7 +22,7 @@ public class Well extends Drawable {
 	}
 	
 	private Rand ran;
-	
+	float cosic = 0.0f;
 	public void draw(int darkness) {
 		tesselator.translate(pos.x,pos.y,pos.z,false);
 		tesselator.rotate(0, 0.3f, 0);
@@ -33,6 +33,8 @@ public class Well extends Drawable {
 		final float outerR = 165;
 		final float innerR = 125;
 		final float co = 2.75f;
+		final float nis = (float)(Math.cos(cosic) * 15);
+		final float nin = (float)(Math.sin(cosic) * 15);
 		
 		drawCylinder(outerR,innerR,height, Utility.adjustBrightness(new Color(144,136,124), -darkness),true);
 		//drawCylinder(innerR,0,height,new Color(80,85,120),false);
@@ -50,10 +52,11 @@ public class Well extends Drawable {
 		tesselator.point(-outerR+-30,heightCompounder - 12, 0);
 		tesselator.point(-outerR+-30,heightCompounder,0);
 		
+		// the rope
 		tesselator.color(Utility.adjustBrightness(new Color(138,116,102), -darkness));
 		tesselator.point(-8,heightCompounder-12,-4);
 		tesselator.point(8,heightCompounder-12,4);
-		tesselator.point(0,0,0);
+		tesselator.point(nin,0,nis);
 		
 		Color roof =Utility.adjustBrightness(new Color(90,93,82), -darkness);
 		P3D pinnacle = new P3D(0,height * 3.5f,0);
@@ -166,7 +169,7 @@ public class Well extends Drawable {
 	}
 
 	public void tick() {
-		
+		cosic += 0.02f;
 	}
 
 	public PointTesselator getTesselator() {

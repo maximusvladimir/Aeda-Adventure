@@ -35,6 +35,14 @@ public abstract class Drawable {
 		staticPos = st;
 	}
 	
+	public void setInstanceLoc(float x, float y, float z) {
+		setInstanceLoc(new P3D(x,y,z));
+	}
+	
+	public void setInstanceLoc(float x, float z) {
+		setInstanceLoc(x,getInstanceLoc().y,z);
+	}
+	
 	public P3D getInstanceLoc() {
 		return staticPos;
 	}

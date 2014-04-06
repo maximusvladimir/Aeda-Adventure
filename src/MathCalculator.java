@@ -16,6 +16,10 @@ public class MathCalculator {
 		return volumeCube(new P3D(sx,sy,sz), new P3D(ex,ey,ez));
 	}
 	
+	public static final float PIOVER2 =(float)(Math.PI / 2);
+	public static final float PI = (float)(Math.PI);
+	public static final float TWOPI = (float)(Math.PI * 2);
+	
 	public static float lock(float v) {
 		if (v > 1)
 			v = 1;
@@ -25,6 +29,10 @@ public class MathCalculator {
 	}
 	
 	public static Color lerp(Color c0, Color c1, float amount) {
+		if (amount < 0)
+			amount = 0;
+		if (amount > 1)
+			amount = 1;
 		return new Color((int)lerp(c0.getRed(),c1.getRed(),amount),
 				(int)lerp(c0.getGreen(),c1.getGreen(),amount),
 				(int)lerp(c0.getBlue(),c1.getBlue(),amount),

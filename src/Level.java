@@ -1,3 +1,4 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -55,6 +56,8 @@ public abstract class Level extends Screen {
 		}
 		else
 			getScene().setPlayerMovable(true);
+		
+		getScene().getPlayer().tick();
 		
 		for (int i = 0; i < scene.getSceneSize(); i++) {
 			try {
@@ -131,7 +134,9 @@ float sf = 0.0f;
 		} else if (code == KeyEvent.VK_D) {
 			playerDelta = playerDelta - 0.1f;
 		} else if (code == KeyEvent.VK_ENTER) {
-			scene.getPlayer().hit();
+			scene.getPlayer().hit(); 
+		} else if (code == KeyEvent.VK_SPACE) {
+			scene.getPlayer().jump();
 		} else if (code == KeyEvent.VK_P) {
 			scene.useThisMethodSparsingly().setUseWireframeWithShading(!
 					scene.useThisMethodSparsingly().getUseWireframeWithShader());
@@ -183,6 +188,12 @@ float sf = 0.0f;
 
 	public abstract void draw(Graphics g);
 
+	public void startTransition(Screen s) {
+		transition = 1;
+		nextScreen = s;
+	}
+	
+	private Screen nextScreen;
 	private float transition;
 	private boolean showWorldMap = false;
 	public void drawHUD(Graphics g) {
@@ -195,6 +206,7 @@ float sf = 0.0f;
 
 		boolean flagForMovable = drawWindows(g);
 
+		if (signs != null)
 		for (int i = 0; i < signs.length; i++) {
 			if (signs[i].doSigns(g, getMain())) {
 				flagForMovable = false;
@@ -204,6 +216,7 @@ float sf = 0.0f;
 			flagForMovable = false;
 		scene.setPlayerMovable(flagForMovable);
 
+		Utility.drawEnemyData(g, getMain(), getScene());
 		Utility.drawHealth(g);
 		if (GameState.doVignette)
 			g.drawImage(vignette, 0, 0, null);
@@ -229,14 +242,22 @@ float sf = 0.0f;
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_OFF);
 		if (transition >= -0.1f) {
-			transition -= 0.01f;
+			transition -= 0.008f;
 			// player.moving = false;
 			// canMove = false;
 			scene.getPlayer().moving = false;
 			scene.setPlayerMovable(false);
-			g.setColor(new Color(0, 0, 0, MathCalculator
+			g.setColor(new Color(10,30,10, MathCalculator
 					.colorLock(255 - (int) (255 * transition))));
 			g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());
+			if (transition <= 0.00) {
+				transition = -10;
+				if (nextScreen != null) {
+					if (!getMain().screenExists(nextScreen.getName()))
+						getMain().addScreen(nextScreen);
+					getMain().setActiveScreen(nextScreen.getName());
+				}
+			}
 		}
 	}
 

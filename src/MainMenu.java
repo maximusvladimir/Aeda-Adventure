@@ -129,7 +129,7 @@ public class MainMenu extends Screen {
 	
 	private void glow(Color baseColor,Graphics2D g, float x, float y, float w,float h) {
 		Color alter;
-		float size = (float)Math.sqrt(w*h)*0.1f;
+		float size = (float)Math.sqrt(w*h)*0.15f;
 		g.setColor(baseColor);
 		g.fill(new Ellipse2D.Float(x-1,y-1,w+2,h+2));
 		for (int i = (int)size; i > 0; i--) {
@@ -265,7 +265,7 @@ public class MainMenu extends Screen {
 		g.setColor(Color.white);
 		g.drawString("FPS:"+getMain().getFPS(), 0,10);
 		
-		g.drawString("Coded and designed by Max Kirkby",0,getMain().getHeight()-44);
+		g.drawString("Coded and designed by Max K.",0,getMain().getHeight()-44);
 		g.drawString("Thanks to freesound.org for beautiful legally free sound and music.", 0,getMain().getHeight()-30);
 		
 		g.setFont(new Font("Levenim MT",0,48));
