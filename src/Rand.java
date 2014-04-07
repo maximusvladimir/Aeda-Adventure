@@ -6,8 +6,13 @@ public class Rand extends Random {
 	private static final long serialVersionUID = -2247503840546694056L;
 	private static long queries =0;
 	private Scene<Drawable> scene;
+	private static final Rand internalRandom = new Rand();
 	public static long getNumRandoms() {
 		return queries;
+	}
+	
+	public static double random() {
+		return internalRandom.nextDouble();
 	}
 	
 	public void setScene(Scene<Drawable> scene) {

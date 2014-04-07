@@ -25,6 +25,16 @@ public abstract class Level extends Screen {
 					.getHeight());
 	}
 	
+	/**
+	 * Called each time the level is created, or moved to it.
+	 */
+	public void loadedLevel() {
+		
+	}
+	
+	/**
+	 * Called each time the level is moved to it.
+	 */
 	public void reloadedLevel() {
 		gameHalt = false;
 	}
@@ -299,13 +309,17 @@ public abstract class Level extends Screen {
 				|| ke.getKeyCode() == KeyEvent.VK_S) && getScene() != null) {
 			scene.getPlayer().moving = false;
 		} else if (ke.getKeyCode() == KeyEvent.VK_Z && GameState.instance.hasRaft) {
-			if (!(this instanceof SailorHarbour)) {
+			if (!(this instanceof SailorHarbour) && !(this instanceof CadenSea)) {
 				addMessage("You can't use a raft here.","NOUSERAFT");
 				setActiveMessage("NOUSERAFT");
 			}
-			else {
+			else if (this instanceof SailorHarbour) {
 				// Really bad OOP here:
 				((SailorHarbour)this).startRaftMode();
+			}
+			else if (this instanceof CadenSea) {
+				// Somemore really bad OOP here:
+				((CadenSea)this).startRaftMode();
 			}
 		}
 		if (ke.getKeyCode() == KeyEvent.VK_M && getScene() != null) {
@@ -453,6 +467,7 @@ public abstract class Level extends Screen {
 						lev.getScene().setPlayerPosition(nextPlayerLoc);
 						GameState.instance.playerDelta = nextDelta;
 						lev.getScene().setPlayerDelta(nextDelta);
+						lev.loadedLevel();
 						if (!firstLoad)
 							lev.reloadedLevel();
 					}

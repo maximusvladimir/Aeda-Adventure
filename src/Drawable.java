@@ -29,7 +29,9 @@ public abstract class Drawable {
 		for (int i = 0; i < csindexer; i++) {
 			P3D poll = P3D.add(getInstanceLoc(), 
 					new P3D((float)(Math.random() * 400) - 200,0,(float)(Math.random() * 400) - 200));
-			poll.y = -170;
+			// TODO: currently, lets set the item's height to the player's
+			// height. (This may not work in all cases).
+			poll.y = getScene().getGamePlane().getHeight() - 50;
 			if (heartsProvided < 2 && GameState.instance.health < 5 && Math.random() < 0.37) {
 				Heart heart = new Heart(getScene());
 				heart.setInstanceLoc(poll);

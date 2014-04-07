@@ -26,6 +26,25 @@ public class Utility {
 		float pz = p0.z + p1.z + p2.z;
 		return new P3D(px * 0.333333f, py * 0.333333f, pz * 0.333333f);
 	}
+	
+	public static void doSound(Screen s) { 
+		if (SoundManager.soundEnabled) {
+			if (SoundManager.backgroundSound != null)
+				SoundManager.backgroundSound.halt();
+			if (s instanceof SailorHarbour || s instanceof CadenSea)
+				SoundManager.backgroundSound = new Sound("harbour");
+			if (s instanceof InsideHouse)
+				SoundManager.backgroundSound = new Sound("piano");
+			if (s instanceof HolmVillage)
+				SoundManager.backgroundSound = new Sound("holm");
+			if (s instanceof MainMenu)
+				SoundManager.backgroundSound = new Sound("title");
+			if (SoundManager.backgroundSound != null) {
+				SoundManager.backgroundSound.setLooping(true);
+				SoundManager.backgroundSound.play();
+			}
+		}
+	}
 
 	public static String capitalizeEnumerator(String str) {
 		// capitalizes the first letter of every word in a phrase.

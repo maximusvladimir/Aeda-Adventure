@@ -430,6 +430,9 @@ public class MainMenu extends Screen {
 				if (!getMain().screenExists("yLENIN")) {
 					getMain().addScreen(new SailorHarbour(getMain()));
 				}
+				if (!getMain().screenExists("lilo")) {
+					getMain().addScreen(new CadenSea(getMain()));
+				}
 				if (GameState.instance.playerLevel == 0) {
 					getMain().setActiveScreen("level");
 					System.out.println("Going to level");
@@ -439,7 +442,13 @@ public class MainMenu extends Screen {
 				} else if (GameState.instance.playerLevel == 2) {
 					getMain().setActiveScreen("yLENIN");
 					System.out.println("Going to yLENIN");
+				} else if (GameState.instance.playerLevel == 3) {
+					getMain().setActiveScreen("lilo");
+					System.out.println("Going to lilo station.");
 				}
+				Screen s = getMain().getScreen(getMain().getActiveScreen());
+				if (s instanceof Level)
+					((Level)s).loadedLevel();
 				startFade = false;
 				fade = 0.0f;
 			}

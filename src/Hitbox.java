@@ -27,8 +27,17 @@ public class Hitbox {
 	private P3D location = new P3D(0, 0, 0);
 
 	private boolean enabled = true;
+	private boolean concernedWithHeight =false;
 	public static HitAction getDefaultHitAction() {
 		return defaultAction;
+	}
+	
+	public boolean isConcernedWithHeight() {
+		return concernedWithHeight;
+	}
+	
+	public void setConcernedWithHeight(boolean b) {
+		concernedWithHeight = b;
 	}
 	
 	public Hitbox() {
@@ -188,14 +197,18 @@ public class Hitbox {
 				ei2 = j * 2 + 1;
 				if (d.adjustBoundToPosition(si2).x > adjustBoundToPosition(ei).x)
 					continue;
+				if (isConcernedWithHeight()) {
 				if (d.adjustBoundToPosition(si2).y > adjustBoundToPosition(ei).y)
 					continue;
+				}
 				if (d.adjustBoundToPosition(si2).z > adjustBoundToPosition(ei).z)
 					continue;
 				if (d.adjustBoundToPosition(ei2).x < adjustBoundToPosition(si).x)
 					continue;
+				if (isConcernedWithHeight()) {
 				if (d.adjustBoundToPosition(ei2).y < adjustBoundToPosition(si).y)
 					continue;
+				}
 				if (d.adjustBoundToPosition(ei2).z < adjustBoundToPosition(si).z)
 					continue;
 				indexthat = j;

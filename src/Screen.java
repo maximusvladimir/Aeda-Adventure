@@ -246,7 +246,7 @@ public abstract class Screen {
 				return;
 			}
 			String hs = noSpace.replace("teleport", "");
-			String telNames = "Try: \"teleport <name of location>\" (no quotes)\nThe following is acceptable:\nholm, fiace, sailor, harbour, harbor";
+			String telNames = "Try: \"teleport <name of location>\" (no quotes)\nThe following is acceptable:\nholm, fiace, sailor, harbour, harbor, caden, sea";
 			try {
 				if (hs.indexOf("holm") > -1) {
 					if (this instanceof HolmVillage)
@@ -284,6 +284,19 @@ public abstract class Screen {
 						else {
 							getMain().addScreen(new SailorHarbour(getMain()));
 							getMain().setActiveScreen("yLENIN");
+						}
+					}
+				}
+				else if (hs.indexOf("caden") > -1 || hs.indexOf("sea") > -1) {
+					if (this instanceof CadenSea)
+						consoleDisplay("You are already there/here.");
+					else {
+						if (getMain().screenExists("lilo")) {
+							getMain().setActiveScreen("lilo");
+						}
+						else {
+							getMain().addScreen(new CadenSea(getMain()));
+							getMain().setActiveScreen("lilo");
 						}
 					}
 				}

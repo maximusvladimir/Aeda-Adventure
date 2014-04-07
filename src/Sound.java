@@ -15,7 +15,11 @@ public class Sound {
 	private static HashSet<SoundSet> clips = new HashSet<SoundSet>();
 	private SoundSet thisSet;
 	private String clipName;
+	private boolean finished = false;
 	public Sound(String clipName) {
+		this(clipName,0);
+	}
+	public Sound(String clipName, int loops) {
 		this.clipName = clipName;
 		SoundSet s = new SoundSet(clipName);
 		if (!clips.contains(s)) {
@@ -29,6 +33,7 @@ public class Sound {
 				if (event.getType() != LineEvent.Type.STOP) {
 					return;
 				}
+				finished = true;
 				try {
 					thisSet.clip.close();
 					thisSet.clip.drain();
@@ -39,7 +44,8 @@ public class Sound {
 				}
 	        }
 	    };
-	    thisSet.clip.addLineListener(listener );
+	    thisSet.clip.loop(loops);
+	    thisSet.clip.addLineListener(listener);
 	}
 	
 	private boolean markedPositionSupport = false;
@@ -61,7 +67,12 @@ public class Sound {
 		clips.remove(thisSet);
 	}
 	
+	public boolean isFinished() {
+		return finished;
+	}
+	
 	public void play() {
+		finished = false;
 		if (isLooping())
 			thisSet.clip.loop(Clip.LOOP_CONTINUOUSLY);
 		else

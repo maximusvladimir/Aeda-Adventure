@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class SailorHarbour extends Level {
+public class SailorHarbour extends Level implements IWaterLevel {
 	private static final int waterStart = 35;
 	private static final float indicator = (waterStart-3) * 10000.0f / 55.0f;
 	private Raft raft;
@@ -15,7 +15,29 @@ public class SailorHarbour extends Level {
 	}
 
 	public static long mapDrawTime = 0;
-
+	
+	public void loadedLevel()  {
+		if (inDeepWater() && !raftMode) {
+			startRaftMode();
+		}
+		else {
+			// A very evil way to ensure we are indeed not in deep water.
+			Thread thread = new Thread(new Runnable() {
+				public void run() {
+					long s = System.currentTimeMillis();
+					while (System.currentTimeMillis() - s < 300) {
+						
+					}
+					if (inDeepWater() && !raftMode) {
+						startRaftMode();
+					}
+				}		
+			});
+			thread.setName("DeepWaterEvilChecker");
+			thread.start();
+		}
+	}
+	
 	public void init() {
 		Tree[] trees = new Tree[20];// 20
 		Grass[] grass = new Grass[20];
@@ -52,6 +74,7 @@ public class SailorHarbour extends Level {
 		}
 		plane.setWaterDraw(true);
 		scene.setPlane(plane);
+		Rand rad = new Rand();
 		for (int x = 0; x < 55; x++) {
 			for (int z = 0; z < 55; z++) {
 				final boolean statemental = (!(z < 10 - (x - (waterStart - 5)) && x > waterStart - 5) && !(z > 45 + (x - (waterStart - 5)) && x > waterStart - 5));
@@ -61,7 +84,7 @@ public class SailorHarbour extends Level {
 					plane.setColorPoint(x,z,MathCalculator.lerp(sand,g,(x-(waterStart-2))/15.0f));
 				}
 				else
-					plane.setColorPoint(x,z,new Color(38,55,85));//new Color(79,86,134));
+					plane.setColorPoint(x,z,rad.variate(new Color(38,55,85),20));//new Color(79,86,134));
 			}
 		}
 		plane.genWorld();
@@ -186,6 +209,7 @@ public class SailorHarbour extends Level {
 					getScene().getPlayer().raftMode = false;
 					getScene().setPlayerSpeed(startSpeed);
 					raft.setVisible(false);
+					new Sound("fallwater").play();
 				}
 				else {
 					addMessage(Strings.inst.SAIL_RAFT_CANT_LEAVE,"WATER40");
@@ -248,6 +272,12 @@ public class SailorHarbour extends Level {
 			GameState.instance.playerLevel = 1;
 			return;
 		}
+		if (getScene().getPlayerX() < -8000 && getScene().canPortalize()) {
+			startTransition(getMain().getScreen("lilo"), new P3D(6000, 0, getScene().getPlayerZ()), getScene().getPlayerDelta());
+			getScene().deportal();
+			GameState.instance.playerLevel = 3;
+			return;
+		}
 		if (getScene().getPlayerX() < 8900 || getScene().getPlayerZ() > 700
 				|| getScene().getPlayerZ() < -700)
 			getScene().reportal();
@@ -260,7 +290,7 @@ public class SailorHarbour extends Level {
 	public void draw(Graphics g) {
 		g.setColor(Color.black);
 		g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());
-		scene.setSceneDarkness(0);
+		//scene.setSceneDarkness(0);
 		scene.draw(g);
 	}
 

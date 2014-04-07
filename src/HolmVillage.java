@@ -238,8 +238,6 @@ public class HolmVillage extends Level {
 		scene.add(barrel);
 		scene.add(lamps);
 		scene.add(new GameWalls(scene));
-		scene.add(new Dunp(scene));
-		scene.add(new FishOil(scene));
 		Windmill windmill = new Windmill(getScene());
 		windmill.setInstanceLoc(-1500, -350, 4000);
 		scene.add(windmill);
@@ -270,6 +268,9 @@ public class HolmVillage extends Level {
 			houses[0].lightsOn = true;
 		} else
 			houses[0].lightsOn = false;
+		
+		if (Rand.random() < 0.0002)
+			getScene().makeLightning();
 
 		super.tick();
 		if (isGameHalted())
@@ -310,26 +311,5 @@ public class HolmVillage extends Level {
 
 	public void draw(Graphics g) {
 		scene.draw(g);
-	}
-
-	public void mouseReleased(MouseEvent me) {
-		super.mouseReleased(me);
-		/*
-		 * ArrayList<House> houses = scene.<House>
-		 * getObjectsByType(House.class); for (int i = 0; i < houses.size();
-		 * i++) { houses.get(i).lightsOn = !houses.get(i).lightsOn; }
-		 */
-		ArrayList<Lamppost> lamps = scene
-				.<Lamppost> getObjectsByType(Lamppost.class);
-		for (int i = 0; i < lamps.size(); i++) {
-			lamps.get(i).setLampOn(!lamps.get(i).isLampOn());
-		}
-	}
-
-	public void keyReleased(KeyEvent ke) {
-		super.keyReleased(ke);
-		if (ke.getKeyCode() == KeyEvent.VK_B) {
-			GameState.instance.health = 10;
-		}
 	}
 }

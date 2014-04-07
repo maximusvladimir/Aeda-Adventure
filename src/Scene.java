@@ -170,14 +170,26 @@ public class Scene<T> {
 	public boolean isMoveOverriden() {
 		return moveOverride;
 	}
-	
+	private Sound footstep;
 	public void movePlayer(boolean forward) {
 		float te = plane.getWorldSizeHalf();
-		if (!SoundManager.playFootstep1 && !SoundManager.playFootstep2) {
-			if (rand.nextDouble() < 0.5)
-				SoundManager.playFootstep1 = true;
+		if ((footstep == null || footstep.isFinished()) && Math.random() < 0.76) {
+			boolean cont = true;
+			if (getScreen() instanceof IWaterLevel) {
+				IWaterLevel lev = (IWaterLevel)getScreen();
+				if (lev.inDeepWater() || lev.inWater()) {
+					cont = false;
+					footstep = new Sound("watersplash");
+				}
+			}
+			if (cont) {
+			if (Math.random() < 0.5)
+				footstep = new Sound("footsteps2");
 			else
-				SoundManager.playFootstep2 = true;
+				footstep = new Sound("footsteps3");
+			}
+			if (footstep != null)
+				footstep.play();
 		}
 		if (forward) {
 			playerX += walkSpeed * MathCalculator.cos(playerDelta);
@@ -321,8 +333,10 @@ public class Scene<T> {
 			float am = (float)(Math.pow(10,lightn));
 			lightningAmount = (int)(am * 5);
 			lightn -= 0.005f;
-			if (lightn < 0.4 && Math.random() < 0.02)
+			if (lightn < 0.4 && Math.random() < 0.02) {
 				lightn = (float)(Math.random()*0.4f + 0.6f);
+				new Sound("thunder").play();
+			}
 		}
 		for (int i = 0; i < getSceneSize(); i++) {
 			Drawable d = get(i);
@@ -367,6 +381,7 @@ public class Scene<T> {
 	
 	public void makeLightning() {
 		lightn = 1;
+		new Sound("thunder").play();
 	}
 	private float lightn = 0.0f;
 	public static long numTriangles = 0;
