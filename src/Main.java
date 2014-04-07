@@ -185,7 +185,7 @@ public class Main extends JFrame implements IMain {
 			}
 		});
 		addScreen(new MainMenu(this));
-		setActiveScreen(0);
+		setActiveScreen("mainmenu");
 		Timer timer = new Timer(10, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (active != null && active.isActiveScreen()
@@ -435,6 +435,8 @@ public class Main extends JFrame implements IMain {
 						SoundManager.backgroundSound = new Sound("piano");
 					if (screens.get(i) instanceof HolmVillage)
 						SoundManager.backgroundSound = new Sound("holm");
+					if (screens.get(i) instanceof MainMenu)
+						SoundManager.backgroundSound = new Sound("title");
 					if (SoundManager.backgroundSound != null) {
 						SoundManager.backgroundSound.setLooping(true);
 						SoundManager.backgroundSound.play();

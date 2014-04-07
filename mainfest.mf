@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Created-By: Max K. (http://maximusvladimir.wordpress.com)
+Main-Class: Main
+Caller-Allowable-Codebase: dl.dropbox.com dl.dropboxusercontent.com maximusvladimir.wordpress.com 127.0.0.1 
+Permissions: sandbox
+Application-Name: Aeda Adventure

@@ -264,23 +264,4 @@ public class SailorHarbour extends Level {
 		scene.draw(g);
 	}
 
-	public void mouseReleased(MouseEvent me) {
-		super.mouseReleased(me);
-		ArrayList<House> houses = scene.<House> getObjectsByType(House.class);
-		for (int i = 0; i < houses.size(); i++) {
-			houses.get(i).lightsOn = !houses.get(i).lightsOn;
-		}
-		ArrayList<Lamppost> lamps = scene
-				.<Lamppost> getObjectsByType(Lamppost.class);
-		for (int i = 0; i < lamps.size(); i++) {
-			lamps.get(i).setLampOn(!lamps.get(i).isLampOn());
-		}
-	}
-
-	public void keyReleased(KeyEvent ke) {
-		super.keyReleased(ke);
-		if (ke.getKeyCode() == KeyEvent.VK_B) {
-			GameState.instance.health = 10;
-		}
-	}
 }
