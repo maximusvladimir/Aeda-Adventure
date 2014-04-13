@@ -48,6 +48,23 @@ public class CadenSea extends Level implements IWaterLevel {
 		getScene().setPlayerSpeed(startSpeed * 2.6f);
 		getScene().getPlayer().raftMode = true;
 		
+		for (int i = 0; i < 20; i++) {
+			Enemy enemyOfTheRepublic = new Enemy(scene);
+			float x = 0;
+			float z = 0;
+			boolean found = false;
+			float height = -250;
+			//while (!found) {
+				x = (float) (getRand().nextDouble() * -(scene.getWorldSize()-1200)) + scene.getWorldSizeHalf()-600;
+				z = (float) (getRand().nextDouble() * -(scene.getWorldSize()-1200)) + scene.getWorldSizeHalf()-600;
+				enemyOfTheRepublic = new Krake(scene);
+			//}
+			float y = getScene().getTerrainHeight(x, z);
+			enemyOfTheRepublic.setInstanceLoc(x,y+height,z);
+			getScene().add(enemyOfTheRepublic);
+		}
+		
+		// TODO: Reimplement
 		//if (!GameState.instance.hasFishOil) {
 			FishOil oil = new FishOil(getScene());
 			oil.setInstanceLoc(-4000, 0, -2000);

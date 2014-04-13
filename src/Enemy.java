@@ -6,12 +6,21 @@ public class Enemy extends Character {
 	private PointTesselator tesselator;
 	protected BufferedImage enemyImage = null;
 	private float speed = 2.11f;
+	private float visiblilityDistance = 1000;
 	
 	public Enemy(Scene<Drawable> scene,Hitbox hitbox) {
 		super(scene, hitbox);
 		tesselator = new PointTesselator();
 		createPic();
 		//tesselator.setTransparency(50);
+	}
+	
+	public void setVisiblilityDistance(float v) {
+		visiblilityDistance = v;
+	}
+	
+	public float getVisiblilityDistance() {
+		return visiblilityDistance;
 	}
 	
 	public void setSpeed(float speed) {
@@ -316,7 +325,7 @@ public class Enemy extends Character {
 			getTesselator().setTransparency((int)(fader * 255));
 			return;
 		}
-		if (getScene().getLevel().isMessageBeingShown())
+		if (getScene().getLevel().isMessageBeingShown() || !getScene().canPlayerMove())
 			return;
 		if (isPersuingPlayer()) {
 			theta += 0.05f;
@@ -344,7 +353,7 @@ public class Enemy extends Character {
 		if (alreadyHit && System.currentTimeMillis() - timeSinceLastHit > 1000) {
 			alreadyHit = false;
 		}
-		setPersuingPlayer(dist <= 1000);
+		setPersuingPlayer(dist <= getVisiblilityDistance());
 		//if (dist <= 1500) {
 		delta = (float) Math.atan2((-getScene().getPlayerZ() + getInstanceLoc().z+500),
 					(-getScene().getPlayerX() + getInstanceLoc().x));

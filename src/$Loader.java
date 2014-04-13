@@ -28,9 +28,12 @@ public class $Loader /*extends SimpleGame*/ {
 				reader = new InputStreamReader(input);
 			boolean firstline = true;
 			is = new BufferedReader(reader);
+			//int iterator = 0;
 			while ((tempData = is.readLine()) != null) {
+				//iterator++;
 				//strip white space
 				tempData = tempData.trim();
+				//System.out.println("reading"+iterator);
 				//strip comments
 				if (tempData.indexOf("#") != -1) {
 					tempData = tempData.substring(0,tempData.indexOf("#"));
@@ -163,6 +166,7 @@ public class $Loader /*extends SimpleGame*/ {
 		}
 	}
 	public static void parseMeshVertexColors(String filedata,$MeshObject mo) {
+		//System.out.println(filedata);
 		filedata = filedata.substring(filedata.indexOf("{"),filedata.lastIndexOf("}"));
 		
 		String s = filedata.substring(filedata.indexOf("{")+1,filedata.indexOf(";;")+2);
@@ -197,6 +201,9 @@ public class $Loader /*extends SimpleGame*/ {
 				mo.vertexColors[index].rgba[2] = Float.parseFloat(ts4.trim());
 				mo.vertexColors[index].rgba[3] = Float.parseFloat(ts5.trim());
 			} catch (NumberFormatException nfe) {
+			}
+			if (i % 400 == 0) {
+				System.out.println(((((float)i) / verts) * 100)+"%");
 			}
 		}
 		
@@ -696,19 +703,19 @@ public class $Loader /*extends SimpleGame*/ {
 			filedata = filedata.substring(s.length(),filedata.length());
 			s = s.trim();
 			if (s.startsWith("MeshNormals")) {
-				parseMeshNormals(s,mo);
+				//parseMeshNormals(s,mo);
 			} else if (s.startsWith("MeshTextureCoords")) {
-				parseMeshTextureCoords(s,mo);
+				//parseMeshTextureCoords(s,mo);
 			} else if (s.startsWith("MeshVertexColors")) {
 				parseMeshVertexColors(s,mo);
 			} else if (s.startsWith("MeshMaterialList")) {
-				parseMeshMaterialList(s,mo);
+				//parseMeshMaterialList(s,mo);
 			} else if (s.startsWith("XSkinMeshHeader")) {
-				parseXSkinMeshHeader(s,mo);
+				//parseXSkinMeshHeader(s,mo);
 			} else if (s.startsWith("VertexDuplicationIndices")) {
-				parseVertexDuplicationIndices(s,mo);
+				//parseVertexDuplicationIndices(s,mo);
 			} else if (s.startsWith("SkinWeights")) {
-				parseSkinWeights(s,mo);
+				//parseSkinWeights(s,mo);
 			} else if (s.startsWith("MeshFaceWraps")) {
 				//Unhandled for now
 			}

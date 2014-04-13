@@ -20,6 +20,7 @@ public class GameState {
 	public boolean hasRaft = false;
 	public boolean hasLantern = false;
 	public boolean hasFishOil = false;
+	public boolean hasSword = false;
 	
 	public String toString() {
 		return  "playerStage     = " + playerStage + "\n" +
@@ -36,7 +37,8 @@ public class GameState {
 				"hasRaft        = " + hasRaft + "\n" +
 				"hasLantern     = " + hasLantern + "\n" +
 				"timePlayed     = " + timePlayed + "\n" + 
-				"hasFishOil     = " + hasFishOil;
+				"hasFishOil     = " + hasFishOil + "\n" +
+				"hasSword       = " + hasSword;
 	}
 	public static GameState instance;
 	private static FileSave saver = new FileSave();

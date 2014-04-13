@@ -1,3 +1,5 @@
+import java.awt.image.DataBufferInt;
+
 
 public interface IMain {
 	public int getWidth();
@@ -19,4 +21,7 @@ public interface IMain {
 	public boolean isPaused();
 	public void pause();
 	public void resume();
+	
+	public int getPixel(int x, int y);
+	public DataBufferInt getDBI();
 }

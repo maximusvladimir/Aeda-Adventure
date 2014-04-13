@@ -79,6 +79,7 @@ public class Sign extends Drawable {
 
 	private boolean isShowing = false;
 	private boolean alreadyShown = false;
+	//public static boolean displayingSign = false;
 	public void tick() {
 		setInstanceLoc(getInstanceLoc().x,getInstanceLoc().z+250);
 		float dist = getDistToPlayer();

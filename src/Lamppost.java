@@ -13,6 +13,7 @@ public class Lamppost extends Drawable {
 		tesselator.setDrawType(DrawType.Triangle);
 		tesselator.setSkipCullCheck(true);
 		//delta = -3.1415926535f / 1.5f;
+		lampDelta = (float)(Math.random() * 23847);
 		windX = (float)(Math.PI * 2 * Math.random());
 	}
 	
@@ -238,7 +239,7 @@ public class Lamppost extends Drawable {
 		return windX;
 	}
 
-	private Color lightColor = Color.yellow;
+	public Color lightColor = Color.yellow;
 	public void tick() {
 		windX += 0.025f;
 		lampDelta += 0.02f * Math.random();

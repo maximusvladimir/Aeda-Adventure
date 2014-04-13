@@ -87,6 +87,12 @@ public class SailorHarbour extends Level implements IWaterLevel {
 					plane.setColorPoint(x,z,rad.variate(new Color(38,55,85),20));//new Color(79,86,134));
 			}
 		}
+		// fade the road to show where the portal is
+		for (int z = 48; z < 55; z++) {
+			plane.setColorPoint(z, 27, MathCalculator.lerp(plane.getColorPoint(z,27),rad.variate(new Color(132, 117, 98).darker(), 20),(z-48)/4.0f));
+			plane.setColorPoint(z, 28, MathCalculator.lerp(plane.getColorPoint(z,28),rad.variate(new Color(132, 117, 98).darker(), 20),(z-48)/4.0f));
+			plane.setColorPoint(z, 29, MathCalculator.lerp(plane.getColorPoint(z,29),rad.variate(new Color(132, 117, 98).darker(), 20),(z-48)/4.0f));
+		}
 		plane.genWorld();
 		scene.setFog(-2000, -2600);
 		scene.setFogColor(new Color(93, 109, 120));
@@ -209,7 +215,9 @@ public class SailorHarbour extends Level implements IWaterLevel {
 					getScene().getPlayer().raftMode = false;
 					getScene().setPlayerSpeed(startSpeed);
 					raft.setVisible(false);
-					new Sound("fallwater").play();
+					if (SoundManager.soundEnabled) {
+						new Sound("fallwater").play();
+					}
 				}
 				else {
 					addMessage(Strings.inst.SAIL_RAFT_CANT_LEAVE,"WATER40");
@@ -264,10 +272,10 @@ public class SailorHarbour extends Level implements IWaterLevel {
 		if (isGameHalted())
 			return;
 		
-		if (getScene().getPlayerX() > 9100 && getScene().getPlayerZ() < 600
+		if (getScene().getPlayerX() > 9000 && getScene().getPlayerZ() < 1100
 				&& getScene().getPlayerZ() > -600 && getScene().canPortalize()) {
-			startTransition(getMain().getScreen("vbm"), new P3D(-9200, 0, 300),
-					4.712388980384689f);
+			startTransition(getMain().getScreen("vbm"), new P3D(-9200, 0, getScene().getPlayerZ()),
+					getScene().getPlayerDelta());
 			getScene().deportal();
 			GameState.instance.playerLevel = 1;
 			return;

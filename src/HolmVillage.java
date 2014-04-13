@@ -4,23 +4,42 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 public class HolmVillage extends Level {
 
 	private House[] houses;
+	private Lamppost[] lamps;
 	private P3D lastLoc = new P3D();
+
+	private static BufferedImage glow = null;
 
 	public HolmVillage(IMain inst) {
 		super(inst);
 	}
 
-	public void reloadedLevel() {
-		super.reloadedLevel();
-		/*
-		 * getScene().setPlayerPosition(lastLoc);
-		 * GameState.instance.playerLocation = lastLoc;
-		 */
+	public void loadedLevel() {
+		super.loadedLevel();
+		if (GameState.instance.hasFishOil && !GameState.instance.hasSword
+				&& getScene().getObjectsByType(Cassius.class).size() == 0) {
+			Cassius cas = new Cassius(getScene()) {
+				public void tick() {
+					super.tick();
+				}
+			};
+			cas.setInstanceLoc(-8000, -350, 0);
+			getScene().add(cas);
+		}
+		if (glow == null) {
+			try {
+				glow = ImageIO.read(HolmVillage.class.getResource("/glow.png"));
+			} catch (Throwable t) {
+
+			}
+		}
 	}
 
 	public static long mapDrawTime = 0;
@@ -29,9 +48,9 @@ public class HolmVillage extends Level {
 		Tree[] trees = new Tree[120];// 20
 		Grass[] grass = new Grass[80];
 		Barrel[] barrel = new Barrel[5];
-		Sign[] signs = new Sign[2];
+		Sign[] signs = new Sign[3];
 		houses = new House[4];
-		Lamppost[] lamps = new Lamppost[10];
+		lamps = new Lamppost[10];
 		Enemy[] enemies = new Enemy[4];
 		scene = new Scene<Drawable>(this, getRand());
 		GamePlane plane = new GamePlane(scene, getRand(), 55, new Color(99,
@@ -156,7 +175,19 @@ public class HolmVillage extends Level {
 							float dist = getDistToPlayer();
 							if (dist < 400 && !grandmaMessage) {
 								grandmaMessage = true;
-								if (GameState.instance.hasRaft) {
+								if (GameState.instance.hasSword) {
+									addMessage(
+											"It was very nice of Master Cassius to give you that beautiful sword.",
+											"nicesword");
+									setActiveMessage("nicesword");
+								} else if (GameState.instance.hasFishOil
+										&& !GameState.instance.hasSword) {
+									addMessage(
+											GameState.instance.playerGUID
+													+ " there's somebody that want to talk\nto you by the road near Sailor's Harbour.",
+											"noswordnotify");
+									setActiveMessage("noswordnotify");
+								} else if (GameState.instance.hasRaft) {
 									addMessage(
 											Strings.inst.HOLM_HAUZ_GRAND_PURCHASED_RAFT,
 											"raftGrandma");
@@ -205,6 +236,9 @@ public class HolmVillage extends Level {
 		signs[1].setInstanceLoc(600, -220, -9800);
 		signs[1].setSignMessage(Strings.inst.HOLM_VILLAGE_NORTH_ENTRY);
 
+		signs[2].setInstanceLoc(0, -220, 7000);
+		signs[2].setSignMessage("Don't forget to fight enemies with ENTER.\nYou can also break barells as well.");
+
 		barrel[0].setInstanceLoc(600, -350, 2000);
 		barrel[1].setInstanceLoc(-900, -350, 2075);
 		barrel[2].setInstanceLoc(600, -350, 3500);
@@ -214,12 +248,12 @@ public class HolmVillage extends Level {
 		enemies[0].setInstanceLoc(0, -350, 4000);
 		enemies[1].setInstanceLoc(0, -350, 5000);
 		enemies[2].setInstanceLoc(0, -350, 6000);
-		enemies[3].setInstanceLoc(0, -350, 7000);
-		
+		enemies[3].setInstanceLoc(0, -350, 6800);
+
 		// Very "heavy" object
-		Horse horse = new Horse(scene); horse.setInstanceLoc(-6000, -350, -850);
+		Horse horse = new Horse(scene);
+		horse.setInstanceLoc(-6000, -350, -850);
 		scene.add(horse);
-		
 
 		RedGem jewel = new RedGem(getScene(), getRand());
 		jewel.setInstanceLoc(-2000, -170, 5000);
@@ -238,6 +272,9 @@ public class HolmVillage extends Level {
 		scene.add(barrel);
 		scene.add(lamps);
 		scene.add(new GameWalls(scene));
+
+		// scene.add(new Krake(scene));
+
 		Windmill windmill = new Windmill(getScene());
 		windmill.setInstanceLoc(-1500, -350, 4000);
 		scene.add(windmill);
@@ -268,18 +305,20 @@ public class HolmVillage extends Level {
 			houses[0].lightsOn = true;
 		} else
 			houses[0].lightsOn = false;
-		
+
 		if (Rand.random() < 0.0002)
 			getScene().makeLightning();
+
+		// System.out.println(getScene().getPlayerZ());
 
 		super.tick();
 		if (isGameHalted())
 			return;
 
 		if (getScene().getPlayerX() < -9500 && getScene().getPlayerZ() > -600
-				&& getScene().getPlayerZ() < 600 && getScene().canPortalize()) {
-			startTransition(getMain().getScreen("yLENIN"), new P3D(9200, 0, 0),
-					4.712388980384689f);
+				&& getScene().getPlayerZ() < 1100 && getScene().canPortalize()) {
+			startTransition(getMain().getScreen("yLENIN"), new P3D(9000, 0,
+					getScene().getPlayerZ()), getScene().getPlayerDelta());
 			getScene().deportal();
 			GameState.instance.playerLevel = 2;
 			return;
@@ -311,5 +350,66 @@ public class HolmVillage extends Level {
 
 	public void draw(Graphics g) {
 		scene.draw(g);
+	}
+
+	private ArrayList<P3D> lightHints = new ArrayList<P3D>();
+
+	public void drawHUD(Graphics g) {
+		if (glow != null) {
+			if (Main.findNumFramesDrawn() % 4 == 0) {
+				lightHints.clear();
+				Color[] screenColors = null;
+				for (int i = 0; i < lamps.length; i++) {
+					Lamppost post = lamps[i];
+					if (getScene().isVisible(post)) {
+						if (screenColors == null) {
+							int[] dbi = getMain().getDBI().getData();
+							screenColors = new Color[dbi.length];
+							for (int j = 0; j < dbi.length; j++) {
+								screenColors[j] = new Color(dbi[j]);
+							}
+						}
+						Color sample = post.lightColor;
+						int lx = 0;
+						int ly = 0;
+						for (int x = 0; x < getMain().getWidth(); x++) {
+							for (int y = 0; y < getMain().getHeight(); y++) {
+								int det = y * getMain().getWidth() + x;
+								if (det < 0 || det > screenColors.length)
+									continue;
+								if (MathCalculator.compareColor(
+										screenColors[det], sample) < 20) {
+									lx = x;
+									ly = y;
+									x = getMain().getWidth() + 100;
+									y = getMain().getHeight() + 100;
+									break;
+								}
+							}
+						}
+						if (lx == 0 && ly == 0) {
+							continue;
+						}
+						float size = 0;
+						float dist = post.getDistToCamera();
+						size = dist * 0.001f;
+						size = 1 / size;
+						size = size * glow.getWidth() * 4;
+						lightHints.add(new P3D(lx,ly,size));
+					}
+				}
+			}
+
+			for (int i = 0; i < lightHints.size(); i++) {
+				P3D p = lightHints.get(i);
+				float size = p.z;
+				if (size < 0)
+					continue;
+				int half = (int) (size * 0.5f);
+				g.drawImage(glow, (int) p.x - half, (int) p.y - half,
+						(int) size, (int) size, null);
+			}
+		}
+		super.drawHUD(g);
 	}
 }

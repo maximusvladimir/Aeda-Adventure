@@ -39,6 +39,8 @@ public class Utility {
 				SoundManager.backgroundSound = new Sound("holm");
 			if (s instanceof MainMenu)
 				SoundManager.backgroundSound = new Sound("title");
+			if (s instanceof FiaceForest)
+				SoundManager.backgroundSound = new Sound("fiace");
 			if (SoundManager.backgroundSound != null) {
 				SoundManager.backgroundSound.setLooping(true);
 				SoundManager.backgroundSound.play();
@@ -112,11 +114,9 @@ public class Utility {
 		int sw = m.getWidth() - (int) (m.getWidth() * 0.15f) - 8;
 		int sh = m.getHeight() - (int) (m.getHeight() * 0.15f) - 32;
 		g.fillRoundRect(sx, sy, sw, sh, 15, 15);
-		g.setColor(new Color(255, 255, 255));
-		g.setFont(new Font("Arial", 0, 14));
-		g.drawString("Fi\u00E4ce Forest", sx + 6, sy + 18);
 		g.setFont(new Font("Arial", 0, 9));
 		Color current = new Color(255, 255, 255, 45);
+		Color currentBack = new Color(127,200,127,127);
 		current = MathCalculator.lerp(current, new Color(255, 255, 255, 200),
 				(float) Math.abs(Math.sin(flash)));
 		int rectSize = (int) (m.getWidth() * 0.14f);
@@ -125,29 +125,64 @@ public class Utility {
 		Color def2 = new Color(255, 255, 255, 45);
 		Color def3 = new Color(255, 255, 255, 45);
 		Color def4 = new Color(255, 255, 255, 45);
-		if (s.getLevel().getName().equals("vbm"))
+		Color def1a = new Color(255, 255, 255, 45);
+		Color def2a = new Color(255, 255, 255, 45);
+		Color def3a = new Color(255, 255, 255, 45);
+		Color def4a = new Color(255, 255, 255, 45);
+		float defpx = 0;
+		float defpy = 0;
+		float def1px = (m.getWidth() * 0.5f) - (rectSizeHalf);
+		float def1py = (m.getHeight() * 0.72f) - (rectSizeHalf);
+		float def2px = (m.getWidth() * 0.5f) - (rectSizeHalf);
+		float def2py = (m.getHeight() * 0.72f) - (rectSizeHalf * 3);
+		float def3px = (m.getWidth() * 0.5f) - (rectSizeHalf * 3);
+		float def3py = (m.getHeight() * 0.72f) - (rectSizeHalf * 3);
+		float def4px = (m.getWidth() * 0.5f) - (rectSizeHalf * 5.5f);
+		float def4py = (m.getHeight() * 0.72f) - (rectSizeHalf * 3);
+		g.setColor(new Color(255, 255, 255));
+		g.setFont(new Font("Arial", 0, 14));
+		if (s.getLevel().getName().equals("vbm")) {
 			def2 = current;
-		if (s.getLevel().getName().equals("level"))
+			def2a = currentBack;
+			defpx = def2px;
+			defpy = def2py;
+			g.drawString(Strings.inst.NAME_HOLM, sx + 6, sy + 18);
+		}
+		if (s.getLevel().getName().equals("level")) {
 			def1 = current;
-		drawBorderRect(g, def1, new Color(255, 0, 0, 125), sx + (sw / 2)
-				- rectSizeHalf, sy + sh - rectSize, rectSize, rectSize, 3);
-		drawBorderRect(g, def2, new Color(0, 255, 0,
-				125), sx + (sw / 2) - (int) (0.8f * rectSizeHalf), sy + sh
-				- rectSize - rectSize, (int) (0.8f * rectSize), rectSize, 3);
-		drawBorderRect(g, def3, new Color(30, 40, 255,
-				125), sx + (sw / 3) - (int) (1.2f * rectSizeHalf) + 1, sy + sh
-				- rectSize - rectSize, (int) (1.2f * rectSize), rectSize, 3);
-		drawBorderRect(g, def4, new Color(30, 40, 255,
-				125), sx + (sw / 3) - (int) (3.2f * rectSizeHalf) + 1, sy + sh
-				- (int) (rectSize * 3.2f), (int) (1.2f * rectSize), rectSize, 3);
+			def1a = currentBack;
+			defpx = def1px;
+			defpy = def1py;
+			g.drawString(Strings.inst.NAME_FIACE, sx + 6, sy + 18);
+		}
+		if (s.getLevel().getName().equals("yLENIN")) {
+			def3 = current;
+			def3a = currentBack;
+			defpx = def3px;
+			defpy = def3py;
+			g.drawString(Strings.inst.NAME_HARBOUR, sx + 6, sy + 18);
+		}
+		if (s.getLevel().getName().equals("lilo")) {
+			def4 = current;
+			def4a = currentBack;
+			defpx = def4px;
+			defpy = def4py;
+			g.drawString(Strings.inst.NAME_CADEN_SEA, sx + 6, sy + 18);
+		}
+		
+		Utility.drawBorderRect(g, def1, def1a, def1px, def1py, rectSize, rectSize, 4);
+		Utility.drawBorderRect(g, def2, def2a, def2px, def2py, rectSize, rectSize, 4);
+		Utility.drawBorderRect(g, def3, def3a, def3px, def3py, rectSize, rectSize, 4);
+		Utility.drawBorderRect(g, def4, def4a, def4px, def4py, rectSize, rectSize, 4);
+		
 		flash += 0.013f;
 
 		int entityx = (int) ((s.getPlayerX() + s.getWorldSizeHalf()) * rectSize / s
 				.getWorldSize());
 		int entityz = (int) ((s.getPlayerZ() + s.getWorldSizeHalf()) * rectSize / s
 				.getWorldSize());
-		entityx += sx + (sw / 2) - rectSizeHalf;
-		entityz += sy + sh - rectSize;
+		entityx += defpx;
+		entityz += defpy;
 		g.setColor(Color.yellow);
 		Polygon p = new Polygon();
 		float delt = -(float) (s.getPlayerDelta() + Math.PI / 2);
@@ -160,17 +195,11 @@ public class Utility {
 		g.fillPolygon(p);
 		g.setColor(Color.black);
 		g.drawPolygon(p);
-
-		g.setColor(Color.black);
-		g.drawString("Holm Town", sx + (sw / 2) - (int) (0.8f * rectSizeHalf)
-				+ 5, sy + sh - rectSize - (rectSize / 2));
-		g.drawString("Sailor's Harbour", sx + (sw / 3)
-				- (int) (1.2f * rectSizeHalf) + 16, sy + sh - rectSize
-				- (rectSize / 2));
-		g.drawString("Fi\u00E4ce Forest", sx + (sw / 2) - rectSizeHalf + 9, sy
-				+ sh - (rectSize / 2));
-		g.drawString("Caden Sea", sx + (sw / 3) - (int) (3.2f * rectSizeHalf)
-				+ 1 + 17, sy + sh - (int) (rectSize * 3.2f) + 35);
+		g.setFont(new Font("Arial", 0, 10));
+		g.drawString(Strings.inst.NAME_FIACE,6 + (int)def1px,rectSizeHalf + (int)def1py);
+		g.drawString(Strings.inst.NAME_HOLM,5 + (int)def2px,rectSizeHalf + (int)def2py);
+		g.drawString(Strings.inst.NAME_HARBOUR_SHORT,15 + (int)def3px,rectSizeHalf + (int)def3py);
+		g.drawString(Strings.inst.NAME_CADEN_SEA,8 + (int)def4px,rectSizeHalf + (int)def4py);
 
 	}
 
@@ -197,14 +226,14 @@ public class Utility {
 	private static float flash = 0.0f;
 
 	public static void drawBorderRect(Graphics g, Color border, Color fore,
-			int x, int y, int w, int h, int s) {
+			float f, float i, int w, int h, int s) {
 		g.setColor(border);
-		g.fillRect(x, y, w, h);
+		g.fillRect((int)f, (int)i, w, h);
 		g.setXORMode(border);
-		g.fillRect(x + s, y + s, w - (s * 2), h - (s * 2));
+		g.fillRect((int)f + s, (int)i + s, w - (s * 2), h - (s * 2));
 		g.setPaintMode();
 		g.setColor(fore);
-		g.fillRect(x + s, y + s, w - (s * 2), h - (s * 2));
+		g.fillRect((int)f + s, (int)i + s, w - (s * 2), h - (s * 2));
 	}
 
 	public static NetworkInterface getDefaultNetworkAdapter() {
@@ -468,6 +497,38 @@ public class Utility {
 			g.drawLine(sx - 1, sy, sx + 1, sy);
 			g.drawLine(sx, sy - 1, sx, sy + 1);
 		}
+		
+		ArrayList<FishOil> oil = scene.<FishOil> getObjectsByType(FishOil.class);
+		if (oil.size() == 1) {
+			FishOil f = oil.get(0);
+			if (f.isVisible()) {
+				int entityx = (int) ((f.getInstanceLoc().x + scene
+						.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+				int entityz = (int) ((f.getInstanceLoc().z + scene
+						.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+				int sx = mapx + entityx + 5;
+				int sy = mapy + entityz + 5;
+				g.drawLine(sx - 1, sy, sx + 1, sy);
+				g.drawLine(sx, sy - 1, sx, sy + 1);
+			}
+		}
+		
+		g.setColor(Color.red);
+		ArrayList<Cassius> cassius = scene.<Cassius> getObjectsByType(Cassius.class);
+		if (cassius.size() == 1) {
+			Cassius f = cassius.get(0);
+			if (f.isVisible()) {
+				int entityx = (int) ((f.getInstanceLoc().x + scene
+						.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+				int entityz = (int) ((f.getInstanceLoc().z + scene
+						.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+				int sx = mapx + entityx + 5;
+				int sy = mapy + entityz + 5;
+				g.drawLine(sx - 1, sy, sx + 1, sy);
+				g.drawLine(sx, sy - 1, sx, sy + 1);
+			}
+		}
+			
 		g.setColor(Color.red);
 		ArrayList<Water> water = scene.<Water>getObjectsByType(Water.class); 
 		for (int i = 0; i < water.size(); i++) {
@@ -594,12 +655,16 @@ public class Utility {
 			evilTracker.add(message);
 			//SoundManager.playClick = true;
 		}
+		int alpha = 125;
+		if (mainInst.getScreen(mainInst.getActiveScreen()) instanceof MainMenu) {
+			alpha = 255;
+		}
 		if (message.indexOf("¢") > -1)
 			message = message.replace("¢", "");
-		g.setColor(new Color(185, 163, 124, 125));
+		g.setColor(new Color(185, 163, 124, alpha));
 		g.fillRoundRect(10, mainInst.getHeight() - 125,
 				mainInst.getWidth() - 26, 85, 8, 8);
-		g.setColor(new Color(109, 88, 57,125));
+		g.setColor(new Color(109, 88, 57,alpha));
 		g.fillRoundRect(13, mainInst.getHeight() - 122,
 				mainInst.getWidth() - 33, 78, 8, 8);
 		g.setFont(messageFont);

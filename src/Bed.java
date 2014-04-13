@@ -4,7 +4,7 @@ import java.awt.Color;
 public class Bed extends Drawable {
 	private PointTesselator tesselator;
 	public Bed(Scene<Drawable> scene) {
-		super(scene, new Hitbox());
+		super(scene, new Hitbox(new P3D(-100,-30,-200), new P3D(100,80,200)));
 		tesselator = new PointTesselator();
 		tesselator.setSkipCullCheck(true);
 		tesselator.setDrawType(DrawType.Triangle);

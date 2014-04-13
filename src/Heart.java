@@ -58,9 +58,13 @@ public class Heart extends Drawable {
 		tesselator.point(0,-50,10);
 	}
 
+	private float lastPoll = (float)(Math.random());
+	
 	public void tick() {
 		if (!doingDestroy) {
-			delta += 0.02f;
+			if (Main.findNumFramesDrawn() % 60 == 0)
+				lastPoll = (float)(Math.random());
+			delta += 0.02f * lastPoll + 0.01f;
 			float ale = (float)(Math.sin(delta*0.5f)+1)*0.5f;
 			tesselator.setTransparency((int)(ale * 190)+65);
 			cnnsr = MathCalculator.lerp(new Color(170,20,20), Color.white, (1-ale)/3);

@@ -181,6 +181,10 @@ public class ThreadDebugger extends JFrame {
 		g.drawString("Game runtime:" + millis + " (seconds: " + (millis/1000) + ")", 215, 194);
 		g.drawString("Total distance overhead:" + (P3D.totalDistanceOverhead/1000000) + " ms", 215, 205);
 		g.drawString("Number of Jedi Knights: " + amount, 215, 216);
+		long sd = MainApplet.getNumFramesDrawn();
+		if (sd == 0)
+			sd = Main.getNumFramesDrawn();
+		g.drawString("Number of frames drawn: " + sd, 215, 227);
 		if (adder <= 0 && Math.random() < 0.01) {
 			adder = (float)(Math.random() * 10)+15;
 		}

@@ -3,7 +3,7 @@ public class Strings {
 	public static Strings inst = null;
 	
 	static {
-		inst = new Strings();
+		inst = new ENUS_Strings();
 	}
 	
 	public Strings() {
@@ -30,29 +30,47 @@ public class Strings {
 		
 		SAIL_RAFT_RULE_NOTE = "You must be in the water to use your raft.";
 		SAIL_RAFT_CANT_LEAVE = "You can not leave a raft in deep water.";
+		
+		NAME_FIACE = "Fi\u00E4ce Forest";
+		NAME_HOLM = "Holm Village";
+		NAME_HARBOUR = "Sailor's Harbour";
+		NAME_HARBOUR_SHORT = "Harbour";
+		NAME_CADEN_SEA = "Caden Sea";
 	}
 	
-	public final String HOLM_VILLAGE_SIGN;
-	public final String HOLM_VILLAGE_NORTH_ENTRY;
-	public final String HOLM_VILLAGE_CASSIUS_O;
-	public final String HOLM_VILLAGE_CASSIUS_H;
-	public final String HOLM_VILLAGE_GRANDMA_O;
-	public final String HOLM_VILLAGE_GRANDMA_H;
-	public final String HOLM_VILLAGE_CHARLES_O;
-	public final String HOLM_VILLAGE_CHARLES_H;
-	public final String HOLM_VILLAGE_RULF_O;
-	public final String HOLM_VILLAGE_RULF_H;
-	public final String HOLM_VILLAGE_WELL_MSG_0;
-	public final String HOLM_HAUZ_GRAND_PURCHASED_RAFT;
-	public final String HOLM_HAUZ_GRAND_NOT_PURCHASED_RAFT;
-	public final String SHOP_ENTRY_MSG;
-	public final String SHOP_LEAVE_MSG;
-	public final String SHOP_DISPL_RAFT;
-	public final String SHOP_DISPL_MOON;
-	public final String SHOP_DISPL_LAMP;
-	public final String SHOP_DISPL_HART;
-	public final String SHOP_NO_FUNDS;
+	public String NAME_FIACE;
+	public String NAME_HOLM;
+	public String NAME_HARBOUR;
+	public String NAME_HARBOUR_SHORT;
+	public String NAME_CADEN_SEA;
 	
-	public final String SAIL_RAFT_RULE_NOTE;
-	public final String SAIL_RAFT_CANT_LEAVE;
+	public String HOLM_VILLAGE_SIGN;
+	public String HOLM_VILLAGE_NORTH_ENTRY;
+	public String HOLM_VILLAGE_CASSIUS_O;
+	public String HOLM_VILLAGE_CASSIUS_H;
+	public String HOLM_VILLAGE_GRANDMA_O;
+	public String HOLM_VILLAGE_GRANDMA_H;
+	public String HOLM_VILLAGE_CHARLES_O;
+	public String HOLM_VILLAGE_CHARLES_H;
+	public String HOLM_VILLAGE_RULF_O;
+	public String HOLM_VILLAGE_RULF_H;
+	public String HOLM_VILLAGE_WELL_MSG_0;
+	public String HOLM_HAUZ_GRAND_PURCHASED_RAFT;
+	public String HOLM_HAUZ_GRAND_NOT_PURCHASED_RAFT;
+	public String SHOP_ENTRY_MSG;
+	public String SHOP_LEAVE_MSG;
+	public String SHOP_DISPL_RAFT;
+	public String SHOP_DISPL_MOON;
+	public String SHOP_DISPL_LAMP;
+	public String SHOP_DISPL_HART;
+	public String SHOP_NO_FUNDS;
+	
+	public String SAIL_RAFT_RULE_NOTE;
+	public String SAIL_RAFT_CANT_LEAVE;
+}
+
+class ENUS_Strings extends Strings {
+	public ENUS_Strings() {
+		super();
+	}
 }

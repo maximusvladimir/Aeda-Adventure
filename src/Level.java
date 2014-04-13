@@ -308,21 +308,21 @@ public abstract class Level extends Screen {
 		if ((ke.getKeyCode() == KeyEvent.VK_W
 				|| ke.getKeyCode() == KeyEvent.VK_S) && getScene() != null) {
 			scene.getPlayer().moving = false;
-		} else if (ke.getKeyCode() == KeyEvent.VK_Z && GameState.instance.hasRaft) {
-			if (!(this instanceof SailorHarbour) && !(this instanceof CadenSea)) {
+		} else if (ke.getKeyCode() == KeyEvent.VK_X && GameState.instance.hasRaft) {
+			if (!(this instanceof IWaterLevel)) {
 				addMessage("You can't use a raft here.","NOUSERAFT");
 				setActiveMessage("NOUSERAFT");
 			}
-			else if (this instanceof SailorHarbour) {
-				// Really bad OOP here:
-				((SailorHarbour)this).startRaftMode();
+			else {
+				((IWaterLevel)this).startRaftMode();
 			}
-			else if (this instanceof CadenSea) {
-				// Somemore really bad OOP here:
-				((CadenSea)this).startRaftMode();
+		} else if (ke.getKeyCode() == KeyEvent.VK_C && GameState.instance.hasFishOil) {
+			if (!GameState.instance.hasLantern) {
+				addMessage("You can't use fish oil without a lantern.", "NOUSEFISHOIL");
+				setActiveMessage("NOUSEFISHOIL");
 			}
 		}
-		if (ke.getKeyCode() == KeyEvent.VK_M && getScene() != null) {
+		if (ke.getKeyCode() == KeyEvent.VK_Z && getScene() != null) {
 			showWorldMap = !showWorldMap;
 			if (showWorldMap) {
 				scene.getPlayer().moving = false;
@@ -348,6 +348,9 @@ public abstract class Level extends Screen {
 		nextDelta = playerDelta;
 		gameHalt = true;
 		GameState.ORIGINS = new P3D(getScene().getPosition());
+		if (SoundManager.soundEnabled) {
+			new Sound("portal").play();
+		}
 	}
 
 	private P3D nextPlayerLoc;
@@ -369,15 +372,21 @@ public abstract class Level extends Screen {
 		if (!(this instanceof InsideHouse) && !(this instanceof Shop)) {
 			Utility.drawMap(g, getMain(), scene);
 			
-			if (GameState.instance.hasRaft) {
+			{
 				int x092 = getMain().getWidth() - (int) (getMain().getWidth() * 0.14f) - 8;
 				int y558 = (int) (getMain().getWidth() * 0.17f);
+				g.drawImage(Shop.getMapImage(), x092, y558,null);
+			}
+			
+			if (GameState.instance.hasRaft) {
+				int x092 = getMain().getWidth() - (int) (getMain().getWidth() * 0.14f) - 8;
+				int y558 = (int) (getMain().getWidth() * 0.17f + 56);
 				g.drawImage(Shop.getRaftImage(), x092,y558,null);
 			}
 			
 			if (GameState.instance.hasFishOil) {
 				int x092 = getMain().getWidth() - (int) (getMain().getWidth() * 0.14f) - 8;
-				int y558 = (int) (getMain().getWidth() * 0.17f + 56);
+				int y558 = (int) (getMain().getWidth() * 0.17f + 112);
 				g.drawImage(Shop.getOilImage(), x092,y558,null);
 			}
 		}

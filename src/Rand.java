@@ -80,6 +80,8 @@ public class Rand extends Random {
 	}
 	
 	public Color variate(Color base, int tolerance) {
+		if (tolerance == 0)
+			return base;
 		int halfT = tolerance / 2;
 		int dr = MathCalculator.colorLock(base.getRed() + nextInt(-halfT,halfT));
 		int dg = MathCalculator.colorLock(base.getGreen() + nextInt(-halfT,halfT));

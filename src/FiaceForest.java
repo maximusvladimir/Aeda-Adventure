@@ -55,29 +55,31 @@ public class FiaceForest extends Level {
 			trees[i] = new Tree(scene, getRand());
 			trees[i].setInstanceLoc(getRand().nextLocation(-400));
 		}
-		for (int i = 0; i < signs.length; i++) {
+		/*for (int i = 0; i < signs.length; i++) {
 			signs[i] = new Sign(scene);
 			signs[i].setInstanceLoc(getRand().nextLocation(-220));
 			signs[i].setSignMessage("Sign #" + (i + 1));
-		}
+		}*/
 		for (int i = 0; i < barrel.length; i++) {
 			barrel[i] = new Barrel(scene, getRand());
 			barrel[i].setInstanceLoc(getRand().nextLocation(-300));
 		}
-		setSigns(signs);
+		//setSigns(signs);
 		scene.add(grass);
 		scene.add(gems);
 		scene.add(trees);
-		scene.add(signs);
+//		scene.add(signs);
 		scene.add(barrel);
 		scene.add(new GameWalls(scene));
+		for (int i = 0; i < 10; i++) {
 		Enemy en = new Enemy(scene);
-		en.setInstanceLoc(new P3D(-400, -300, 0));
+		en.setInstanceLoc(getRand().nextLocation(-300));
 		scene.add(en);
-		Lamppost lamp = new Lamppost(scene);
+		}
+		/*Lamppost lamp = new Lamppost(scene);
 		lamp.setInstanceLoc(new P3D(2000, -300, 0));
 		lamp.updateInstLoc();
-		scene.add(lamp);
+		scene.add(lamp);*/
 
 		Well well = new Well(scene);
 		well.setInstanceLoc(new P3D(2000, -300, 300));
@@ -212,8 +214,13 @@ public class FiaceForest extends Level {
 			GameState.save();
 			addMessage(
 					"Press 'Q' to skip the dialogues or jump."
-							+ "\nPress 'E' to attack.\nPress 'WASD' to move around.\nThe game automatically saves every 10 seconds, so there is no\nneed to save.",
-					"intro1");
+							+ "\nPress 'ENTER' to attack.\nPress 'WASD' to move around.\nThe game automatically saves every 10 seconds, so there is no\nneed to save.",
+					"intro1",new ActionListener() {
+								public void actionPerformed(ActionEvent arg0) {
+									setActiveMessage("intro2");
+								}
+							});
+			addMessage("Your Grandma is around here somewhere.\nHelp her get back to her house.","intro2");
 			addMessage("Welcome to Fi\u00E4ce Forest, "
 					+ GameState.instance.playerGUID + ". Press 'Q'.", "intro0",
 					new ActionListener() {

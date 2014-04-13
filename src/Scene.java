@@ -173,7 +173,7 @@ public class Scene<T> {
 	private Sound footstep;
 	public void movePlayer(boolean forward) {
 		float te = plane.getWorldSizeHalf();
-		if ((footstep == null || footstep.isFinished()) && Math.random() < 0.76) {
+		if (SoundManager.soundEnabled && (footstep == null || footstep.isFinished()) && Math.random() < 0.76) {
 			boolean cont = true;
 			if (getScreen() instanceof IWaterLevel) {
 				IWaterLevel lev = (IWaterLevel)getScreen();
@@ -333,9 +333,12 @@ public class Scene<T> {
 			float am = (float)(Math.pow(10,lightn));
 			lightningAmount = (int)(am * 5);
 			lightn -= 0.005f;
-			if (lightn < 0.4 && Math.random() < 0.02) {
+			if (lightn < 0.4 && Math.random() < 0.02 && lcycles < 4) {
+				lcycles++;
 				lightn = (float)(Math.random()*0.4f + 0.6f);
-				new Sound("thunder").play();
+				if (SoundManager.soundEnabled && lcycles < 2) {
+					new Sound("thunder").play();
+				}
 			}
 		}
 		for (int i = 0; i < getSceneSize(); i++) {
@@ -381,8 +384,16 @@ public class Scene<T> {
 	
 	public void makeLightning() {
 		lightn = 1;
-		new Sound("thunder").play();
+		if (SoundManager.soundEnabled) {
+			new DelayedThread(new Runnable() {
+				public void run() {
+					new Sound("thunder").play();
+				}
+			}, 300).start();
+		}
+		lcycles = 0;
 	}
+	private int lcycles = 0;
 	private float lightn = 0.0f;
 	public static long numTriangles = 0;
 	public static int skippedTriangles = 0;

@@ -153,7 +153,7 @@ public class Shop extends Level {
 						public void actionPerformed(ActionEvent arg0) {
 							Message m = (Message) arg0.getSource();
 							if (m.getResult()) {
-								addMessage("Congradulations! You now have a raft!\nPress 'Z' in water to use your raft.", "RAFTINFO");
+								addMessage("Congradulations! You now have a raft!\nPress 'X' in water to use your raft.", "RAFTINFO");
 								setActiveMessage("RAFTINFO");
 								GameState.instance.hasRaft = true;
 								GameState.instance.gems -= 200;
@@ -379,7 +379,7 @@ public class Shop extends Level {
 			drawRaft(g,98.4f,8,28,scaler);
 			g.setColor(Color.red);
 			g.setFont(new Font("Courier New",0,20));
-			g.drawString("Z",36,46);
+			g.drawString("X",36,46);
 			g.dispose();
 		}
 		return raftImage;
@@ -408,10 +408,51 @@ public class Shop extends Level {
 			g.setClip(0, 0, 48, 48);
 			g.setColor(Color.red);
 			g.setFont(new Font("Courier New",0,20));
-			g.drawString("X",36,46);
+			g.drawString("C",36,46);
 			g.dispose();
 		}
 		return oilImage;
+	}
+	
+	private static BufferedImage mapImage = null;
+	public static BufferedImage getMapImage() {
+		if (mapImage == null) {
+			mapImage = new BufferedImage(48,48,BufferedImage.TYPE_4BYTE_ABGR);
+			Graphics2D g = (Graphics2D)mapImage.getGraphics();
+			Polygon shell = new Polygon();
+			shell.addPoint(7,5);
+			shell.addPoint(44, 5);
+			shell.addPoint(38,36);
+			shell.addPoint(0, 36);
+			shell.addPoint(7, 5);
+			
+			// shadow
+			g.translate(4,5);
+			g.setColor(new Color(0,0,0,50));
+			g.fillPolygon(shell);
+			g.translate(-4, -5);
+			
+			g.setColor(new Color(209,205,154));
+			g.fillPolygon(shell);
+			g.setColor(new Color(141,107,27));
+			g.drawPolygon(shell);
+			
+			Rand fkjs = new Rand(1108295);
+			for (int i = 0; i < 28; i++) {
+				if (fkjs.nextDouble() < 0.4 || i == 2)
+					continue;
+				g.setColor(fkjs.variate(new Color(71,114,33),50));
+				g.drawLine(9 - (i/4), 7 + (i), 41 - (i/4), 7 + (i));
+			}
+			
+			g.setColor(new Color(20,163,248));
+			g.fillOval(11,22,23,6);
+			
+			g.setColor(Color.red);
+			g.setFont(new Font("Courier New",0,20));
+			g.drawString("Z",36,46);
+		}
+		return mapImage;
 	}
 
 	public void drawHUD(Graphics g) {

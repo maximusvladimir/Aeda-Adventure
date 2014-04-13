@@ -1,0 +1,1414 @@
+$AnimationKeyObject -> a:
+    int keytype -> a
+    $TimedFloatKeyObject[] TimedFloatKeys -> a
+    java.lang.String toString() -> toString
+$AnimationObject -> b:
+    java.lang.String name -> name
+    java.util.Vector AnimationKeyList -> a
+    $FrameModel frame -> a
+    java.lang.String toString() -> toString
+$AnimationSetObject -> c:
+    java.lang.String name -> name
+    java.util.Vector AnimationList -> b
+    java.lang.String toString() -> toString
+$Face -> d:
+    int[] vertIndex -> a
+    java.lang.String toString() -> toString
+$FrameModel -> e:
+    java.lang.String name -> name
+    float[] transformMatrix -> a
+    java.util.Vector FrameModelList -> c
+    java.util.Vector MeshObjectList -> d
+    java.lang.String toString() -> toString
+$Loader -> f:
+    int unnamed -> b
+    java.util.Vector segments -> e
+    java.lang.String readFile(java.lang.String) -> a
+    java.lang.String getBraceSegment(java.lang.String) -> b
+    float[] parseTransformMatrixArray(java.lang.String) -> a
+    void parseMeshVertexColors(java.lang.String,$MeshObject) -> a
+    java.lang.String getSegmentByName(java.lang.String) -> c
+    void parseAnimationKey(java.lang.String,$AnimationObject) -> a
+    void parseAnimation(java.lang.String,$AnimationSetObject,$XModelData) -> a
+    void parseAnimationSet(java.lang.String,$XModelData) -> a
+    java.lang.String parseReferenceName(java.lang.String) -> d
+    void parseMesh(java.lang.String,$FrameModel) -> a
+    void parseFrame(java.lang.String,$XModelData) -> b
+    void parseFrame(java.lang.String,$FrameModel) -> b
+    void handleFrame(java.lang.String,$FrameModel) -> c
+    $XModelData LoadModel(java.lang.String) -> a
+$MaterialObject -> g:
+    java.lang.String toString() -> toString
+$MeshObject -> h:
+    java.lang.String name -> name
+    $Vertex3f[] vertices -> a
+    $Face[] faces -> a
+    $Vertex2f[] textureCoords -> a
+    $Vertex3f[] normals -> b
+    $Face[] normalsFaces -> b
+    $RGBA[] vertexColors -> a
+    java.util.Vector SkinWeightsList -> f
+    $MaterialObject[] MaterialList -> a
+    java.lang.String toString() -> toString
+$RGBA -> i:
+    float[] rgba -> b
+    java.lang.String toString() -> toString
+$TimedFloatKeyObject -> j:
+    int time -> c
+    float[] keys -> c
+    java.lang.String toString() -> toString
+$Vertex2f -> k:
+    java.lang.String toString() -> toString
+$Vertex3f -> l:
+    float x -> x
+    float y -> y
+    float z -> a
+    java.lang.String toString() -> toString
+$XModelData -> m:
+    int hMajor -> d
+    int hMinor -> e
+    long hFlags -> a
+    java.util.Vector FrameModelList -> c
+    java.util.Vector AnimationSetList -> g
+    java.lang.String toString() -> toString
+    $FrameModel searchFrame(java.util.Vector,java.lang.String) -> a
+AbstractBufferedImageOp -> n:
+    java.awt.image.BufferedImage createCompatibleDestImage(java.awt.image.BufferedImage,java.awt.image.ColorModel) -> createCompatibleDestImage
+    java.awt.geom.Rectangle2D getBounds2D(java.awt.image.BufferedImage) -> getBounds2D
+    java.awt.geom.Point2D getPoint2D(java.awt.geom.Point2D,java.awt.geom.Point2D) -> getPoint2D
+    java.awt.RenderingHints getRenderingHints() -> getRenderingHints
+    int[] getRGB(java.awt.image.BufferedImage,int,int,int,int,int[]) -> a
+    void setRGB(java.awt.image.BufferedImage,int,int,int,int,int[]) -> a
+B64 -> o:
+    char[] ALPHABET -> a
+    int[] toInt -> b
+    java.lang.String encode(byte[]) -> encode
+    byte[] decode(java.lang.String) -> decode
+Barrel -> p:
+    PointTesselator tesselator -> a
+    P3D[] gens -> a
+    java.awt.Color[] colors -> colors
+    float delta -> b
+    float rotateOver -> c
+    boolean done -> a
+    long deadTime -> b
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Bed -> q:
+    PointTesselator tesselator -> a
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Berlin -> r:
+    int[] p -> c
+    int[] permutation -> d
+    double noise(double,double) -> a
+    double fade(double) -> a
+    double lerp(double,double,double) -> a
+    double grad(int,double,double,double) -> a
+C3D -> s:
+    java.awt.Color color -> color
+    java.lang.String toString() -> toString
+CadenSea -> t:
+    Raft raft -> a
+    float startSpeed -> d
+    void init() -> init
+    boolean inDeepWater() -> a
+    boolean inWater() -> b
+    void tick() -> a
+    java.lang.String getName() -> getName
+    void draw(java.awt.Graphics) -> a
+    void access$0(CadenSea) -> a
+CadenSea$1 -> u:
+    CadenSea this$0 -> a
+    void movePlayer(boolean) -> a
+Cassius -> v:
+    PointTesselator tesselator -> a
+    float delta -> b
+    Rand ra -> a
+    void draw(int) -> a
+    P3D[] genHeadCache() -> a
+    P3D getPoint$1949e685(double,double) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+CassiusModel -> w:
+    void drawModel0$403005b(PointTesselator,Rand) -> a
+Character -> x:
+    float health -> e
+    boolean persuingPlayer -> b
+    float destX -> f
+    float destZ -> g
+    float startX -> h
+    float startZ -> i
+    float destDist -> j
+    float moveSpeed -> k
+    float destAlt -> l
+    boolean movingTowards -> c
+    boolean firedArrival -> d
+    boolean isMovingTowards() -> c
+    void cancelMovement() -> b
+    void moveTowards(float,float) -> a
+    void moveTowards(P3D) -> a
+    void addHealth(float) -> a
+    void tick() -> a
+    void kill() -> kill
+ComponentMover -> y:
+    java.awt.Component destinationComponent -> a
+    java.awt.Component destination -> destination
+    java.awt.Component source -> source
+    boolean changeCursor -> e
+    java.awt.Point pressed -> a
+    java.awt.Point location -> b
+    java.awt.Cursor originalCursor -> a
+    boolean autoscrolls -> f
+    java.awt.Insets dragInsets -> a
+    java.awt.Dimension snapSize -> a
+    void registerComponent(java.awt.Component[]) -> a
+    void mousePressed(java.awt.event.MouseEvent) -> mousePressed
+    void mouseDragged(java.awt.event.MouseEvent) -> mouseDragged
+    int getDragDistance(int,int,int) -> a
+    void mouseReleased(java.awt.event.MouseEvent) -> mouseReleased
+ControllerSupport$1 -> z:
+    void write(int) -> write
+ConvolveFilter -> A:
+    int CLAMP_EDGES -> f
+    int WRAP_EDGES -> g
+    java.awt.image.Kernel kernel -> a
+    boolean alpha -> g
+    int edgeAction -> h
+    java.awt.image.BufferedImage filter(java.awt.image.BufferedImage,java.awt.image.BufferedImage) -> filter
+    java.awt.image.BufferedImage createCompatibleDestImage(java.awt.image.BufferedImage,java.awt.image.ColorModel) -> createCompatibleDestImage
+    java.awt.geom.Rectangle2D getBounds2D(java.awt.image.BufferedImage) -> getBounds2D
+    java.awt.geom.Point2D getPoint2D(java.awt.geom.Point2D,java.awt.geom.Point2D) -> getPoint2D
+    java.awt.RenderingHints getRenderingHints() -> getRenderingHints
+    java.lang.String toString() -> toString
+Couch -> B:
+    PointTesselator tesselator -> a
+    float delta -> b
+    void draw(int) -> a
+    boolean isCullable() -> d
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Couch$1 -> C:
+    void onHit(Drawable,Drawable,int,int) -> a
+DT -> D:
+    int internalType$5669a71 -> i
+DelayedThread -> E:
+    java.lang.Thread thread -> thread
+DelayedThread$1 -> F:
+    long val$millis -> c
+    java.lang.Runnable val$runnable -> a
+    void run() -> run
+Drawable -> G:
+    Hitbox hitbox -> a
+    P3D pos -> a
+    P3D staticPos -> b
+    boolean visible -> h
+    Scene scene -> a
+    int iddark -> j
+    void dropGoodies() -> c
+    float getDistToPlayer() -> a
+    void setInstanceLoc(float,float,float) -> a
+    void setInstanceLoc(float,float) -> b
+    boolean isCullable() -> d
+    void setPosition(P3D) -> b
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Dunp -> H:
+    PointTesselator tesselator -> a
+    float ssf -> m
+    void createPic() -> d
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Dunp$1 -> I:
+    void onHit(Drawable,Drawable,int,int) -> a
+ENUS_Strings -> J:
+Enemy -> K:
+    PointTesselator tesselator -> a
+    java.awt.image.BufferedImage enemyImage -> a
+    float speed -> n
+    boolean alreadyHit -> i
+    long timeSinceLastHit -> d
+    float delta -> b
+    float theta -> o
+    float interpolator -> p
+    Rand rand -> b
+    boolean persueHalt -> j
+    float healthLoss -> q
+    float fader -> r
+    boolean dead -> k
+    long timeSinceLastHit2 -> e
+    boolean checker -> l
+    void createPic() -> d
+    java.awt.image.BufferedImage getEnemyIcon() -> a
+    void draw(int) -> a
+    void kill() -> kill
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Enemy$1 -> L:
+    void onHit(Drawable,Drawable,int,int) -> a
+FacialExpression -> M:
+    FacialExpression MOUTH_SMILE -> a
+    FacialExpression MOUTH_NEUTRAL -> b
+    FacialExpression MOUTH_FROWN -> c
+    FacialExpression EYEBROWS_NEUTRAL -> d
+    FacialExpression EYEBROWS_ANGRY -> e
+    FacialExpression EYEBROWS_INNOCENTLIKE -> f
+    FacialExpression EMOTION_HAPPY -> g
+    FacialExpression EMOTION_ANGRY -> h
+    FacialExpression EMOTION_SAD -> i
+    FacialExpression EMOTION_PLAIN -> j
+    FacialExpression EMOTION_FOCUSED -> k
+    FacialExpression EMOTION_REASSURING -> l
+    FacialExpression[] ENUM$VALUES -> a
+    FacialExpression[] values() -> a
+FiaceForest -> N:
+    void init() -> init
+    void tick() -> a
+    java.lang.String getName() -> getName
+    void draw(java.awt.Graphics) -> a
+FiaceForest$1 -> O:
+    boolean showingMessage -> m
+    boolean askAnnoyingMessageAnymore -> n
+    boolean talkedTo -> o
+    boolean traveling -> p
+    boolean completedAction -> q
+    boolean showedCompletedAction -> r
+    void tick() -> a
+    void access$0$63f6edb2(FiaceForest$1) -> a
+    void access$1$63f6edb2(FiaceForest$1) -> b
+FiaceForest$1$1 -> P:
+    FiaceForest$1 this$1 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+FiaceForest$1$2 -> Q:
+    FiaceForest$1 this$1 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+FiaceForest$1$2$1 -> R:
+    FiaceForest$1$2 this$2 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+FiaceForest$2 -> S:
+    FiaceForest this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+FileSave -> T:
+    long startTime -> f
+    void save(GameState) -> a
+    void save(GameState,java.lang.StringBuilder) -> a
+    java.lang.String b64d(java.lang.String) -> e
+    java.lang.String store(java.lang.String) -> f
+    GameState read(java.io.BufferedReader) -> a
+    GameState load() -> a
+    boolean exists() -> exists
+FishOil -> U:
+    PointTesselator tesselator -> a
+    float stxz -> s
+    float wave -> t
+    int latitudeBands -> k
+    int longitudeBands -> l
+    java.awt.Color baseColor1 -> a
+    java.awt.Color baseColor2 -> b
+    P3D[] header -> b
+    void draw(int) -> a
+    java.awt.Color adjust(float,float) -> a
+    P3D[] genConicalSphereCache() -> b
+    P3D getPoint$1949e685(double,double) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+FishOil$1 -> V:
+    Hitbox val$box -> b
+    void onHit(Drawable,Drawable,int,int) -> a
+Flake -> W:
+    float x -> x
+    float y -> y
+    float dx -> u
+    int size -> size
+Flakes -> X:
+    Flake[] parts -> a
+    HitAction main$35561e25 -> a
+    Rand rand -> b
+Font3D -> Y:
+    java.awt.Color color -> color
+    java.awt.Font font -> font
+    P3D loc -> c
+    java.lang.String str -> a
+GamePlane -> Z:
+    PointTesselator tesselator -> a
+    int size -> size
+    java.awt.Color baseColor -> c
+    float[] points -> d
+    java.awt.Color[] colors -> colors
+    java.awt.Color[] colors2 -> a
+    float[] waters -> e
+    float px -> v
+    float pz -> w
+    float WORLDSIZE -> z
+    float WORLDSIZEHALF -> A
+    float WORLDSIZESIZE -> B
+    float FOGAMOUNT -> C
+    Rand random -> c
+    int variability -> m
+    int variabilityhalf -> n
+    float colorHeight -> D
+    boolean stop -> s
+    boolean water -> t
+    float target -> E
+    float nnsHeight -> F
+    float nnsTarget -> G
+    float playerHeight -> H
+    java.awt.image.BufferedImage genWorld -> b
+    boolean pointsOverride -> u
+    float waterx -> I
+    float waterz -> J
+    float getLocationPoint(float,float) -> a
+    float getPlayerLocation$2548a25() -> b
+    int[] getWorldPointAsGridPoint(float,float) -> a
+    void genWorld() -> e
+    void setColorPoint(int,int,java.awt.Color) -> a
+    java.awt.Color getColorPoint(int,int) -> a
+    void setHeightPoint(int,int,float) -> a
+    float getHeightPoint(int,int) -> a
+    float getSparsalHeightPoint(int,int) -> b
+    float getHeightPointWater(int,int) -> c
+    boolean isCullable() -> d
+    int getColor(int,int) -> a
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+GameState -> aa:
+    int playerStage -> o
+    int playerLevel -> p
+    P3D playerLocation -> d
+    int score -> q
+    float health -> e
+    java.lang.String playerGUID -> b
+    int gems -> r
+    float playerDelta -> K
+    java.awt.Color playerColor -> d
+    P3D ORIGINS -> e
+    int healthPieces -> s
+    long timePlayed -> g
+    boolean talkedToGrandmaFiace -> v
+    boolean hasMoonstone -> w
+    boolean hasRaft -> x
+    boolean hasLantern -> y
+    boolean hasFishOil -> z
+    GameState instance -> a
+    FileSave saver -> a
+    long saveNum -> h
+    P3D FIXEDLOC -> f
+    boolean doVignette -> A
+    int DISPLAYED3DOBJECTS -> t
+    int TOTAL3DOBJECTS -> u
+    int DTIME -> v
+    java.lang.String appletInstance -> c
+    java.lang.String toString() -> toString
+    void save() -> save
+GameWalls -> ab:
+    PointTesselator tesselator -> a
+    float height -> height
+    java.awt.Color wc -> e
+    boolean isCullable() -> d
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+GaussianFilter -> ac:
+    java.awt.image.Kernel kernel -> a
+    java.awt.image.BufferedImage filter(java.awt.image.BufferedImage,java.awt.image.BufferedImage) -> filter
+    void convolveAndTranspose(java.awt.image.Kernel,int[],int[],int,int,boolean,int) -> a
+    java.lang.String toString() -> toString
+    java.awt.image.BufferedImage createCompatibleDestImage(java.awt.image.BufferedImage,java.awt.image.ColorModel) -> createCompatibleDestImage
+    void setRGB(java.awt.image.BufferedImage,int,int,int,int,int[]) -> a
+    java.awt.geom.Rectangle2D getBounds2D(java.awt.image.BufferedImage) -> getBounds2D
+    java.awt.RenderingHints getRenderingHints() -> getRenderingHints
+    int[] getRGB(java.awt.image.BufferedImage,int,int,int,int,int[]) -> a
+    java.awt.geom.Point2D getPoint2D(java.awt.geom.Point2D,java.awt.geom.Point2D) -> getPoint2D
+Gem -> ad:
+    PointTesselator tesselator -> a
+    float spinOffset -> L
+    float dark -> M
+    float time1 -> N
+    float delta -> b
+    PointTesselator getTesselator() -> a
+    void tick() -> a
+    void draw(int) -> a
+Gem$1 -> ae:
+    Hitbox val$box -> b
+    void onHit(Drawable,Drawable,int,int) -> a
+Grandma -> af:
+    PointTesselator tesselator -> a
+    Rand rand -> b
+    float delta -> b
+    Rand ra -> a
+    P3D[] trigDressCache -> c
+    P3D[] trigHeadCache -> d
+    boolean angryFace -> B
+    float walkDelta -> O
+    float turn -> P
+    float dx -> u
+    float dz -> Q
+    float alphaTele -> R
+    void draw(int) -> a
+    P3D[] genHeadCache() -> a
+    P3D getPoint$1949e685(double,double) -> a
+    void drawLeg(boolean,java.awt.Color) -> a
+    void tick() -> a
+    void doMovement() -> f
+    PointTesselator getTesselator() -> a
+Grass -> ag:
+    PointTesselator tesselator -> a
+    float delta -> b
+    void draw(int) -> a
+    java.awt.Color genColor(java.util.Random,int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Heart -> ah:
+    PointTesselator tesselator -> a
+    float delta -> b
+    java.awt.Color cnnsr -> f
+    float destructionDelta -> S
+    java.awt.Color cnstart -> g
+    boolean doingDestroy -> C
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Heart$1 -> ai:
+    Hitbox val$box -> b
+    void onHit(Drawable,Drawable,int,int) -> a
+HitAction -> aj:
+    void onHit(Drawable,Drawable,int,int) -> a
+    int getWidth() -> getWidth
+    int getHeight() -> getHeight
+    void setActiveScreen(java.lang.String) -> a
+    Screen getScreen(java.lang.String) -> a
+    int getFPS() -> a
+    boolean isFullscreen() -> e
+    int getDrawTime() -> b
+    boolean screenExists(java.lang.String) -> a
+    void addScreen(Screen) -> a
+    void removeScreen(Screen) -> b
+    int getNumScreens() -> getNumScreens
+    int getActiveScreen() -> c
+    Screen getScreen(int) -> a
+Hitbox -> ak:
+    HitAction defaultAction -> b
+    P3D[] bounds -> e
+    HitAction action -> c
+    P3D location -> g
+    boolean enabled -> enabled
+    Drawable drawable -> a
+    void rotate90deg() -> g
+    P3D getCenter(P3D,P3D) -> a
+    boolean isHitable() -> f
+    P3D adjustBoundToPosition(int) -> a
+    P3D resolvePlayer(Hitbox,Hitbox,int) -> a
+Hitbox$1 -> al:
+    void onHit(Drawable,Drawable,int,int) -> a
+HolmVillage -> am:
+    House[] houses -> a
+    void loadedLevel() -> h
+    void init() -> init
+    void tick() -> a
+    java.awt.Color getRoadColor(java.awt.Color) -> a
+    java.lang.String getName() -> getName
+    void draw(java.awt.Graphics) -> a
+HolmVillage$1 -> an:
+HolmVillage$2 -> ao:
+    Grandma grandma -> a
+    boolean grandmaMessage -> D
+    HolmVillage this$0 -> a
+    void reloadedLevel() -> i
+    void init() -> init
+    boolean access$0(HolmVillage$2) -> a
+    void access$1$4ff3919a(HolmVillage$2) -> a
+HolmVillage$2$1 -> ap:
+    HolmVillage$2 this$1 -> a
+    void tick() -> a
+HolmVillage$3 -> aq:
+    boolean na -> E
+    HolmVillage this$0 -> a
+    void tick() -> a
+Horse -> ar:
+    PointTesselator tesselator -> a
+    float rpw -> T
+    float rot -> U
+    float tar -> V
+    Rand rand -> b
+    float tail -> W
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+House -> as:
+    PointTesselator tesselator -> a
+    java.lang.String houseName -> d
+    java.lang.String ownerName -> e
+    java.awt.Font fontCache -> a
+    boolean isShowing -> F
+    java.awt.Color sideColor -> h
+    long offset -> offset
+    float windowGlow -> X
+    boolean lightsOn -> G
+    void draw(int) -> a
+    void tick() -> a
+    void drawSideRoof$c6a8ad5(P3D,P3D) -> a
+    void drawPane(P3D,P3D,P3D,P3D) -> a
+    void drawPaneSide(P3D,P3D,P3D,P3D) -> b
+    void drawLengthSide(P3D,P3D) -> b
+    void drawLength(P3D,P3D) -> c
+    void drawWindow(P3D,P3D) -> d
+    PointTesselator getTesselator() -> a
+IWaterLevel -> at:
+    boolean inDeepWater() -> a
+    boolean inWater() -> b
+InsideHouse -> au:
+    java.lang.String na -> f
+    Level ths -> a
+    void init() -> init
+    void draw(java.awt.Graphics) -> a
+    void tick() -> a
+    java.lang.String getName() -> getName
+Lamppost -> av:
+    PointTesselator tesselator -> a
+    java.awt.Color[] startTileColor -> b
+    java.awt.Color[] endTileColor -> c
+    int tile0X -> w
+    int tile0Z -> z
+    boolean lampOn -> H
+    float windX -> Y
+    float lampDelta -> Z
+    float side -> aa
+    float interpolationDisappearValue -> ab
+    java.awt.Color lightColor -> i
+    void updateInstLoc() -> j
+    void draw(int) -> a
+    java.awt.Color getTileColor(int,int,boolean) -> a
+    int locToIndex(int,int) -> b
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Level -> aw:
+    Scene scene -> a
+    boolean showFlakes -> I
+    Sign[] signs -> a
+    Flakes flakes -> a
+    Rand rand -> b
+    java.awt.image.BufferedImage vignette -> c
+    boolean stTickLoad -> J
+    float decrement -> ac
+    int activeMessageIndex -> A
+    java.util.ArrayList messages -> a
+    long blinkTime -> i
+    long lastBlink -> j
+    float sf -> ad
+    float playerDelta -> K
+    P3D nextPlayerLoc -> h
+    Screen nextScreen -> a
+    float nextDelta -> ae
+    float transition -> af
+    boolean showWorldMap -> K
+    boolean gameHalt -> L
+    void loadedLevel() -> h
+    void reloadedLevel() -> i
+    Scene getScene() -> a
+    void silentTick() -> k
+    void postSilentTick() -> l
+    void addMessage(java.lang.String,java.lang.String,java.awt.event.ActionListener) -> a
+    void addMessage$3f6f7d67(java.lang.String,java.lang.String,java.awt.event.ActionListener) -> b
+    void addMessage(java.lang.String,java.lang.String,boolean,boolean,java.awt.event.ActionListener) -> a
+    void setActiveMessage(java.lang.String) -> b
+    void resize(int,int) -> resize
+    void keyDown(int) -> b
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+    void startTransition(Screen,P3D,float) -> a
+    void drawHUD(java.awt.Graphics) -> b
+    boolean isMessageBeingShown() -> g
+Light -> ax:
+Main -> Main:
+    java.awt.image.VolatileImage vRAMBuffer -> a
+    java.lang.Thread updateThread -> a
+    long timeSinceUpdate -> k
+    int framesDrawn -> B
+    int FPS -> C
+    boolean running -> running
+    boolean fullscreen -> M
+    boolean justEnteredFullscreen -> N
+    boolean painting -> O
+    java.awt.image.BufferedImage buffer -> d
+    java.util.ArrayList screens -> b
+    Screen active -> b
+    long recordedSaves -> l
+    int drawTime -> D
+    long keyTicks -> m
+    boolean[] keys -> a
+    CassiusModel cnt$35afa774 -> a
+    boolean antialias -> P
+    float blurAmount -> ag
+    float redAmount -> ah
+    int activeIndex -> E
+    void main(java.lang.String[]) -> main
+    boolean isFullscreen() -> e
+    int getNumScreens() -> getNumScreens
+    boolean screenExists(java.lang.String) -> a
+    void addScreen(Screen) -> a
+    Screen getScreen(int) -> a
+    Screen getScreen(java.lang.String) -> a
+    int getActiveScreen() -> c
+    void removeScreen(Screen) -> b
+    void setActiveScreen(java.lang.String) -> a
+    void paint(java.awt.Graphics) -> paint
+    int getFPS() -> a
+    int getDrawTime() -> b
+    boolean access$0(Main) -> a
+    Screen access$1(Main) -> a
+    boolean[] access$2(Main) -> a
+    void access$3(Main,java.awt.image.BufferedImage) -> a
+    void access$4$3318af89(Main) -> a
+    long access$5(Main) -> a
+    void access$6(Main,long) -> a
+    CassiusModel access$7$31f73489(Main) -> a
+    long access$8(Main) -> b
+    void access$9(Main,long) -> b
+    void access$10(Main) -> b
+Main$1 -> ay:
+    Main this$0 -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+    void keyPressed(java.awt.event.KeyEvent) -> keyPressed
+    void keyTyped(java.awt.event.KeyEvent) -> keyTyped
+Main$2 -> az:
+    Main this$0 -> a
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+    void mousePressed(java.awt.event.MouseEvent) -> mousePressed
+    void mouseReleased(java.awt.event.MouseEvent) -> mouseReleased
+Main$3 -> aA:
+    Main this$0 -> a
+    void mouseDragged(java.awt.event.MouseEvent) -> mouseDragged
+    void mouseMoved(java.awt.event.MouseEvent) -> mouseMoved
+Main$4 -> aB:
+    Main this$0 -> a
+    void componentResized(java.awt.event.ComponentEvent) -> componentResized
+Main$5 -> aC:
+    Main this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+Main$6 -> aD:
+    Main this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+Main$7 -> aE:
+    Main this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+Main$7$1 -> aF:
+    void run() -> run
+Main$8 -> aG:
+    Main this$0 -> a
+    void run() -> run
+MainApplet -> MainApplet:
+    boolean isApplet -> Q
+    Screen active -> b
+    java.util.ArrayList screens -> b
+    java.awt.image.BufferedImage buffer -> d
+    boolean[] keys -> a
+    boolean start -> R
+    int framesDrawn -> B
+    long queryTime -> n
+    java.lang.String readData -> g
+    int activeIndex -> E
+    int FPS -> C
+    int drawTime -> D
+    void init() -> init
+    void update(java.awt.Graphics) -> update
+    void paint(java.awt.Graphics) -> paint
+    boolean isFullscreen() -> e
+    int getNumScreens() -> getNumScreens
+    boolean screenExists(java.lang.String) -> a
+    java.lang.String invokeAndWaitOnPulse() -> invokeAndWaitOnPulse
+    void pulsateSignature(java.lang.String) -> pulsateSignature
+    int getActiveScreen() -> c
+    void addScreen(Screen) -> a
+    Screen getScreen(int) -> a
+    Screen getScreen(java.lang.String) -> a
+    void removeScreen(Screen) -> b
+    void setActiveScreen(java.lang.String) -> a
+    int getFPS() -> a
+    int getDrawTime() -> b
+    void access$0(MainApplet) -> a
+    Screen access$1(MainApplet) -> a
+    boolean[] access$2(MainApplet) -> a
+MainApplet$1 -> aH:
+    MainApplet this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+MainApplet$2 -> aI:
+    MainApplet this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+MainApplet$3 -> aJ:
+    MainApplet this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+MainApplet$4 -> aK:
+    MainApplet this$0 -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+    void keyPressed(java.awt.event.KeyEvent) -> keyPressed
+    void keyTyped(java.awt.event.KeyEvent) -> keyTyped
+MainApplet$5 -> aL:
+    MainApplet this$0 -> a
+    void mouseClicked(java.awt.event.MouseEvent) -> mouseClicked
+    void mousePressed(java.awt.event.MouseEvent) -> mousePressed
+    void mouseReleased(java.awt.event.MouseEvent) -> mouseReleased
+MainApplet$6 -> aM:
+    MainApplet this$0 -> a
+    void mouseDragged(java.awt.event.MouseEvent) -> mouseDragged
+    void mouseMoved(java.awt.event.MouseEvent) -> mouseMoved
+MainMenu -> aN:
+    PointTesselator terrain -> b
+    SceneTesselator scene -> a
+    Flake[] parts -> a
+    float starDelta -> ai
+    float normalizerMax -> aj
+    float normalizerMin -> ak
+    float[] clouds -> f
+    float heightCoefficent -> al
+    int width -> width
+    float delta -> b
+    float theta -> o
+    float moon -> am
+    boolean startFade -> S
+    float fade -> an
+    java.lang.String storageBuffer -> h
+    int isDisplayingPrompt -> F
+    long flasher -> o
+    boolean flasherOn -> T
+    void init() -> init
+    void resize(int,int) -> resize
+    java.awt.Color computeColor(float) -> a
+    float getHeight(float,float) -> b
+    void glow(java.awt.Color,java.awt.Graphics2D,float,float,float,float) -> a
+    void draw(java.awt.Graphics) -> a
+    java.lang.String getName() -> getName
+    void mouseReleased$161a084() -> m
+    void keyTyped(java.awt.event.KeyEvent) -> keyTyped
+    void drawHUD(java.awt.Graphics) -> b
+MathCalculator -> aO:
+    float[] sinTable -> g
+    float[] cosTable -> h
+    java.lang.String reduceDigits$52cdecda(double) -> a
+    float cos(double) -> a
+    float sin(double) -> b
+    float reduceTrig(float) -> a
+    float lock(float) -> b
+    java.awt.Color lerp(java.awt.Color,java.awt.Color,float) -> a
+    int min(int,int,int) -> b
+    int max(int,int,int) -> c
+    int colorLock(int) -> a
+    float lerp(float,float,float) -> a
+Matrix -> aP:
+    float[] internalData -> i
+    float[] swapMemory -> j
+    void zero() -> n
+    java.lang.String toString() -> toString
+    java.lang.String fch(float) -> a
+Message -> aQ:
+    java.lang.String msg -> i
+    java.lang.String name -> name
+    java.awt.event.ActionListener closeEvent -> a
+    float characters -> ao
+    boolean rem -> U
+    boolean currentOption -> V
+    boolean optionMessage -> W
+    void tick$26a536dc(java.awt.Graphics,HitAction) -> a
+ModelMerger -> aR:
+    int mx -> G
+    int my -> H
+    java.lang.String file -> j
+    java.lang.String sample -> k
+    boolean mouseOver -> X
+    void paint(java.awt.Graphics) -> paint
+    void merge() -> o
+    java.lang.String access$0(ModelMerger) -> a
+    void access$1(ModelMerger,java.lang.String) -> a
+    void access$2(ModelMerger,java.lang.String) -> b
+    void access$3(ModelMerger,int) -> a
+    void access$4(ModelMerger,int) -> b
+ModelMerger$1 -> aS:
+    ModelMerger this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+ModelMerger$2 -> aT:
+    ModelMerger this$0 -> a
+    void mousePressed(java.awt.event.MouseEvent) -> mousePressed
+    void mouseReleased(java.awt.event.MouseEvent) -> mouseReleased
+ModelMerger$3 -> aU:
+    ModelMerger this$0 -> a
+    void mouseMoved(java.awt.event.MouseEvent) -> mouseMoved
+Multiplayer -> aV:
+    PointTesselator terrain -> b
+    SceneTesselator scene -> a
+    Flake[] parts -> a
+    float normalizerMax -> aj
+    float normalizerMin -> ak
+    float[] clouds -> f
+    float heightCoefficent -> al
+    int width -> width
+    float delta -> b
+    float theta -> o
+    float moon -> am
+    void init() -> init
+    void resize(int,int) -> resize
+    java.awt.Color computeColor(float) -> a
+    float getHeight(float,float) -> b
+    void glow(java.awt.Color,java.awt.Graphics2D,float,float,float,float) -> a
+    void draw(java.awt.Graphics) -> a
+    java.lang.String getName() -> getName
+    void mouseReleased$161a084() -> m
+    void drawHUD(java.awt.Graphics) -> b
+Network -> aW:
+    boolean RUNNING -> Y
+    long clientId -> p
+    java.lang.Thread multiplayerThread -> b
+    java.lang.Thread multiplayerThread2 -> c
+    boolean createLevelIsOkay -> Z
+    java.lang.String MCAST_ADDR -> l
+    int DEST_PORT -> I
+    void halt() -> p
+    void start() -> start
+    void access$0() -> q
+    void access$1() -> r
+Network$1 -> aX:
+    void run() -> run
+Network$2 -> aY:
+    void run() -> run
+Operation3D -> aZ:
+    byte id -> a
+    int getOperationType() -> d
+P3D -> ba:
+    float x -> x
+    float y -> y
+    float z -> a
+    long totalDistanceOverhead -> q
+    long quS -> r
+    java.lang.Object clone() -> clone
+    float dist(P3D) -> a
+    java.lang.String toString() -> toString
+    P3D add(P3D,P3D) -> b
+PixelUtils -> bb:
+    int clamp(int) -> b
+Player -> bc:
+    PointTesselator tesselator -> a
+    FacialExpression mouthExpression -> m
+    FacialExpression eyeExpression -> n
+    float armsLag -> ap
+    float hhblur -> aq
+    boolean eyesOpen -> aa
+    boolean actualHitTick -> ab
+    float hitDelta -> ar
+    java.awt.Color playerColor -> d
+    boolean raftMode -> ac
+    float delta -> b
+    float time0 -> as
+    float time1 -> N
+    float time2 -> at
+    float jump -> au
+    float jumploss -> av
+    float actualDelta -> aw
+    boolean moving -> ad
+    Rand va -> d
+    boolean isASheik -> ae
+    float uqpz -> ax
+    java.awt.Color sheikWhite -> j
+    float destX -> f
+    float destZ -> g
+    float startX -> h
+    float startZ -> i
+    float dist -> ay
+    float destAlt -> l
+    int[] $SWITCH_TABLE$FacialExpression -> e
+    void hitBlur() -> s
+    void setFaceEmotion(FacialExpression) -> a
+    boolean isHitting() -> h
+    void drawCurlThing(java.awt.Color,P3D,P3D,P3D,P3D) -> a
+    void draw(int) -> a
+    void drawArm(java.awt.Color,java.awt.Color,java.awt.Color,float,float,boolean,int) -> a
+    void drawLeg$1120d6eb(java.awt.Color,java.awt.Color,float,float,float,float,float,boolean) -> a
+    void tick() -> a
+    void moveTowards(P3D) -> a
+    PointTesselator getTesselator() -> a
+    int[] $SWITCH_TABLE$FacialExpression() -> a
+PointTesselator -> bd:
+    Queue operationStack -> a
+    TriangleComparator cmp -> a
+    java.util.ArrayList triangles -> c
+    int maxWidth -> maxWidth
+    int maxHeight -> J
+    float midWidth -> az
+    float midHeight -> aA
+    float focalLength -> aB
+    float zDistance -> aC
+    java.awt.image.BufferedImage img -> e
+    int transparency -> transparency
+    float[] stagedPoints -> k
+    int stagedWidth -> K
+    boolean skipCull -> af
+    float rotationX -> aD
+    float rotationY -> aE
+    float rotationZ -> aF
+    int backgroundColor -> L
+    float translatePostX -> aG
+    float translatePostY -> aH
+    float translatePostZ -> aI
+    float translatePreX -> aJ
+    float translatePreY -> aK
+    float translatePreZ -> aL
+    int previousX -> M
+    int previousY -> N
+    int tri0X -> O
+    int tri0Y -> P
+    float tri0Z -> aM
+    P3D preRotate0 -> i
+    P3D preRotate1 -> j
+    java.awt.Color tri0C -> k
+    P3D p0YY -> k
+    P3D p1YY -> l
+    P3D p2YY -> m
+    R3D rotation -> a
+    P3D latestNormal -> n
+    int tri1X -> Q
+    int tri1Y -> R
+    float tri1Z -> aN
+    float tri1ZT -> aO
+    float tri0ZT -> aP
+    java.awt.Color tri1C -> l
+    java.awt.Color lastKnownGoodColor -> m
+    Matrix matrix -> a
+    long numSkippedTriangles -> s
+    P3D scale -> o
+    int[] imgData -> f
+    int stackDrawType$5669a71 -> S
+    int lastSkippedTriangles -> T
+    boolean removeAlpha -> ag
+    java.awt.Color currentStackColor -> n
+    float angleX -> aQ
+    float angleY -> aR
+    float angleZ -> aS
+    float radiusX -> aT
+    float radiusY -> aU
+    float radiusZ -> aV
+    void setTransparency(int) -> c
+    void setBackgroundColor(java.awt.Color) -> a
+    void setDrawType$755d345a$13462e() -> t
+    int getNumOfLastSkippedTriangles() -> e
+    void text(Font3D) -> a
+    void point(float,float,float) -> b
+    void point(P3D) -> c
+    void color(java.awt.Color) -> b
+    void color(int,int,int) -> a
+    void rotate(float,float,float) -> c
+    void translate(float,float,float,boolean) -> a
+    void setSize(java.awt.image.BufferedImage,int,int) -> a
+    void partialDraw(java.awt.Graphics) -> c
+    void draw(java.awt.Graphics) -> a
+    boolean drawableTriangle(int[]) -> a
+    void lowerTri$29c92f1d$5a73e2be(PointTesselator$microhelperpoint,PointTesselator$microhelperpoint,PointTesselator$microhelperpoint,java.awt.Color,java.awt.Color,java.awt.Color,T3D,int[],Light) -> a
+    void upperTri$29c92f1d$5a73e2be(PointTesselator$microhelperpoint,PointTesselator$microhelperpoint,PointTesselator$microhelperpoint,java.awt.Color,java.awt.Color,java.awt.Color,T3D,int[],Light) -> b
+    void fillTriangle$68cd43dc$ec6221f(T3D,int) -> a
+    void setPixel$6046c8d5(int,int,int,int,int) -> a
+    void setAngleRadiusX$483d242b(float,float) -> c
+    void setAngleRadiusY$483d242b(float,float) -> d
+    void setAngleRadiusZ$483d242b(float,float) -> e
+    void rotateX(float) -> b
+    void rotateY(float) -> c
+    void rotateZ(float) -> d
+    void rotateYZ(float,float,float,float,float) -> a
+    void rotateXZ(float,float,float,float,float) -> b
+    void generateStagedPoints$399b7e4c(int) -> d
+    float getHeightData(int,int) -> d
+PointTesselator$microhelperpoint -> be:
+    int x -> x
+    int y -> y
+PortalFront -> bf:
+    PointTesselator tesselator -> a
+    java.lang.String name -> name
+    P3D gotoPos -> p
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Queue -> bg:
+    java.util.ArrayList objs -> d
+    void enqueue(java.lang.Object) -> enqueue
+R3D -> bh:
+    float x -> x
+    float y -> y
+    float z -> a
+Raft -> bi:
+    PointTesselator tesselator -> a
+    Rand worker -> e
+    float deltaShake -> aW
+    float sailDeltaX -> aX
+    float full -> aY
+    void draw(int) -> a
+    boolean isCullable() -> d
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Rand -> bj:
+    long queries -> t
+    Scene scene -> a
+    Rand internalRandom -> f
+    long getNumRandoms() -> a
+    double random() -> random
+    float next2PI() -> c
+    double nextDouble() -> nextDouble
+    int nextInt() -> nextInt
+    int nextInt(int) -> nextInt
+    int nextInt(int,int) -> nextInt
+    float nextFloat() -> nextFloat
+    P3D nextLocation(float) -> a
+    java.awt.Color variate(java.awt.Color,int) -> a
+    java.awt.Color bright(java.awt.Color,int) -> b
+    java.awt.Color bright(java.awt.Color,int,int) -> a
+RedGem -> bk:
+    PointTesselator getTesselator() -> a
+    void draw(int) -> a
+RedGem$1 -> bl:
+    Hitbox val$box -> b
+    void onHit(Drawable,Drawable,int,int) -> a
+SailorHarbour -> bm:
+    Raft raft -> a
+    boolean raftMode -> ac
+    float startSpeed -> d
+    void loadedLevel() -> h
+    void init() -> init
+    void keyDown(int) -> b
+    boolean inDeepWater() -> a
+    boolean inWater() -> b
+    void startRaftMode() -> u
+    void tick() -> a
+    java.lang.String getName() -> getName
+    void draw(java.awt.Graphics) -> a
+    boolean access$0(SailorHarbour) -> a
+    void access$1(SailorHarbour) -> a
+SailorHarbour$1 -> bn:
+    SailorHarbour this$0 -> a
+    void run() -> run
+SailorHarbour$2 -> bo:
+    SailorHarbour this$0 -> a
+    void movePlayer(boolean) -> a
+Scene -> bp:
+    java.util.ArrayList objs -> d
+    java.awt.Color fogColor -> o
+    float fogStart -> aZ
+    float fogEnd -> ba
+    float playerX -> bb
+    float playerZ -> bc
+    int darkness -> U
+    float walkSpeed -> bd
+    float playerDelta -> K
+    Player player -> a
+    SceneTesselator scene -> a
+    GamePlane plane -> a
+    boolean canMove -> ah
+    Screen screen -> c
+    Level level -> b
+    boolean portalize -> ai
+    float playerY -> be
+    boolean fogEnabled -> aj
+    Sound footstep -> a
+    float camDist -> bf
+    int lcycles -> V
+    float lightn -> bg
+    long numTriangles -> u
+    int skippedTriangles -> W
+    void setPlane(GamePlane) -> a
+    java.util.ArrayList getObjectsByType(java.lang.Class) -> a
+    java.util.ArrayList getObjectsByTypeAndParented(java.lang.Class) -> b
+    void setPlayerDelta(float) -> e
+    void movePlayer(boolean) -> a
+    void add(Drawable) -> a
+    void add(java.lang.Object[]) -> add
+    void remove(Drawable) -> b
+    Drawable get(int) -> a
+    void setFog(float,float) -> f
+    P3D getPosition() -> a
+    void draw(java.awt.Graphics) -> a
+    void makeLightning() -> v
+    float getTerrainHeight(float,float) -> c
+    void setPlayerPosition(P3D) -> d
+Scene$1 -> bq:
+    void run() -> run
+SceneTesselator -> br:
+    java.util.ArrayList sceneObjects -> e
+    java.util.ArrayList triangles -> c
+    java.util.ArrayList lights -> f
+    TriangleComparator2 cmp2 -> a
+    java.awt.Color fogColor -> o
+    float fogStart -> aZ
+    float fogEnd -> ba
+    boolean fogUsed -> ak
+    boolean reverseFogEquation -> al
+    boolean useWireframeAdditionally -> am
+    java.awt.Polygon p -> a
+    long avaiableTriangles -> v
+    void addTesselator(PointTesselator) -> a
+    PointTesselator getTesselator(int) -> a
+    void draw(java.awt.Graphics) -> a
+Screen -> bs:
+    HitAction inst$35561e25 -> d
+    boolean inited -> an
+    int mx -> G
+    int my -> H
+    java.awt.image.BufferedImage buffer -> d
+    long timeSinceInit -> w
+    long counter -> x
+    boolean consoleMode -> ao
+    java.lang.String consoleString -> m
+    float consoleFlash -> bh
+    java.lang.String consoleDisplay -> n
+    long consoleDisplayTime -> y
+    java.lang.String n -> o
+    java.util.Hashtable wordsToColor -> a
+    long messageTime -> z
+    int inButton -> X
+    boolean isActiveScreen() -> i
+    void keyDown(int) -> b
+    void tick() -> a
+    int lerp(int,int,float) -> a
+    void internalInit() -> w
+    void init() -> init
+    void resize(int,int) -> resize
+    void draw(java.awt.Graphics) -> a
+    void drawHUD(java.awt.Graphics) -> b
+    java.lang.String getName() -> getName
+    void setMouse(int,int) -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+    void keyTyped(java.awt.event.KeyEvent) -> keyTyped
+    void consoleDisplay(java.lang.String) -> c
+    void drawConsole(java.awt.Graphics) -> d
+    void mouseReleased$161a084() -> m
+    java.lang.Object[] fitStringToRect$7380e4b8(java.awt.Graphics,java.lang.String,java.lang.String) -> a
+    void drawButton$783af6d3(java.awt.Graphics,java.lang.String,int) -> a
+    void hideCursor() -> x
+    boolean isFullscreen() -> e
+    void drawCursor(java.awt.Graphics) -> e
+Shop -> bt:
+    java.awt.Polygon kreepySmile -> b
+    boolean startPrivateTransition -> ap
+    boolean shownMessage -> aq
+    java.lang.String sender -> p
+    int selectedItem -> Y
+    float scaleAdjust -> bi
+    float selectedD -> bj
+    float windDelta -> bk
+    float glowDelta -> bl
+    float lampDelta -> Z
+    float transitionDelta -> bm
+    java.awt.image.BufferedImage raftImage -> f
+    java.awt.image.BufferedImage oilImage -> g
+    void init() -> init
+    void reloadedLevel() -> i
+    void resize(int,int) -> resize
+    void draw(java.awt.Graphics) -> a
+    void keyReleased(java.awt.event.KeyEvent) -> keyReleased
+    void keyDown(int) -> b
+    void drawPiece$45d7371(java.awt.Graphics2D,float,float) -> a
+    void drawLamp(java.awt.Graphics2D,float,float,float) -> a
+    void drawMoonstone$1aa75dd9(java.awt.Graphics2D,float,float,float) -> b
+    void drawRaft(java.awt.Graphics2D,float,float,float,float) -> a
+    java.awt.image.BufferedImage getRaftImage() -> b
+    java.awt.image.BufferedImage getOilImage() -> c
+    void drawHUD(java.awt.Graphics) -> b
+    void access$0$1f049e46(Shop) -> a
+    void access$1$1f049e46(Shop) -> b
+Shop$1 -> bu:
+    Shop this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+Shop$2 -> bv:
+    Shop this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+Shop$3 -> bw:
+    Shop this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+Shop$4 -> bx:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+Shop$5 -> by:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+Shop$6 -> bz:
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+Sign -> bA:
+    PointTesselator tesselator -> a
+    java.awt.Font fontCache -> a
+    java.lang.String message -> message
+    boolean isShowing -> F
+    boolean alreadyShown -> ar
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Sound -> bB:
+    java.util.HashSet clips -> a
+    SoundSet thisSet -> a
+    java.lang.String clipName -> q
+    boolean finished -> finished
+    boolean markedPositionSupport -> as
+    boolean markedVolumeSupport -> at
+    boolean loop -> au
+    void play() -> play
+    void access$0$2b188a29(Sound) -> a
+    SoundSet access$1(Sound) -> a
+Sound$1 -> bC:
+    Sound this$0 -> b
+    void update(javax.sound.sampled.LineEvent) -> update
+SoundManager -> bD:
+    java.lang.Thread soundThread -> d
+    boolean ENTRANCE -> av
+    javax.sound.sampled.AudioInputStream backgroundStream -> a
+    javax.sound.sampled.AudioInputStream clickStream -> b
+    javax.sound.sampled.AudioInputStream fs1Stream -> c
+    javax.sound.sampled.AudioInputStream fs2Stream -> d
+    javax.sound.sampled.AudioInputStream gemStream -> e
+    boolean playBackground -> aw
+    boolean playClick -> ax
+    boolean runAudioSystem -> ay
+    Sound backgroundSound -> c
+    boolean soundEnabled -> az
+    void start() -> start
+    boolean runCheck(javax.sound.sampled.Clip,javax.sound.sampled.AudioInputStream) -> a
+    void access$0(javax.sound.sampled.AudioInputStream) -> a
+    void access$1(javax.sound.sampled.AudioInputStream) -> b
+    void access$2(javax.sound.sampled.AudioInputStream) -> c
+    void access$3(javax.sound.sampled.AudioInputStream) -> d
+    void access$4(javax.sound.sampled.AudioInputStream) -> e
+    javax.sound.sampled.AudioInputStream access$5() -> a
+    javax.sound.sampled.AudioInputStream access$6() -> b
+    javax.sound.sampled.AudioInputStream access$7() -> c
+    javax.sound.sampled.AudioInputStream access$8() -> d
+    boolean access$9$48d66205(javax.sound.sampled.Clip,boolean) -> a
+    javax.sound.sampled.AudioInputStream access$10() -> e
+    boolean access$11(javax.sound.sampled.Clip,javax.sound.sampled.AudioInputStream) -> b
+    void access$12$79fc866(javax.sound.sampled.Clip) -> a
+    void access$13(javax.sound.sampled.Clip) -> b
+SoundManager$1 -> bE:
+    void run() -> run
+SoundSet -> bF:
+    java.lang.String clipName -> q
+    javax.sound.sampled.AudioInputStream ais -> f
+    javax.sound.sampled.Clip clip -> a
+    boolean load() -> j
+    boolean unload() -> k
+    boolean equals(java.lang.Object) -> equals
+Strings -> bG:
+    Strings inst -> a
+    java.lang.String HOLM_VILLAGE_SIGN -> r
+    java.lang.String HOLM_VILLAGE_NORTH_ENTRY -> s
+    java.lang.String HOLM_VILLAGE_CASSIUS_O -> t
+    java.lang.String HOLM_VILLAGE_CASSIUS_H -> u
+    java.lang.String HOLM_VILLAGE_GRANDMA_O -> v
+    java.lang.String HOLM_VILLAGE_GRANDMA_H -> w
+    java.lang.String HOLM_VILLAGE_RULF_O -> x
+    java.lang.String HOLM_VILLAGE_RULF_H -> y
+    java.lang.String HOLM_VILLAGE_WELL_MSG_0 -> z
+    java.lang.String HOLM_HAUZ_GRAND_PURCHASED_RAFT -> A
+    java.lang.String HOLM_HAUZ_GRAND_NOT_PURCHASED_RAFT -> B
+    java.lang.String SHOP_ENTRY_MSG -> C
+    java.lang.String SHOP_LEAVE_MSG -> D
+    java.lang.String SHOP_DISPL_RAFT -> E
+    java.lang.String SHOP_DISPL_MOON -> F
+    java.lang.String SHOP_DISPL_LAMP -> G
+    java.lang.String SHOP_DISPL_HART -> H
+    java.lang.String SHOP_NO_FUNDS -> I
+    java.lang.String SAIL_RAFT_RULE_NOTE -> J
+    java.lang.String SAIL_RAFT_CANT_LEAVE -> K
+T3D -> bH:
+    int[] tri -> g
+    float zdepth -> bn
+    java.awt.Color c0i -> p
+    java.awt.Color c1i -> q
+    java.awt.Color c2i -> r
+    float tou -> bo
+    float tov -> bp
+    P3D p0 -> q
+    P3D p1 -> r
+    P3D p2 -> s
+    PointTesselator root -> c
+    float darkness -> bq
+    float[] fogHintColor -> l
+    double dist -> a
+    Font3D font -> a
+ThreadDebugger -> bI:
+    long spinTime -> A
+    float adder -> br
+    long amount -> B
+    boolean mouseOver -> X
+    void paint(java.awt.Graphics) -> paint
+ThreadDebugger$1 -> bJ:
+    ThreadDebugger this$0 -> a
+    void actionPerformed(java.awt.event.ActionEvent) -> actionPerformed
+ThreadDebugger$2 -> bK:
+    ThreadDebugger this$0 -> a
+    void mousePressed(java.awt.event.MouseEvent) -> mousePressed
+ThreadDebugger$3 -> bL:
+    ThreadDebugger this$0 -> a
+    void mouseMoved(java.awt.event.MouseEvent) -> mouseMoved
+Tree -> bM:
+    PointTesselator tesselator -> a
+    java.awt.Color leafColor -> s
+    float delta -> b
+    float swayx -> bs
+    float swayz -> bt
+    float height -> height
+    float swayr -> bu
+    Rand ran -> g
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+TriangleComparator -> bN:
+    int compare(java.lang.Object,java.lang.Object) -> compare
+TriangleComparator2 -> bO:
+    int compare(java.lang.Object,java.lang.Object) -> compare
+Utility -> bP:
+    java.net.NetworkInterface interfacer -> a
+    float flash -> bv
+    long lastDotDuration -> C
+    float dotDelta -> bw
+    java.awt.Polygon gem -> c
+    java.awt.Polygon healthThing -> d
+    java.util.ArrayList evilTracker -> g
+    java.awt.Font messageFont -> b
+    void doSound(Screen) -> c
+    java.lang.String capitalizeEnumerator(java.lang.String) -> g
+    boolean isStringAllUpper(java.lang.String) -> b
+    void drawWorldMap$b86b9(java.awt.Graphics,HitAction,Scene) -> a
+    java.awt.Color adjustAlpha(java.awt.Color,int) -> c
+    int rotatePointX$2e716ae4(int,int,int,double) -> a
+    int rotatePointY$2e716ae4(int,int,int,double) -> b
+    void drawBorderRect$23995d4(java.awt.Graphics,java.awt.Color,java.awt.Color,int,int,int,int) -> a
+    java.net.NetworkInterface getDefaultNetworkAdapter() -> a
+    void startInterfaceLookup() -> y
+    java.net.NetworkInterface findNetworkAdapter() -> b
+    java.awt.Color validateColor(java.lang.String) -> a
+    java.lang.String getDots() -> a
+    boolean colorEqual(java.awt.Color,java.awt.Color,java.awt.Color) -> a
+    void drawEnemyData$b86b9(java.awt.Graphics,HitAction,Scene) -> b
+    void drawMap$b86b9(java.awt.Graphics,HitAction,Scene) -> c
+    void drawHealth(java.awt.Graphics) -> f
+    java.awt.Color adjustBrightness(java.awt.Color,int) -> d
+    void showDialog$50530fb0(java.lang.String,java.awt.Color,java.awt.Graphics,HitAction) -> a
+    java.awt.image.BufferedImage generateVignette(int,int) -> a
+    java.net.NetworkInterface access$0() -> c
+    void access$1(java.net.NetworkInterface) -> a
+Utility$1 -> bQ:
+    void run() -> run
+Water -> bR:
+    float delta -> b
+    void draw(int) -> a
+    boolean isCullable() -> d
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Well -> bS:
+    PointTesselator tesselator -> a
+    P3D[] trigCache -> f
+    Rand ran -> g
+    float cosic -> bx
+    void draw(int) -> a
+    void drawPost$27def0a1(java.awt.Color,float) -> a
+    void drawCylinder$255ace01(java.awt.Color) -> c
+    void tick() -> a
+    PointTesselator getTesselator() -> a
+Windmill -> bT:
+    PointTesselator tesselator -> a
+    float spinSpeed -> by
+    float spinDelta -> bz
+    void draw(int) -> a
+    void tick() -> a
+    PointTesselator getTesselator() -> a

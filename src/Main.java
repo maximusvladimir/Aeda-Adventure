@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
+import java.awt.image.DataBufferInt;
 import java.awt.image.Kernel;
 import java.awt.image.VolatileImage;
 import java.util.ArrayList;
@@ -60,15 +61,31 @@ public class Main extends JFrame implements IMain {
 	private int activeIndex = -1;
 	private boolean paused = false;
 	private static float[] cel;
+	private static long frames;
 
 	public static void main(String[] args) {
 		new Main();
 		System.out.println("Shutting down.");
 		Network.RUNNING = false;
 	}
+	
+	public DataBufferInt getDBI() {
+		return (DataBufferInt)buffer.getRaster().getDataBuffer();
+	}
 
 	public BufferedImage getBuffer() {
 		return buffer;
+	}
+	
+	public static long findNumFramesDrawn() {
+		long sd = getNumFramesDrawn();
+		if (sd == 0)
+			sd = MainApplet.getNumFramesDrawn();
+		return sd;
+	}
+	
+	public static long getNumFramesDrawn() {
+		return frames;
 	}
 
 	public boolean isPaused() {
@@ -186,7 +203,7 @@ public class Main extends JFrame implements IMain {
 		});
 		addScreen(new MainMenu(this));
 		setActiveScreen("mainmenu");
-		Timer timer = new Timer(10, new ActionListener() {
+		/*Timer timer = new Timer(10, new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (active != null && active.isActiveScreen()
 						&& !active.isInConsoleMode() && !isPaused()) {
@@ -198,7 +215,29 @@ public class Main extends JFrame implements IMain {
 				}
 			}
 		});
-		timer.start();
+		timer.start();*/
+		Thread updateThread = new Thread(new Runnable() {
+			public void run() {
+				long lastSync = System.currentTimeMillis();
+				while (true) {
+					if (active != null && active.isActiveScreen()
+							&& !active.isInConsoleMode() && !isPaused()) {
+						if (active instanceof Level)
+							((Level) active).silentTick();
+						active.tick();
+						if (active instanceof Level)
+							((Level) active).postSilentTick();
+					}
+					while (System.currentTimeMillis() - lastSync <= 10) {
+						Thread.yield();
+					}
+					lastSync = System.currentTimeMillis();
+				}
+			}			
+		});
+		updateThread.setPriority(Thread.MAX_PRIORITY);
+		updateThread.setName("UpdateThread");
+		updateThread.start();
 		cnt = new ControllerSupport();
 		if (cnt.isAvaliable())
 			System.out.println("Valid controller found.");
@@ -400,6 +439,10 @@ public class Main extends JFrame implements IMain {
 		}
 		return null;
 	}
+	
+	public int getPixel(int x, int y) {
+		return buffer.getRGB(x, y);
+	}
 
 	public int getActiveScreen() {
 		return activeIndex;
@@ -445,6 +488,7 @@ public class Main extends JFrame implements IMain {
 			g.setColor(new Color(254, 219, 18, (int) (redAmount * 150)));
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
+		frames++;
 	}
 
 	public void drawHUD(Graphics g) {
@@ -486,16 +530,28 @@ public class Main extends JFrame implements IMain {
 			setUndecorated(true);
 			setVisible(true);
 			device.setFullScreenWindow(this);
-			/*
-			 * for (int i = 0; i < device.getDisplayModes().length; i++) {
-			 * DisplayMode m = device.getDisplayModes()[i];
-			 * System.out.println(m.getWidth() + "," + m.getHeight() + "," +
-			 * m.getBitDepth() + "," + m.getRefreshRate()); } System.exit(0);
-			 */
-			device.setDisplayMode(new DisplayMode(512, 384, 32, 60));
-			// device.setDisplayMode(new DisplayMode(1280,768,32,60));
-			justEnteredFullscreen = true;
-			fullscreen = true;
+			int setupW = 10000000;
+			int setupH = 10000000;
+			for (int i = 0; i < device.getDisplayModes().length; i++) {
+				 DisplayMode m = device.getDisplayModes()[i];
+				 if (m.getWidth() < 512 || m.getHeight() < 384)
+					 continue;
+				 if (m.getWidth() < setupW && m.getHeight() < setupH && m.getRefreshRate() == 60 && m.getBitDepth() == 32) {
+					 setupW = m.getWidth();
+					 setupH = m.getHeight();
+				 }
+			}
+			if (setupW == 10000000) {
+				JOptionPane.showMessageDialog(this, "Unable to set fullscreen: Device is unsupported.");
+				if (setupW != 512 && setupH != 384)
+					System.err.println("Fullscreen was set to an undesired mode. There may be artifacts and errors present.");
+			} else {
+				device.setDisplayMode(new DisplayMode(setupW,setupH,32,60));
+				//device.setDisplayMode(new DisplayMode(512, 384, 32, 60));
+				// device.setDisplayMode(new DisplayMode(1280,768,32,60));
+				justEnteredFullscreen = true;
+				fullscreen = true;
+			}
 		} else
 			System.out.println("Sorry, fullscreen is not supported.");
 	}

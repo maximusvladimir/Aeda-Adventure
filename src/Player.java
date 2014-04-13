@@ -836,11 +836,11 @@ public class Player extends Character {
 			hhblur -= 0.005f;
 			if (hhblur > 0.5) {
 				Main.redAmount = ((hhblur - 0.5f) * 2);// * 12);
-				Main.blurAmount = Main.redAmount * 10;
+				//Main.blurAmount = Main.redAmount * 10;
 			}
 			else {
 				Main.redAmount = (hhblur * 2 );//* 12);
-				Main.blurAmount = Main.redAmount * 10;
+				//Main.blurAmount = Main.redAmount * 10;
 			}
 		}
 		if (movingTowards) {

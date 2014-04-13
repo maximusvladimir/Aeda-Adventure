@@ -216,14 +216,23 @@ public class ModelMerger extends JFrame {
 					P3D v2 = new P3D(third.x*scale, third.y*scale, third.z*scale);
 					if (bw != null) {
 						try {
+							if (tmesh.vertexColors.length > 1) {
+								$RGBA rgbd = tmesh.vertexColors[verts[0]];
+								System.out.println(rgbd);
+								if (rgbd != null)
+									bw.write("tesselator.color(var.variate(new Color(" + (int)(rgbd.rgba[0]*255)+","+(int)(rgbd.rgba[1]*255)+","+(int)(rgbd.rgba[2]*255) + "),tol));\n");
+							}
+							else {
 							if (Math.random() < 0.5)
 								bw.write("tesselator.color(var.variate(myColor,20));\n");
 							else
 								bw.write("tesselator.color(var.bright(myColor,20));\n");
+							}
 							bw.write("tesselator.point("+v0.x+"f*scale,"+v0.y+"f*scale,"+v0.z+"f*scale);\n");
 							bw.write("tesselator.point("+v1.x+"f*scale,"+v1.y+"f*scale,"+v1.z+"f*scale);\n");
 							bw.write("tesselator.point("+v2.x+"f*scale,"+v2.y+"f*scale,"+v2.z+"f*scale);\n");
 							bw.write("\n");
+							bw.flush();
 						}catch (Throwable t) {
 							
 						}
@@ -236,6 +245,7 @@ public class ModelMerger extends JFrame {
 			 */
 		}
 		try {
+			bw.flush();
 			bw.close();
 			fw.close();
 		}

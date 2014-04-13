@@ -14,6 +14,16 @@ public class MathCalculator {
 		}
 	}
 	
+	public static double compareColor(Color c0, Color c1) {
+		int r2 = c0.getRed() - c1.getRed();
+		int g2 = c0.getGreen() - c1.getGreen();
+		int b2 = c0.getBlue() - c1.getBlue();
+		r2 = r2 * r2;
+		g2 = g2 * g2;
+		b2 = b2 * b2;
+		return Math.sqrt(r2 + g2 + b2);
+	}
+	
 	public static String reduceDigits(double num, int digits) {
 		String asStr = num+"";
 		if (asStr.indexOf('.') < 0) {

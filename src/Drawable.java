@@ -68,6 +68,12 @@ public abstract class Drawable {
 		return dist;
 	}
 	
+	public float getDistToCamera() {
+		float dist = new P3D().dist(new P3D(-getScene().getPlayerX() + getInstanceLoc().x, getInstanceLoc().y,
+				-getScene().getPlayerZ() + getInstanceLoc().z));
+		return dist;
+	}
+	
 	public float getDistToPlayerZ() {
 		return -625 + getScene().getPlayerZ() + getInstanceLoc().z;
 	}

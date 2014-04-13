@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -22,6 +23,15 @@ public class MainApplet extends Applet implements IMain {
 	private BufferedImage buffer;
 	private boolean[] keys = new boolean[525];
 	private boolean paused = false;
+	private static long frames = 0;
+	
+	public static long getNumFramesDrawn() {
+		return frames;
+	}
+	
+	public DataBufferInt getDBI() {
+		return (DataBufferInt)buffer.getRaster().getDataBuffer();
+	}
 	
 	public void pause() {
 		paused = true;
@@ -29,6 +39,10 @@ public class MainApplet extends Applet implements IMain {
 	
 	public void resume() {
 		paused = false;
+	}
+	
+	public int getPixel(int x, int y) {
+		return buffer.getRGB(x, y);
 	}
 	
 	public boolean isPaused() {
@@ -190,6 +204,7 @@ public class MainApplet extends Applet implements IMain {
 			active.draw(g);
 			active.drawHUD(g);
 			active.drawConsole(g);
+			frames++;
 			framesDrawn++;
 			if (System.currentTimeMillis() - queryTime >= 1000) {
 				FPS = framesDrawn;
