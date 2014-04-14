@@ -109,6 +109,7 @@ public abstract class Character extends Drawable {
 			 }
 		}
 	}
+	
 
 	public abstract PointTesselator getTesselator();
 

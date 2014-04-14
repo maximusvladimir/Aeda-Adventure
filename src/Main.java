@@ -101,7 +101,8 @@ public class Main extends JFrame implements IMain {
 	}
 
 	public Main() {
-		new ThreadDebugger();
+		if (GameState.DEBUGMODE)
+			new ThreadDebugger();
 		Utility.startInterfaceLookup();
 		setSize(512, 384);
 		int w = Toolkit.getDefaultToolkit().getScreenSize().width;

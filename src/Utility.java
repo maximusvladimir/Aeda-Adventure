@@ -19,15 +19,15 @@ import java.util.Enumeration;
 
 public class Utility {
 	private static NetworkInterface interfacer;
-	
+
 	public static final P3D findMidpoint(P3D p0, P3D p1, P3D p2) {
 		float px = p0.x + p1.x + p2.x;
 		float py = p0.y + p1.y + p2.y;
 		float pz = p0.z + p1.z + p2.z;
 		return new P3D(px * 0.333333f, py * 0.333333f, pz * 0.333333f);
 	}
-	
-	public static void doSound(Screen s) { 
+
+	public static void doSound(Screen s) {
 		if (SoundManager.soundEnabled) {
 			if (SoundManager.backgroundSound != null)
 				SoundManager.backgroundSound.halt();
@@ -116,7 +116,7 @@ public class Utility {
 		g.fillRoundRect(sx, sy, sw, sh, 15, 15);
 		g.setFont(new Font("Arial", 0, 9));
 		Color current = new Color(255, 255, 255, 45);
-		Color currentBack = new Color(127,200,127,127);
+		Color currentBack = new Color(127, 200, 127, 127);
 		current = MathCalculator.lerp(current, new Color(255, 255, 255, 200),
 				(float) Math.abs(Math.sin(flash)));
 		int rectSize = (int) (m.getWidth() * 0.14f);
@@ -169,12 +169,16 @@ public class Utility {
 			defpy = def4py;
 			g.drawString(Strings.inst.NAME_CADEN_SEA, sx + 6, sy + 18);
 		}
-		
-		Utility.drawBorderRect(g, def1, def1a, def1px, def1py, rectSize, rectSize, 4);
-		Utility.drawBorderRect(g, def2, def2a, def2px, def2py, rectSize, rectSize, 4);
-		Utility.drawBorderRect(g, def3, def3a, def3px, def3py, rectSize, rectSize, 4);
-		Utility.drawBorderRect(g, def4, def4a, def4px, def4py, rectSize, rectSize, 4);
-		
+
+		Utility.drawBorderRect(g, def1, def1a, def1px, def1py, rectSize,
+				rectSize, 4);
+		Utility.drawBorderRect(g, def2, def2a, def2px, def2py, rectSize,
+				rectSize, 4);
+		Utility.drawBorderRect(g, def3, def3a, def3px, def3py, rectSize,
+				rectSize, 4);
+		Utility.drawBorderRect(g, def4, def4a, def4px, def4py, rectSize,
+				rectSize, 4);
+
 		flash += 0.013f;
 
 		int entityx = (int) ((s.getPlayerX() + s.getWorldSizeHalf()) * rectSize / s
@@ -196,10 +200,14 @@ public class Utility {
 		g.setColor(Color.black);
 		g.drawPolygon(p);
 		g.setFont(new Font("Arial", 0, 10));
-		g.drawString(Strings.inst.NAME_FIACE,6 + (int)def1px,rectSizeHalf + (int)def1py);
-		g.drawString(Strings.inst.NAME_HOLM,5 + (int)def2px,rectSizeHalf + (int)def2py);
-		g.drawString(Strings.inst.NAME_HARBOUR_SHORT,15 + (int)def3px,rectSizeHalf + (int)def3py);
-		g.drawString(Strings.inst.NAME_CADEN_SEA,8 + (int)def4px,rectSizeHalf + (int)def4py);
+		g.drawString(Strings.inst.NAME_FIACE, 6 + (int) def1px, rectSizeHalf
+				+ (int) def1py);
+		g.drawString(Strings.inst.NAME_HOLM, 5 + (int) def2px, rectSizeHalf
+				+ (int) def2py);
+		g.drawString(Strings.inst.NAME_HARBOUR_SHORT, 15 + (int) def3px,
+				rectSizeHalf + (int) def3py);
+		g.drawString(Strings.inst.NAME_CADEN_SEA, 8 + (int) def4px,
+				rectSizeHalf + (int) def4py);
 
 	}
 
@@ -228,12 +236,12 @@ public class Utility {
 	public static void drawBorderRect(Graphics g, Color border, Color fore,
 			float f, float i, int w, int h, int s) {
 		g.setColor(border);
-		g.fillRect((int)f, (int)i, w, h);
+		g.fillRect((int) f, (int) i, w, h);
 		g.setXORMode(border);
-		g.fillRect((int)f + s, (int)i + s, w - (s * 2), h - (s * 2));
+		g.fillRect((int) f + s, (int) i + s, w - (s * 2), h - (s * 2));
 		g.setPaintMode();
 		g.setColor(fore);
-		g.fillRect((int)f + s, (int)i + s, w - (s * 2), h - (s * 2));
+		g.fillRect((int) f + s, (int) i + s, w - (s * 2), h - (s * 2));
 	}
 
 	public static NetworkInterface getDefaultNetworkAdapter() {
@@ -299,7 +307,8 @@ public class Utility {
 					// stops at the first *working* solution
 					// break OUTER;
 				}
-				System.out.println("Default network interface: " + interface_.getDisplayName());
+				System.out.println("Default network interface: "
+						+ interface_.getDisplayName());
 				return interface_;
 			}
 		} catch (Throwable t) {
@@ -324,7 +333,7 @@ public class Utility {
 		} else if (value.toLowerCase().indexOf("magenta") > -1) {
 			return Color.magenta.darker();
 		} else if (value.toLowerCase().indexOf("brown") > -1) {
-			return new Color(107,92,61);
+			return new Color(107, 92, 61);
 		} else {
 			if (value.indexOf(",") > -1) {
 				String[] rgb = value.split(",");
@@ -397,21 +406,24 @@ public class Utility {
 		int cz = x0 * y1 - y0 * x1;
 		return new int[] { cx, cy };
 	}
-	
+
 	public static void drawEnemyData(Graphics g, IMain m, Scene<Drawable> scene) {
 		if (scene == null)
 			return;
-		ArrayList<Enemy> ens = scene.<Enemy>getObjectsByTypeAndParented(Enemy.class);
+		ArrayList<Enemy> ens = scene
+				.<Enemy> getObjectsByTypeAndParented(Enemy.class);
 		int w = m.getWidth() - (int) (m.getWidth() * 0.16f) - 16;
 		int gulf = 0;
 		for (int i = 0; i < ens.size(); i++) {
 			Enemy e = ens.get(i);
 			if (e.isPersuingPlayer()) {
-				g.setColor(MathCalculator.lerp(new Color(60,175,45), new Color(175,19,39), 1-e.getHealth()));
-				g.fillRect(w - 100,25*gulf+10,(int)(100 * e.getHealth()),15);
-				g.setColor(new Color(46,62,175));
-				g.drawRect(w - 100,25*gulf+10,100,15);
-				g.drawImage(e.getEnemyIcon(), w - 114,25*gulf+10,null);
+				g.setColor(MathCalculator.lerp(new Color(60, 175, 45),
+						new Color(175, 19, 39), 1 - e.getHealth()));
+				g.fillRect(w - 100, 25 * gulf + 10,
+						(int) (100 * e.getHealth()), 15);
+				g.setColor(new Color(46, 62, 175));
+				g.drawRect(w - 100, 25 * gulf + 10, 100, 15);
+				g.drawImage(e.getEnemyIcon(), w - 114, 25 * gulf + 10, null);
 				gulf++;
 			}
 		}
@@ -420,7 +432,7 @@ public class Utility {
 	public static void drawMap(Graphics g, IMain m, Scene<Drawable> scene) {
 		if (scene == null)
 			return;
-		
+
 		int mapx = m.getWidth() - (int) (m.getWidth() * 0.16f) - 8;
 		int mapy = (int) (m.getWidth() * 0.02f);
 		int mapw2 = (int) (m.getWidth() * 0.14f);
@@ -455,8 +467,9 @@ public class Utility {
 			g.drawLine(sx - 1, sy, sx + 1, sy);
 			g.drawLine(sx, sy - 1, sx, sy + 1);
 		}
-		g.setColor(new Color(120,0,0));
-		ArrayList<RedGem> redgems = scene.<RedGem> getObjectsByType(RedGem.class);
+		g.setColor(new Color(120, 0, 0));
+		ArrayList<RedGem> redgems = scene
+				.<RedGem> getObjectsByType(RedGem.class);
 		for (int i = 0; i < redgems.size(); i++) {
 			if (!redgems.get(i).isVisible())
 				continue;
@@ -497,8 +510,9 @@ public class Utility {
 			g.drawLine(sx - 1, sy, sx + 1, sy);
 			g.drawLine(sx, sy - 1, sx, sy + 1);
 		}
-		
-		ArrayList<FishOil> oil = scene.<FishOil> getObjectsByType(FishOil.class);
+
+		ArrayList<FishOil> oil = scene
+				.<FishOil> getObjectsByType(FishOil.class);
 		if (oil.size() == 1) {
 			FishOil f = oil.get(0);
 			if (f.isVisible()) {
@@ -512,9 +526,10 @@ public class Utility {
 				g.drawLine(sx, sy - 1, sx, sy + 1);
 			}
 		}
-		
+
 		g.setColor(Color.red);
-		ArrayList<Cassius> cassius = scene.<Cassius> getObjectsByType(Cassius.class);
+		ArrayList<Cassius> cassius = scene
+				.<Cassius> getObjectsByType(Cassius.class);
 		if (cassius.size() == 1) {
 			Cassius f = cassius.get(0);
 			if (f.isVisible()) {
@@ -528,24 +543,26 @@ public class Utility {
 				g.drawLine(sx, sy - 1, sx, sy + 1);
 			}
 		}
-			
+
 		g.setColor(Color.red);
-		ArrayList<Water> water = scene.<Water>getObjectsByType(Water.class); 
+		ArrayList<Water> water = scene.<Water> getObjectsByType(Water.class);
 		for (int i = 0; i < water.size(); i++) {
 			Water wat = water.get(i);
 			if (!wat.isVisible())
 				continue;
-			int entityx = (int) ((wat.getInstanceLoc().x-(wat.getSequence()*wat.getSize()*0.5f) + scene
-					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
-			int entityz = (int) ((wat.getInstanceLoc().z-(wat.getSequence()*wat.getSize()*0.5f) + scene
-					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int entityx = (int) ((wat.getInstanceLoc().x
+					- (wat.getSequence() * wat.getSize() * 0.5f) + scene
+						.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int entityz = (int) ((wat.getInstanceLoc().z
+					- (wat.getSequence() * wat.getSize() * 0.5f) + scene
+						.getWorldSizeHalf()) * mapw / scene.getWorldSize());
 			int sx = mapx + entityx + 5;
 			int sy = mapy + entityz + 5;
-			int size = (int)(((wat.getSize()) + scene
-					.getWorldSizeHalf()) * mapw / scene.getWorldSize())/2;
-			g.fillRect(sx,sy,size,size);
+			int size = (int) (((wat.getSize()) + scene.getWorldSizeHalf())
+					* mapw / scene.getWorldSize()) / 2;
+			g.fillRect(sx, sy, size, size);
 		}
-		
+
 		g.setColor(Color.white);
 		g.fillRect(
 				(int) ((scene.getPlayerX() + scene.getWorldSizeHalf()) * mapw / scene
@@ -560,8 +577,9 @@ public class Utility {
 				mapy
 						+ (int) ((scene.getPlayerZ() + scene.getWorldSizeHalf())
 								* mapw / scene.getWorldSize()) + 5, 3, 3);
-		
-		ArrayList<Enemy> enemiesOfTheRepublic = scene.<Enemy>getObjectsByTypeAndParented(Enemy.class);
+
+		ArrayList<Enemy> enemiesOfTheRepublic = scene
+				.<Enemy> getObjectsByTypeAndParented(Enemy.class);
 		g.setColor(Color.red);
 		for (int i = 0; i < enemiesOfTheRepublic.size(); i++) {
 			Enemy wat = enemiesOfTheRepublic.get(i);
@@ -621,9 +639,10 @@ public class Utility {
 		}
 		g.setColor(Color.black);
 		g.drawPolygon(healthThing);
-		
+
 		g.setFont(new Font("Courier New", 0, 14));
-		String health = MathCalculator.reduceDigits(GameState.instance.health, 1);
+		String health = MathCalculator.reduceDigits(GameState.instance.health,
+				1);
 		g.drawString(health, 34, 42);
 		g.setColor(Color.white);
 		g.drawString(health, 33, 43);
@@ -649,11 +668,12 @@ public class Utility {
 	private static ArrayList<String> evilTracker = new ArrayList<String>();
 	private static Font messageFont = new Font("Courier New", 0, 12);
 
-	public static void showDialog(String message, Color textColor, Graphics g, IMain mainInst) {
+	public static void showDialog(String message, Color textColor, Graphics g,
+			IMain mainInst) {
 		if (evilTracker.indexOf(message) == -1) {
 			// This is evil in the sense that it stores already shown messages.
 			evilTracker.add(message);
-			//SoundManager.playClick = true;
+			// SoundManager.playClick = true;
 		}
 		int alpha = 125;
 		if (mainInst.getScreen(mainInst.getActiveScreen()) instanceof MainMenu) {
@@ -664,7 +684,7 @@ public class Utility {
 		g.setColor(new Color(185, 163, 124, alpha));
 		g.fillRoundRect(10, mainInst.getHeight() - 125,
 				mainInst.getWidth() - 26, 85, 8, 8);
-		g.setColor(new Color(109, 88, 57,alpha));
+		g.setColor(new Color(109, 88, 57, alpha));
 		g.fillRoundRect(13, mainInst.getHeight() - 122,
 				mainInst.getWidth() - 33, 78, 8, 8);
 		g.setFont(messageFont);
@@ -718,12 +738,16 @@ public class Utility {
 		Point2D center = new Point2D.Float(width / 2, height / 2);
 		float radius = (float) Math.sqrt(width * width + height * height);
 		float[] dist = { 0.3f, 0.5f };
-		Color[] colors = { new Color(0, 0, 0, 0),new Color(0, 0, 0, 120) };
-		RadialGradientPaint p = new RadialGradientPaint(center, radius, dist,
-				colors);
-		g.setPaint(p);
-		g.fillRect(0, 0, width, height);
-		g.dispose();
+		Color[] colors = { new Color(0, 0, 0, 0), new Color(0, 0, 0, 120) };
+		try {
+			RadialGradientPaint p = new RadialGradientPaint(center, radius,
+					dist, colors);
+			g.setPaint(p);
+			g.fillRect(0, 0, width, height);
+			g.dispose();
+		} catch (Throwable t) {
+
+		}
 		return vignette;
 	}
 }

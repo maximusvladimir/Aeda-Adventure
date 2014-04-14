@@ -44,8 +44,10 @@ public class Sound {
 				}
 	        }
 	    };
-	    thisSet.clip.loop(loops);
-	    thisSet.clip.addLineListener(listener);
+	    if (thisSet.clip != null) {
+	    	thisSet.clip.loop(loops);
+	    	thisSet.clip.addLineListener(listener);
+	    }
 	}
 	
 	private boolean markedPositionSupport = false;
@@ -62,6 +64,8 @@ public class Sound {
 	}
 	
 	public void halt() {
+		if (thisSet.clip == null)
+			return;
 		thisSet.clip.stop();
 		thisSet.unload();
 		clips.remove(thisSet);
@@ -72,6 +76,8 @@ public class Sound {
 	}
 	
 	public void play() {
+		if (thisSet.clip == null)
+			return;
 		finished = false;
 		if (isLooping())
 			thisSet.clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -85,6 +91,9 @@ public class Sound {
 	 * @param v
 	 */
 	public void setVolume(float v) {
+		if (thisSet.clip == null)
+			return;
+		
 		if (!thisSet.clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
 			if (!markedVolumeSupport) {
 				markedVolumeSupport = true;
@@ -101,6 +110,8 @@ public class Sound {
 	}
 	
 	public void setPosition(float x) {
+		if (thisSet.clip == null)
+			return;
 		if (x > 1)
 			x = 1;
 		if (x < -1)

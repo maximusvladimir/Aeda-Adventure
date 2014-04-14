@@ -1,4 +1,6 @@
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public abstract class Cassius extends Character {
@@ -12,7 +14,7 @@ public abstract class Cassius extends Character {
 		tesselator = new PointTesselator();
 		tesselator.setDrawType(DrawType.Triangle);
 		tesselator.setSkipCullCheck(true);
-		setMoveSpeed(0.5f);
+		setMoveSpeed(6.0f);
 	}
 	
 	public void uponArrival() {
@@ -23,7 +25,7 @@ public abstract class Cassius extends Character {
 		delta = d;
 	}
 
-	protected float delta = -MathCalculator.PIOVER2;
+	protected float delta = 0;//-MathCalculator.PIOVER2;
 	private Rand ra;
 	private static final P3D[] trigDressCache = genDressCache();
 	private static final P3D[] trigHeadCache = genHeadCache();
@@ -215,8 +217,57 @@ private static final float faceh = 300;
 		tesselator.point(-20 * bit, 70, -15);
 	}
 
+	private boolean msg_intro = false;
+	private boolean msg_complete = false;
 	public void tick() {
 		super.tick();
+		//tickAction();
+	}
+	
+	public void tickAction() {
+		if (msg_complete && !isMovingTowards()) {
+			getScene().remove(this);
+			HolmVillage village = null;
+			// Turn on his house's lights.
+			if (getScene().getLevel() instanceof HolmVillage) {
+				village = (HolmVillage)getScene().getLevel();
+				village.getHouses()[1].lightsOn = true;
+			}
+		}	
+		else if (getDistToPlayer() < 400 && !msg_intro) {
+			msg_intro = true;
+			final Level l = getScene().getLevel();
+			l.addMessage("Hello " + GameState.instance.playerGUID + ".", "CASSIUSINTRO", new ActionListener() {
+				public void actionPerformed(ActionEvent ai) {
+					l.setActiveMessage("CASSIUSPART2");
+				}
+			});
+			l.addMessage("I am Master Cassius.\nI just came back from the far-away lands of Sl\u03CBenthlye.\nEvery year, the greatest swordsmiths in the lands travel there to\nshow off their skills.", "CASSIUSPART2", new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					l.setActiveMessage("CASSIUSPART3");
+				}
+			});
+			l.addMessage("I made you something while I was there.", "CASSIUSPART3", new ActionListener() {
+				public void actionPerformed(ActionEvent ae) {
+					if (SoundManager.soundEnabled) {
+						new Sound("item").play();
+					}
+					l.setActiveMessage("CASSIUSPART4");
+					GameState.instance.hasSword = true;
+					GameState.save();
+				}
+			});
+			l.addMessage("You have recieved a sword. Press ENTER to attack with you sword.\nIt will be easier to fight enemies with your sword.", "CASSIUSPART4", new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					delta = MathCalculator.PI;
+					moveTowards(1500, -500);
+					msg_complete = true;
+				}				
+			});
+			l.setActiveMessage("CASSIUSINTRO");
+		} else if (!isMovingTowards()){
+			delta = MathCalculator.PI + (float)(Math.atan2(getScene().getPlayerZ() - getInstanceLoc().z, getScene().getPlayerX() - getInstanceLoc().x));
+		}
 	}
 	
 	public void doMovement() {

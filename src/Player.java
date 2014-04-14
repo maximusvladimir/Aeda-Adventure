@@ -832,6 +832,10 @@ public class Player extends Character {
 	private float dist = 0.0f;
 	private float destAlt = 0.0f;
 	public void tick() {
+		
+		if (getScene() != null && (getScene().getLevel().isMessageBeingShown() || getScene().getLevel().isInConsoleMode()))
+			moving = false;
+		
 		if (hhblur > 0.0001f) {
 			hhblur -= 0.005f;
 			if (hhblur > 0.5) {

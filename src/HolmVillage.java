@@ -17,6 +17,10 @@ public class HolmVillage extends Level {
 
 	private static BufferedImage glow = null;
 
+	public House[] getHouses() {
+		return houses;
+	}
+	
 	public HolmVillage(IMain inst) {
 		super(inst);
 	}
@@ -28,11 +32,16 @@ public class HolmVillage extends Level {
 			Cassius cas = new Cassius(getScene()) {
 				public void tick() {
 					super.tick();
+					tickAction();
 				}
 			};
 			cas.setInstanceLoc(-8000, -350, 0);
 			getScene().add(cas);
 		}
+		if (GameState.instance.hasSword)
+			houses[1].lightsOn = true;
+		else
+			houses[1].lightsOn = false;
 		if (glow == null) {
 			try {
 				glow = ImageIO.read(HolmVillage.class.getResource("/glow.png"));
@@ -62,10 +71,12 @@ public class HolmVillage extends Level {
 		}
 		scene.setPlane(plane);
 		for (int z = 0; z < 55; z++) {
-			plane.setColorPoint(26, z, getRoadColor(plane.getColorPoint(26, z)));
-			plane.setColorPoint(27, z, getRoadColor(plane.getColorPoint(27, z)));
-			plane.setColorPoint(28, z, getRoadColor(plane.getColorPoint(28, z)));
-
+			if (z > 26) {
+				plane.setColorPoint(26, z, getRoadColor(plane.getColorPoint(26, z)));
+				plane.setColorPoint(27, z, getRoadColor(plane.getColorPoint(27, z)));
+				plane.setColorPoint(28, z, getRoadColor(plane.getColorPoint(28, z)));
+			}
+			
 			plane.setColorPoint(z, 27, getRoadColor(plane.getColorPoint(z, 27)));
 			plane.setColorPoint(z, 28, getRoadColor(plane.getColorPoint(z, 28)));
 			plane.setColorPoint(z, 29, getRoadColor(plane.getColorPoint(z, 29)));
@@ -177,7 +188,7 @@ public class HolmVillage extends Level {
 								grandmaMessage = true;
 								if (GameState.instance.hasSword) {
 									addMessage(
-											"It was very nice of Master Cassius to give you that beautiful sword.",
+											"It was very nice of Master Cassius to give you that beautiful\nsword. Be careful with it, it looks sharp.",
 											"nicesword");
 									setActiveMessage("nicesword");
 								} else if (GameState.instance.hasFishOil
@@ -214,6 +225,47 @@ public class HolmVillage extends Level {
 		houses[1].setInstanceLoc(1500, -350, -1000);
 		houses[1].setHouseName(Strings.inst.HOLM_VILLAGE_CASSIUS_H);
 		houses[1].setOwnerName(Strings.inst.HOLM_VILLAGE_CASSIUS_O);
+		
+		if (GameState.instance.hasSword)
+			houses[1].lightsOn = true;
+		else
+			houses[1].lightsOn = false;
+		
+		if (!getMain().screenExists(houses[1].getHouseName())) {
+			final InsideHouse ggH = new InsideHouse(houses[1].getHouseName(),
+					getMain()) {
+				private Cassius cass;
+				private boolean cassMessage = false;
+
+				public void reloadedLevel() {
+					cassMessage = false;
+				}
+
+				public void init() {
+					setRootLevel(HolmVillage.this);
+					super.init();
+					cass = new Cassius(getScene()) {
+						private boolean shownMessage = false;
+
+						public void tick() {
+							super.tick();
+							float dist = getDistToPlayer();
+							if (dist < 400 && !cassMessage) {
+								cassMessage = true;
+								
+							}
+						}
+					};
+					cass.setMoveSpeed(10.0f);
+					cass.setInstanceLoc(200, -300, 100);
+					Rand guih = new Rand();
+					guih.setScene(getScene());
+					cass.moveTowards(guih.nextLocation(-300));
+					getScene().add(cass);
+				}
+			};
+			getMain().addScreen(ggH);
+		}
 
 		houses[2].setInstanceLoc(1500, -350, 1000);
 		houses[2].setHouseName(Strings.inst.HOLM_VILLAGE_CASSIUS_H);
@@ -236,8 +288,8 @@ public class HolmVillage extends Level {
 		signs[1].setInstanceLoc(600, -220, -9800);
 		signs[1].setSignMessage(Strings.inst.HOLM_VILLAGE_NORTH_ENTRY);
 
-		signs[2].setInstanceLoc(0, -220, 7000);
-		signs[2].setSignMessage("Don't forget to fight enemies with ENTER.\nYou can also break barells as well.");
+		signs[2].setInstanceLoc(300, -220, 7200);
+		signs[2].setSignMessage("Don't forget to fight enemies with ENTER.\nYou can also break barrels as well.");
 
 		barrel[0].setInstanceLoc(600, -350, 2000);
 		barrel[1].setInstanceLoc(-900, -350, 2075);
