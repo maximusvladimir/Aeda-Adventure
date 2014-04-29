@@ -346,6 +346,10 @@ public class MainMenu extends Screen {
 	
 	public void keyTyped(KeyEvent arg0) {
 		super.keyTyped(arg0);
+		
+		if (isInConsoleMode())
+			return;
+		
 		char c = arg0.getKeyChar();
 		if (c == '\u0008' && storageBuffer.length() >= 1)
 			storageBuffer = storageBuffer.substring(0,storageBuffer.length() - 1);
@@ -435,6 +439,9 @@ public class MainMenu extends Screen {
 				if (!getMain().screenExists("lilo")) {
 					getMain().addScreen(new CadenSea(getMain()));
 				}
+				if (!getMain().screenExists("tumalarda")) {
+					getMain().addScreen(new Banicia(getMain()));
+				}
 				if (GameState.instance.playerLevel == 0) {
 					getMain().setActiveScreen("level");
 					System.out.println("Going to level");
@@ -447,6 +454,9 @@ public class MainMenu extends Screen {
 				} else if (GameState.instance.playerLevel == 3) {
 					getMain().setActiveScreen("lilo");
 					System.out.println("Going to lilo station.");
+				} else if (GameState.instance.playerLevel == 4) {
+					getMain().setActiveScreen("tumalarda");
+					System.out.println("Going to tumalarda station.");
 				}
 				Screen s = getMain().getScreen(getMain().getActiveScreen());
 				if (s instanceof Level)

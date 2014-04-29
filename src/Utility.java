@@ -39,6 +39,8 @@ public class Utility {
 				SoundManager.backgroundSound = new Sound("holm");
 			if (s instanceof MainMenu)
 				SoundManager.backgroundSound = new Sound("title");
+			if (s instanceof Banicia)
+				SoundManager.backgroundSound = new Sound("cave");
 			if (s instanceof FiaceForest)
 				SoundManager.backgroundSound = new Sound("fiace");
 			if (SoundManager.backgroundSound != null) {
@@ -125,10 +127,12 @@ public class Utility {
 		Color def2 = new Color(255, 255, 255, 45);
 		Color def3 = new Color(255, 255, 255, 45);
 		Color def4 = new Color(255, 255, 255, 45);
+		Color def5 = new Color(255, 255, 255, 45);
 		Color def1a = new Color(255, 255, 255, 45);
 		Color def2a = new Color(255, 255, 255, 45);
 		Color def3a = new Color(255, 255, 255, 45);
 		Color def4a = new Color(255, 255, 255, 45);
+		Color def5a = new Color(255, 255, 255, 45);
 		float defpx = 0;
 		float defpy = 0;
 		float def1px = (m.getWidth() * 0.5f) - (rectSizeHalf);
@@ -139,6 +143,8 @@ public class Utility {
 		float def3py = (m.getHeight() * 0.72f) - (rectSizeHalf * 3);
 		float def4px = (m.getWidth() * 0.5f) - (rectSizeHalf * 5.5f);
 		float def4py = (m.getHeight() * 0.72f) - (rectSizeHalf * 3);
+		float def5px = (m.getWidth() * 0.5f) + (rectSizeHalf);
+		float def5py = (m.getHeight() * 0.72f) - (rectSizeHalf * 3);
 		g.setColor(new Color(255, 255, 255));
 		g.setFont(new Font("Arial", 0, 14));
 		if (s.getLevel().getName().equals("vbm")) {
@@ -169,6 +175,13 @@ public class Utility {
 			defpy = def4py;
 			g.drawString(Strings.inst.NAME_CADEN_SEA, sx + 6, sy + 18);
 		}
+		if (s.getLevel().getName().equals("tumalarda")) {
+			def5 = current;
+			def5a = currentBack;
+			defpx = def5px;
+			defpy = def5py;
+			g.drawString(Strings.inst.NAME_BANICIA_CAVE, sx + 6, sy + 18);
+		}
 
 		Utility.drawBorderRect(g, def1, def1a, def1px, def1py, rectSize,
 				rectSize, 4);
@@ -177,6 +190,8 @@ public class Utility {
 		Utility.drawBorderRect(g, def3, def3a, def3px, def3py, rectSize,
 				rectSize, 4);
 		Utility.drawBorderRect(g, def4, def4a, def4px, def4py, rectSize,
+				rectSize, 4);
+		Utility.drawBorderRect(g, def5, def5a, def5px, def5py, rectSize,
 				rectSize, 4);
 
 		flash += 0.013f;
@@ -208,7 +223,8 @@ public class Utility {
 				rectSizeHalf + (int) def3py);
 		g.drawString(Strings.inst.NAME_CADEN_SEA, 8 + (int) def4px,
 				rectSizeHalf + (int) def4py);
-
+		g.drawString(Strings.inst.NAME_BANICIA_CAVE, 3 + (int) def5px,
+				rectSizeHalf + (int) def5py);
 	}
 
 	public static Color adjustAlpha(Color base, int alpha) {

@@ -23,9 +23,9 @@ public class Strings {
 		SHOP_ENTRY_MSG = "Welcome to Rulf's Shop!\nI'm in the back, but you can toggle options with \"W\".\nYou can perform a transaction with \"E\".\nExit with \"ESC\".";
 		SHOP_LEAVE_MSG = "Thanks for coming. Come again any time!";
 		SHOP_DISPL_RAFT = "Raft (200 Gems)";
-		SHOP_DISPL_MOON = "Moonstone (400 Gems)";
+		SHOP_DISPL_MOON = "Moonstone (600 Gems)";
 		SHOP_DISPL_HART = "Heart Piece (800 Gems)";
-		SHOP_DISPL_LAMP = "Lamp (600 Gems)";
+		SHOP_DISPL_LAMP = "Lamp (400 Gems)";
 		SHOP_NO_FUNDS = "Sorry. Insufficent funds.";
 		
 		SAIL_RAFT_RULE_NOTE = "You must be in the water to use your raft.";
@@ -36,6 +36,7 @@ public class Strings {
 		NAME_HARBOUR = "Sailor's Harbour";
 		NAME_HARBOUR_SHORT = "Harbour";
 		NAME_CADEN_SEA = "Caden Sea";
+		NAME_BANICIA_CAVE = "Banicia Cave";
 	}
 	
 	public String NAME_FIACE;
@@ -43,6 +44,7 @@ public class Strings {
 	public String NAME_HARBOUR;
 	public String NAME_HARBOUR_SHORT;
 	public String NAME_CADEN_SEA;
+	public String NAME_BANICIA_CAVE;
 	
 	public String HOLM_VILLAGE_SIGN;
 	public String HOLM_VILLAGE_NORTH_ENTRY;

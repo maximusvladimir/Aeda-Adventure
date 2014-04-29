@@ -263,6 +263,10 @@ public class PointTesselator {
 		normal(new P3D(x, y, z));
 	}
 
+	public void bone(P3D location, float tensileRadius, P3D newLocation) {
+		
+	}
+	
 	public void setFaceLighting(boolean value) {
 		faceLighting = value;
 	}

@@ -15,8 +15,6 @@ public class HolmVillage extends Level {
 	private Lamppost[] lamps;
 	private P3D lastLoc = new P3D();
 
-	private static BufferedImage glow = null;
-
 	public House[] getHouses() {
 		return houses;
 	}
@@ -28,7 +26,7 @@ public class HolmVillage extends Level {
 	public void loadedLevel() {
 		super.loadedLevel();
 		if (GameState.instance.hasFishOil && !GameState.instance.hasSword
-				&& getScene().getObjectsByType(Cassius.class).size() == 0) {
+				&& (getScene().<Cassius>getObjectsByType(Cassius.class)).size() == 0) {
 			Cassius cas = new Cassius(getScene()) {
 				public void tick() {
 					super.tick();
@@ -42,13 +40,6 @@ public class HolmVillage extends Level {
 			houses[1].lightsOn = true;
 		else
 			houses[1].lightsOn = false;
-		if (glow == null) {
-			try {
-				glow = ImageIO.read(HolmVillage.class.getResource("/glow.png"));
-			} catch (Throwable t) {
-
-			}
-		}
 	}
 
 	public static long mapDrawTime = 0;
@@ -187,9 +178,26 @@ public class HolmVillage extends Level {
 							if (dist < 400 && !grandmaMessage) {
 								grandmaMessage = true;
 								if (GameState.instance.hasSword) {
+									final String secondary = GameState.instance.playerGUID + ". I know you need to get something at Rulf's.";
+									final String third = "Here is 400 gems that I have saved up for you.\nThis is all I have left.";
 									addMessage(
 											"It was very nice of Master Cassius to give you that beautiful\nsword. Be careful with it, it looks sharp.",
-											"nicesword");
+											"nicesword",new ActionListener() {
+												public void actionPerformed(ActionEvent ar) {
+													if (GameState.instance.hasGivenSecondAmount)
+														return;
+													addMessage(third,"giftedMoney");
+													addMessage(secondary,"rulflantern", new ActionListener() {
+														public void actionPerformed(ActionEvent ae) {
+															setActiveMessage("giftedMoney");
+															GameState.instance.gems += 400;
+															GameState.instance.hasGivenSecondAmount = true;
+															GameState.save();
+														}
+													});
+													setActiveMessage("rulflantern");
+												}
+											});
 									setActiveMessage("nicesword");
 								} else if (GameState.instance.hasFishOil
 										&& !GameState.instance.hasSword) {
@@ -347,7 +355,7 @@ public class HolmVillage extends Level {
 		ohwell.setInstanceLoc(-3000, -340, 1000);
 		scene.add(ohwell);
 
-		scene.setSceneDarkness(50);
+		scene.setSceneDarkness(40);
 	}
 
 	public void tick() {
@@ -366,7 +374,22 @@ public class HolmVillage extends Level {
 		super.tick();
 		if (isGameHalted())
 			return;
-
+		if (getScene().getPlayerX() > 9000 && getScene().getPlayerZ() > -600
+				&& getScene().getPlayerZ() < 1100 && getScene().canPortalize()) {
+			if (GameState.instance.hasLantern && GameState.instance.hasFishOil) {
+			startTransition(getMain().getScreen("tumalarda"), new P3D(-9000, 0,
+					getScene().getPlayerZ()), getScene().getPlayerDelta());
+			getScene().deportal();
+			GameState.instance.playerLevel = 4;
+			}
+			else {
+				getScene().setPlayerX(8700);
+				addMessage("You need a lantern and oil to go into Banicia Cave.", "CAVENOTICE");
+				setActiveMessage("CAVENOTICE");
+			}
+			return;
+		}
+		
 		if (getScene().getPlayerX() < -9500 && getScene().getPlayerZ() > -600
 				&& getScene().getPlayerZ() < 1100 && getScene().canPortalize()) {
 			startTransition(getMain().getScreen("yLENIN"), new P3D(9000, 0,
@@ -404,64 +427,8 @@ public class HolmVillage extends Level {
 		scene.draw(g);
 	}
 
-	private ArrayList<P3D> lightHints = new ArrayList<P3D>();
-
 	public void drawHUD(Graphics g) {
-		if (glow != null) {
-			if (Main.findNumFramesDrawn() % 4 == 0) {
-				lightHints.clear();
-				Color[] screenColors = null;
-				for (int i = 0; i < lamps.length; i++) {
-					Lamppost post = lamps[i];
-					if (getScene().isVisible(post)) {
-						if (screenColors == null) {
-							int[] dbi = getMain().getDBI().getData();
-							screenColors = new Color[dbi.length];
-							for (int j = 0; j < dbi.length; j++) {
-								screenColors[j] = new Color(dbi[j]);
-							}
-						}
-						Color sample = post.lightColor;
-						int lx = 0;
-						int ly = 0;
-						for (int x = 0; x < getMain().getWidth(); x++) {
-							for (int y = 0; y < getMain().getHeight(); y++) {
-								int det = y * getMain().getWidth() + x;
-								if (det < 0 || det > screenColors.length)
-									continue;
-								if (MathCalculator.compareColor(
-										screenColors[det], sample) < 20) {
-									lx = x;
-									ly = y;
-									x = getMain().getWidth() + 100;
-									y = getMain().getHeight() + 100;
-									break;
-								}
-							}
-						}
-						if (lx == 0 && ly == 0) {
-							continue;
-						}
-						float size = 0;
-						float dist = post.getDistToCamera();
-						size = dist * 0.001f;
-						size = 1 / size;
-						size = size * glow.getWidth() * 4;
-						lightHints.add(new P3D(lx,ly,size));
-					}
-				}
-			}
-
-			for (int i = 0; i < lightHints.size(); i++) {
-				P3D p = lightHints.get(i);
-				float size = p.z;
-				if (size < 0)
-					continue;
-				int half = (int) (size * 0.5f);
-				g.drawImage(glow, (int) p.x - half, (int) p.y - half,
-						(int) size, (int) size, null);
-			}
-		}
+		
 		super.drawHUD(g);
 	}
 }

@@ -23,6 +23,8 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.DataBufferInt;
 import java.awt.image.Kernel;
 import java.awt.image.VolatileImage;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -62,6 +64,10 @@ public class Main extends JFrame implements IMain {
 	private boolean paused = false;
 	private static float[] cel;
 	private static long frames;
+	
+	public static boolean screenRecorder = false;
+	public static String screenRecorderPath = "tmp" + (int)(Math.random() * 523897) + "\\";
+	private static long screenRecorderFrame = 0;
 
 	public static void main(String[] args) {
 		new Main();
@@ -312,7 +318,9 @@ public class Main extends JFrame implements IMain {
 				}
 				justEnteredFullscreen = false;
 			}
-			Graphics internalGraphics = vRAMBuffer.createGraphics();
+			Graphics internalGraphics2 = vRAMBuffer.createGraphics();
+			BufferedImage swapper = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_RGB);
+			Graphics internalGraphics = swapper.getGraphics();
 			while (!vRAMBuffer.contentsLost() && !justEnteredFullscreen) {
 				while (painting) {
 
@@ -324,6 +332,7 @@ public class Main extends JFrame implements IMain {
 						framesDrawn = 0;
 						timeSinceUpdate = System.currentTimeMillis();
 					}
+					FPSUtil.queryStart();
 					long qSt = System.currentTimeMillis();
 					Graphics2D bufferedGraphics = (Graphics2D) buffer
 							.getGraphics();
@@ -345,7 +354,7 @@ public class Main extends JFrame implements IMain {
 								RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 					}
 					bufferedGraphics.dispose();
-
+					
 					if (blurAmount > 0.001) {
 						GaussianFilter filter = new GaussianFilter(blurAmount);
 						BufferedImage dest = new BufferedImage(
@@ -361,6 +370,9 @@ public class Main extends JFrame implements IMain {
 						GameState.DTIME = drawTime;
 					}
 					drawHUD(internalGraphics);
+					recordScreen(swapper);
+					internalGraphics2.drawImage(swapper, 0, 0, null);
+					FPSUtil.queryEnd();
 					/*
 					 * Graphics2D sn = (Graphics2D)internalGraphics; int s =
 					 * framesDrawn * 3 + 50; sn.setColor(Color.black);
@@ -411,6 +423,25 @@ public class Main extends JFrame implements IMain {
 
 	public int getNumScreens() {
 		return screens.size();
+	}
+	
+	private void recordScreen(BufferedImage img) {
+		if (screenRecorder) {
+			try {
+				if (screenRecorderFrame == 0) {
+					File folder = new File(screenRecorderPath);
+					if (!folder.exists())
+						folder.mkdirs();
+					
+				}
+				File outputfile = new File(screenRecorderPath + "img" + String.format("%05d", screenRecorderFrame) + ".png");
+			    ImageIO.write(img, "png", outputfile);
+			    screenRecorderFrame++;
+			}
+			catch (Throwable t) {
+				
+			}
+		}
 	}
 
 	public boolean screenExists(String name) {

@@ -1,7 +1,7 @@
 import java.awt.Color;
 
 
-public class Lamppost extends Drawable {
+public class Lamppost extends Drawable implements IGlowable {
 	private PointTesselator tesselator;
 	
 	private Color[] startTileColor = null;
@@ -237,6 +237,10 @@ public class Lamppost extends Drawable {
 	
 	public float getWindDelta() {
 		return windX;
+	}
+	
+	public Color getGlowColor() {
+		return lightColor;
 	}
 
 	public Color lightColor = Color.yellow;

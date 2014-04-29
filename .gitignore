@@ -13,3 +13,9 @@ hs_err_pid*
 # bin folders
 bin/
 bin/*.*
+
+# screen recording stuff.
+
+FFMPEG.EXE
+*.mp4
+*.bat

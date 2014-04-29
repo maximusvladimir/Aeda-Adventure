@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+
 public abstract class Level extends Screen {
 	protected Scene<Drawable> scene;
 	private boolean showFlakes = true;
@@ -23,6 +25,14 @@ public abstract class Level extends Screen {
 		if (vignette == null)
 			vignette = Utility.generateVignette(getMain().getWidth(), getMain()
 					.getHeight());
+		
+		if (glow == null) {
+			try {
+				glow = ImageIO.read(HolmVillage.class.getResource("/glow.png"));
+			} catch (Throwable t) {
+
+			}
+		}
 	}
 	
 	/**
@@ -71,6 +81,8 @@ public abstract class Level extends Screen {
 		
 		if (getScene() == null)
 			return;
+		if (GameState.instance.oilFill < 1)
+			GameState.instance.oilFill += 0.000075f;
 		getScene().getGamePlane().allowFall();
 		getScene().setPlayerY(getScene().getGamePlane().getHeight());
 		if (getTimeSinceInit() == -1
@@ -120,7 +132,7 @@ public abstract class Level extends Screen {
 				darkBuilder += -(ams - (int) (dist / 700 * ams));
 			}
 		}
-		scene.getPlayer().setIndividualDarkness(darkBuilder);
+		scene.getPlayer().setIndividualDarkness(darkBuilder+scene.getPlayer().getPlayerIndividualDarkness());
 		
 		if (showFlakes)
 			flakes.tick();
@@ -321,6 +333,12 @@ public abstract class Level extends Screen {
 				addMessage("You can't use fish oil without a lantern.", "NOUSEFISHOIL");
 				setActiveMessage("NOUSEFISHOIL");
 			}
+			else {
+				if (GameState.instance.oilFill >= 0.25f) {
+					GameState.instance.oilFill -= 0.25f;
+					rechargeLantern();
+				}
+			}
 		}
 		if (ke.getKeyCode() == KeyEvent.VK_Z && getScene() != null) {
 			showWorldMap = !showWorldMap;
@@ -337,6 +355,12 @@ public abstract class Level extends Screen {
 		/*if (ke.getKeyCode() == KeyEvent.VK_SHIFT && getScene() != null) {
 			scene.setPlayerSpeed(19);
 		}*/
+	}
+	
+	public void rechargeLantern() {
+		//addMessage("You can only use your lantern in dark places.", "LANTERNNOTIFY");
+		//setActiveMessage("LANTERNNOTIFY");
+		getScene().getPlayer().flameSize = 1;
 	}
 
 	public abstract void draw(Graphics g);
@@ -365,8 +389,10 @@ public abstract class Level extends Screen {
 	}
 
 	public void drawHUD(Graphics g) {
+		
 		if (showFlakes)
 			flakes.draw(g);
+		drawGlow(g);
 		if (GameState.doVignette)
 			g.drawImage(vignette, 0, 0, null);
 		if (!(this instanceof InsideHouse) && !(this instanceof Shop)) {
@@ -388,6 +414,13 @@ public abstract class Level extends Screen {
 				int x092 = getMain().getWidth() - (int) (getMain().getWidth() * 0.14f) - 8;
 				int y558 = (int) (getMain().getWidth() * 0.17f + 112);
 				g.drawImage(Shop.getOilImage(), x092,y558,null);
+				if (getScene()!= null) {
+					g.setColor(MathCalculator.lerp(Color.red,Color.green,getScene().getPlayer().flameSize));
+					g.fillRect(x092, y558, (int)(getScene().getPlayer().flameSize * 48), 3);
+					float speec = GameState.instance.oilFill;
+					g.setColor(MathCalculator.lerp(Color.red,Color.green,speec));
+					g.fillRect(x092, y558+3, (int)(speec * 48), 3);
+				}
 			}
 		}
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -441,6 +474,7 @@ public abstract class Level extends Screen {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_OFF);
+		
 		if (transition >= -0.1f) {
 			transition -= 0.008f;
 			// player.moving = false;
@@ -483,6 +517,73 @@ public abstract class Level extends Screen {
 					gameHalt = false;
 					//getScene().setPlayerPosition(nextPlayerLoc);
 				}
+			}
+		}
+	}
+	
+	private static BufferedImage glow = null;
+	private ArrayList<P3D> lightHints = new ArrayList<P3D>();
+	//private P3D lastPlayerLamp = null;
+	public void drawGlow(Graphics g) {
+		if (glow != null && getScene() != null) {
+			if (Main.findNumFramesDrawn() % 4 == 0) {
+				ArrayList<IGlowable> lamps = getScene().<IGlowable>getObjectsByTypeAndParented(IGlowable.class);
+				//if (lightHints.size() >= 1)
+					//lastPlayerLamp = lightHints.get(lightHints.size() - 1);
+				lightHints.clear();
+				Color[] screenColors = null;
+				for (int i = 0; i < lamps.size(); i++) {
+					IGlowable post = lamps.get(i);
+					Drawable d = (Drawable)post;
+					if (getScene().isVisible(d)) {
+						if (screenColors == null) {
+							int[] dbi = getMain().getDBI().getData();
+							screenColors = new Color[dbi.length];
+							for (int j = 0; j < dbi.length; j++) {
+								screenColors[j] = new Color(dbi[j]);
+							}
+						}
+						Color sample = post.getGlowColor();
+						int lx = 0;
+						int ly = 0;
+						for (int x = 0; x < getMain().getWidth(); x++) {
+							for (int y = 0; y < getMain().getHeight(); y++) {
+								int det = y * getMain().getWidth() + x;
+								if (det < 0 || det > screenColors.length)
+									continue;
+								if (MathCalculator.compareColor(
+										screenColors[det], sample) < 5) {
+									lx = x;
+									ly = y;
+									x = getMain().getWidth() + 100;
+									y = getMain().getHeight() + 100;
+									break;
+								}
+							}
+						}
+						if (lx == 0 && ly == 0) {
+							continue;
+						}
+						float size = 0;
+						float dist = d.getDistToCamera();
+						size = dist * 0.001f;
+						if (size == 0)
+							size = 1;
+						size = 1 / size;
+						size = size * glow.getWidth() * 4;
+						lightHints.add(new P3D(lx,ly,size));
+					}
+				}
+			}
+
+			for (int i = 0; i < lightHints.size(); i++) {
+				P3D p = lightHints.get(i);
+				float size = p.z;
+				if (size < 0)
+					continue;
+				int half = (int) (size * 0.5f);
+				g.drawImage(glow, (int) p.x - half, (int) p.y - half,
+						(int) size, (int) size, null);
 			}
 		}
 	}

@@ -95,23 +95,23 @@ public class Shop extends Level {
 		else
 			drawRaft((Graphics2D)g,windDelta, 20, getMain().getHeight() * 0.37f, scale);
 		
-		if (selectedItem % 4 == 1) {
+		if (selectedItem % 4 == 2) {
 			glowDelta += 0.01f;
-			drawMoonstone(swap,(Graphics2D)g,150-(scaleAdjust*25),getMain().getHeight()*0.37f,scale+scaleAdjust);
+			drawMoonstone(swap,(Graphics2D)g,270-(scaleAdjust*25),getMain().getHeight()*0.37f,scale+scaleAdjust);
 			g.setColor(fontColor);
-			g.drawString(Strings.inst.SHOP_DISPL_MOON, 125, (int)(getMain().getHeight() * 0.52f));
+			g.drawString(Strings.inst.SHOP_DISPL_MOON, 260, (int)(getMain().getHeight() * 0.52f));
 		}
 		else
-			drawMoonstone(swap,(Graphics2D)g,150,getMain().getHeight()*0.37f,scale);
+			drawMoonstone(swap,(Graphics2D)g,270,getMain().getHeight()*0.37f,scale);
 		
-		if (selectedItem % 4 == 2) {
-			drawLamp((Graphics2D)g,270-(scaleAdjust*23),getMain().getHeight()*0.37f,scale+scaleAdjust);
+		if (selectedItem % 4 == 1) {
+			drawLamp((Graphics2D)g,150-(scaleAdjust*23),getMain().getHeight()*0.37f,scale+scaleAdjust);
 			g.setColor(fontColor);
-			g.drawString(Strings.inst.SHOP_DISPL_LAMP, 260, (int)(getMain().getHeight() * 0.52f));
+			g.drawString(Strings.inst.SHOP_DISPL_LAMP, 125, (int)(getMain().getHeight() * 0.52f));
 			lampDelta += 0.01f * Math.random();
 		}
 		else
-			drawLamp((Graphics2D)g,270,getMain().getHeight()*0.37f,scale);
+			drawLamp((Graphics2D)g,150,getMain().getHeight()*0.37f,scale);
 		
 		if (selectedItem % 4 == 3) {
 			drawPiece((Graphics2D)g,450,getMain().getHeight()*0.37f,scale+scaleAdjust);
@@ -153,6 +153,8 @@ public class Shop extends Level {
 						public void actionPerformed(ActionEvent arg0) {
 							Message m = (Message) arg0.getSource();
 							if (m.getResult()) {
+								if (SoundManager.soundEnabled)
+									new Sound("item").play();
 								addMessage("Congradulations! You now have a raft!\nPress 'X' in water to use your raft.", "RAFTINFO");
 								setActiveMessage("RAFTINFO");
 								GameState.instance.hasRaft = true;
@@ -172,14 +174,14 @@ public class Shop extends Level {
 				}
 			break;
 			
-			case 1:
-				if (GameState.instance.gems >= 400 && !GameState.instance.hasMoonstone) {
-					addMessage("Purchase a moonstone for 400 Gems?", "MOONBUY",true,new ActionListener() {
+			case 2:
+				if (GameState.instance.gems >= 600 && !GameState.instance.hasMoonstone) {
+					addMessage("Purchase a moonstone for 600 Gems?", "MOONBUY",true,new ActionListener() {
 						public void actionPerformed(ActionEvent arg0) {
 							Message m = (Message) arg0.getSource();
 							if (m.getResult()) {
 								GameState.instance.hasMoonstone = true;
-								GameState.instance.gems -= 400;
+								GameState.instance.gems -= 600;
 								GameState.save();
 							}
 						}		
@@ -195,21 +197,25 @@ public class Shop extends Level {
 				}
 			break;
 			
-			case 2:
-				if (GameState.instance.gems >= 600 && !GameState.instance.hasLantern) {
-					addMessage("Purchase a lantern for 600 Gems?", "LANBUY",true,new ActionListener() {
+			case 1:
+				if (GameState.instance.gems >= 400 && !GameState.instance.hasLantern) {
+					addMessage("Purchase a lantern for 400 Gems?", "LANBUY",true,new ActionListener() {
 						public void actionPerformed(ActionEvent arg0) {
 							Message m = (Message) arg0.getSource();
 							if (m.getResult()) {
+								if (SoundManager.soundEnabled)
+									new Sound("item").play();
+								addMessage("Congradulations! You now have a lantern!\nPress 'C' to recharge your lantern in the dark.", "LANTINFO");
+								setActiveMessage("LANTINFO");
 								GameState.instance.hasLantern = true;
-								GameState.instance.gems -= 600;
+								GameState.instance.gems -= 400;
 								GameState.save();
 							}
 						}		
 					});
 					setActiveMessage("LANBUY");
 				} else if (GameState.instance.hasLantern) {
-					addMessage("You already have a moonstone.","LANHAVE");
+					addMessage("You already have a lantern.","LANHAVE");
 					setActiveMessage("LANHAVE");
 				}
 				else {

@@ -15,12 +15,15 @@ public class GameState {
 	public int healthPieces = 10;
 	public long timePlayed = 0;
 	
+	public float oilFill = 1;
+	
 	public boolean talkedToGrandmaFiace = false;
 	public boolean hasMoonstone = false;
 	public boolean hasRaft = false;
 	public boolean hasLantern = false;
 	public boolean hasFishOil = false;
 	public boolean hasSword = false;
+	public boolean hasGivenSecondAmount = false;
 	
 	public String toString() {
 		return  "playerStage     = " + playerStage + "\n" +
@@ -38,7 +41,8 @@ public class GameState {
 				"hasLantern     = " + hasLantern + "\n" +
 				"timePlayed     = " + timePlayed + "\n" + 
 				"hasFishOil     = " + hasFishOil + "\n" +
-				"hasSword       = " + hasSword;
+				"hasSword       = " + hasSword + "\n" +
+				"has600Gems     = " + hasGivenSecondAmount;
 	}
 	public static GameState instance;
 	private static FileSave saver = new FileSave();

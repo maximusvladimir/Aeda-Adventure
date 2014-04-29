@@ -337,7 +337,10 @@ public class Enemy extends Character {
 		
 		if (dist < 400 && getScene().getPlayer().isPhysicallyHitting()) {
 			GameState.instance.score += 1;
-			addHealth(healthLoss);
+			if (GameState.instance.hasSword)
+				addHealth(healthLoss * 10);
+			else
+				addHealth(healthLoss);
 			if (getHealth() <= 0.00001) {
 				kill();
 			}

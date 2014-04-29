@@ -69,7 +69,7 @@ public class Dunp extends Enemy {
 		final float bx = (float)(Math.cos(ssf*4) * 20);
 		final float bz = (float)(Math.sin(ssf * 3) * 30) - 35;
 		final P3D hatTop = new P3D(0,200+(float)(Math.cos(ssf*2)*15),-40);
-		Color clothColor = new Color(70,84,65);//new Color(221,227,219);
+		Color clothColor = Utility.adjustBrightness(new Color(70,84,65),-darkness);//new Color(221,227,219);
 		final float bha = 120;
 		final float hes = -200;
 		final float hhs = -80;

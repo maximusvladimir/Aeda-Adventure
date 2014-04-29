@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,7 +30,7 @@ public abstract class Screen {
 	private float consoleFlash = 0;
 	private String consoleDisplay = "";
 	private long consoleDisplayTime = 0;
-
+	
 	public Screen(IMain inst) {
 		this.inst = inst;
 		buffer = new BufferedImage(inst.getWidth(), inst.getHeight(),
@@ -375,6 +377,40 @@ public abstract class Screen {
 				consoleDisplay("Vignette turned on.");
 			else
 				consoleDisplay("Vignette turned off.");
+		} else if (noSpace.equals("recorder")) {
+			if (MainApplet.isApplet) {
+				consoleDisplay("Screen recorder doesn't work in Applet Mode.");
+			}
+			else if (System.getProperty("os.name", "generic").toLowerCase().indexOf("win") == -1) {
+				consoleDisplay("Screen recorder is only capable of running on Windows currently.");
+			} else {
+			Main.screenRecorder = !Main.screenRecorder;
+			if (Main.screenRecorder) {
+				consoleDisplay("Screen recorder turned on.");
+				FPSUtil.screenRecorderStart();
+			}
+			else {
+				FPSUtil.screenRecorderEnd();
+				try {
+					File builder = new File(Main.screenRecorderPath + "build.bat");
+					builder.createNewFile();
+					FileWriter writer = new FileWriter(builder);
+					writer.write("ffmpeg -r " + ((int)(FPSUtil.getAverageFPS()*1.1f)) + " -i img%%05d.png -vcodec mpeg4 -b 20000k output.mp4\n\r");
+					writer.write("move /Y output.mp4 ..\n\r");
+					writer.write("set startdir=%cd%\n\r");
+					writer.write("cd ..\n\r");
+					writer.write("del /q %startdir%\n\r");
+					writer.write("rmdir /q %startdir%\n\r");
+					writer.close();
+				}
+				catch (Throwable t) {
+					consoleDisplay("Fatal error creating bat file!");
+				}
+				finally {
+					consoleDisplay("Screen recorder turned off.\nData recorded to:\n" + new File(Main.screenRecorderPath).getAbsolutePath() + "\nUse build.bat within folder to build movie, after copying ffmpeg.exe\nto the directory.");
+				}
+			}
+			}
 		} else if (noSpace.equals("fog")) {
 			if (this instanceof Level) {
 				Level lev = (Level) this;
@@ -451,7 +487,7 @@ public abstract class Screen {
 				additive = "\nNOTICE: You are not in debug mode, which disables some console features.";
 			consoleDisplay("-Aeda Adventure Console-"
 					+ additive
-					+ "\nhealth - gets or sets health.\ngem - gets or sets number of gems.\nscore - gets or sets score.\nspeed - gets or sets player speed.\nvignette - enables or disables vignette.\nhelp - displays this message.\nmessages - displays any active messages.\nsave - force saves the game.\nteleport - teleports you to a location.\ngarrote - kills all enemies.\nfog - toggles fog on or off.\nlightning - makes lightning.\nwireframe - toggles wireframe moded on or off.\nantialias - turns on or off antialiasing\nmodelmerger - Opens the model converting utility.\nwhoami - determines player name.\ntime - indicates how long the game has been played.\nsound - enables/disables sound.");
+					+ "\nhealth - gets or sets health.\ngem - gets or sets number of gems.\nscore - gets or sets score.\nspeed - gets or sets player speed.\nvignette - enables or disables vignette.\nhelp - displays this message.\nmessages - displays any active messages.\nsave - force saves the game.\nteleport - teleports you to a location.\ngarrote - kills all enemies.\nfog - toggles fog on or off.\nlightning - makes lightning.\nwireframe - toggles wireframe moded on or off.\nantialias - turns on or off antialiasing\nmodelmerger - Opens the model converting utility.\nwhoami - determines player name.\ntime - indicates how long the game has been played.\nsound - enables/disables sound.\nrecorder - enables/disables the screen recorder.");
 		} else
 			consoleDisplay("Sorry, I didn't understand \""
 					+ cmd

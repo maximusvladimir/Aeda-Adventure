@@ -403,6 +403,8 @@ public class Scene<T> {
 	}
 	
 	public boolean isVisible(Drawable d) {
+		if (d instanceof Player)
+			return true;
 		if (getFogStart() == 0 && getFogEnd() == 0)
 			return true;
 		if (d.getInstanceLoc().z > playerZ || d.getInstanceLoc().z + -getFogEnd() < playerZ)

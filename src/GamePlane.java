@@ -447,7 +447,12 @@ public class GamePlane extends Drawable {
 					int indi = getColor(x, z);
 					Color sample1 = colors[indi];
 					if (xshad == x && zshad == z) {
-						darkness = darkness + 20;
+						if (getScene().getPlayer().flameSize > 0.001f) {
+							darkness = darkness - (int)(getScene().getPlayer().flameSize * 40) - 20;
+						}
+						else {
+							darkness = darkness + 20;
+						}
 					}
 					tesselator.color(sample1.getRed() - darkness,
 							sample1.getGreen() - darkness, sample1.getBlue()
@@ -469,7 +474,12 @@ public class GamePlane extends Drawable {
 					tesselator.point((x) * space, getHeightPoint(x, z + 1),
 							(z + 1) * space);
 					if (xshad == x && zshad == z) {
-						darkness = darkness - 20;
+						if (getScene().getPlayer().flameSize > 0.001f) {
+							darkness = darkness + (int)(getScene().getPlayer().flameSize * 40) + 20;
+						}
+						else {
+							darkness = darkness - 20;
+						}
 					}
 				}
 			}

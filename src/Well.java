@@ -170,6 +170,13 @@ public class Well extends Drawable {
 
 	public void tick() {
 		cosic += 0.02f;
+		if (isVisible() && getScene().isVisible(this)) {
+			if (getDistToPlayer() < 500) {
+				if (GameState.instance.health < GameState.instance.healthPieces) {
+					GameState.instance.health += 0.003f;
+				}
+			}
+		}
 	}
 
 	public PointTesselator getTesselator() {

@@ -20,7 +20,7 @@ public class Grass extends Drawable {
 	}
 	
 	private void drawStrand(P3D center,int seed,int darkness) {
-		Random r = new Random(seed);
+		Rand r = new Rand(seed);
 		float height = (float)(r.nextDouble()*120)+140;
 		float w = height/38.0f;
 		float px = (float)(Math.sin(delta + (r.nextDouble()*Math.PI*2)) * (w*1.8));
@@ -46,10 +46,11 @@ public class Grass extends Drawable {
 		tesselator.point(-w+center.x,0,-w+center.z);
 	}
 	
-	private Color genColor(Random r, int darkness) {
-		return new Color(MathCalculator.colorLock(80+r.nextInt(25)-darkness),
-				MathCalculator.colorLock(160+r.nextInt(25)-darkness),
-				MathCalculator.colorLock(r.nextInt(25)-darkness));
+	private Color genColor(Rand r, int darkness) {
+		//return new Color(MathCalculator.colorLock(80+r.nextInt(25)-darkness),
+			//	MathCalculator.colorLock(160+r.nextInt(25)-darkness),
+				//MathCalculator.colorLock(r.nextInt(25)-darkness));
+		return Utility.adjustBrightness(r.variate(new Color(80,160,0), 25), -darkness);
 	}
 
 	public void tick() {
