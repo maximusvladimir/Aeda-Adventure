@@ -64,12 +64,11 @@ public class CadenSea extends Level implements IWaterLevel {
 			getScene().add(enemyOfTheRepublic);
 		}
 		
-		// TODO: Reimplement
-		//if (!GameState.instance.hasFishOil) {
+		if (!GameState.instance.hasFishOil) {
 			FishOil oil = new FishOil(getScene());
 			oil.setInstanceLoc(-4000, 0, -2000);
 			getScene().add(oil);
-		//}
+		}
 	}
 	
 	private void movePlayer() {

@@ -11,8 +11,9 @@ public class Bat extends Enemy {
 		tesselator = new PointTesselator();
 		tesselator.setSkipCullCheck(true);
 		tesselator.setDrawType(DrawType.Triangle);
-		setSpeed(4.5f);
+		setSpeed(5.0f);
 		setHealthLoss(-0.011f);
+		setVisiblilityDistance(3000);
 	}
 	
 	private static Hitbox buildHitbox() {
@@ -28,7 +29,7 @@ public class Bat extends Enemy {
 					en = (Enemy)d1;
 				en.persueHalt = true;
 				if (!en.alreadyHit){
-					GameState.instance.health -= 0.35f;
+					GameState.instance.health -= 0.25f;
 					en.getScene().getPlayer().hitBlur();
 					en.alreadyHit = true;
 					en.timeSinceLastHit = System.currentTimeMillis();
@@ -65,7 +66,7 @@ public class Bat extends Enemy {
 		tesselator.rotate(0, -delta - MathCalculator.PIOVER2, 0);
 		tesselator.translate(pos.x, pos.y+(float)(Math.cos(ssf) * 30), pos.z, false);
 		
-		Color cn = Utility.adjustBrightness(new Color(60,60,60), -darkness);
+		Color cn = Utility.adjustBrightness(new Color(120,120,120), -darkness);
 		Rand rand = new Rand(294881);
 		
 		float beat = (float)(Math.sin(ssf*7) * 20);
@@ -92,24 +93,47 @@ public class Bat extends Enemy {
 		tesselator.point(-xbeat,50,20 + beat);
 		tesselator.point(20,0,-25);
 		
+		Color middlePart = Utility.adjustBrightness(cn, 30);
+		
 		//body base
-		tesselator.color(rand.bright(cn, brd*3/4,brd*4/3));
+		tesselator.color(rand.bright(middlePart,20));
 		tesselator.point(-20,90,10);
 		tesselator.point(20,90,10);
 		tesselator.point(20,0,-15);
-		tesselator.color(rand.bright(cn, brd*3/4,brd*4/3));
+		tesselator.color(rand.bright(middlePart,20));
 		tesselator.point(-20,90,10);
 		tesselator.point(-20,0,-15);
 		tesselator.point(20,0,-15);
 		
-		tesselator.color(rand.bright(cn, brd*3/4,brd*4/3));
+		tesselator.color(rand.bright(middlePart,20));
 		tesselator.point(-20,90,-10);
 		tesselator.point(20,90,-10);
 		tesselator.point(20,0,-35);
-		tesselator.color(rand.bright(cn, brd*3/4,brd*4/3));
+		tesselator.color(rand.bright(middlePart,20));
 		tesselator.point(-20,90,-10);
 		tesselator.point(-20,0,-35);
 		tesselator.point(20,0,-15);
+		
+		tesselator.point(40, 90, -15);
+		tesselator.point(-40,90, -15);
+		tesselator.point(-40,0,20);
+		tesselator.point(40,90,-15);
+		tesselator.point(40,90,-15);
+		tesselator.point(-40,0,20);
+		
+		// head
+		tesselator.color(rand.bright(middlePart,20));
+		tesselator.point(-20,90,-10);
+		tesselator.point(20,90,-10);
+		tesselator.point(0,110,20);
+		tesselator.color(rand.bright(middlePart,20));
+		tesselator.point(0,110,20);
+		tesselator.point(-20,90,0);
+		tesselator.point(0,80,40);
+		tesselator.color(rand.bright(middlePart,20));
+		tesselator.point(0,110,20);
+		tesselator.point(20,90,0);
+		tesselator.point(0,80,40);
 	}
 
 	public void tick() {

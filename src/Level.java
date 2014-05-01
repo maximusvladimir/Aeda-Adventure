@@ -79,6 +79,10 @@ public abstract class Level extends Screen {
 			messages.get(activeMessageIndex).physicalTick();
 		}
 		
+		if (transition >= -0.1f) {
+			transition -= 0.008f;
+		}
+		
 		if (getScene() == null)
 			return;
 		if (GameState.instance.oilFill < 1)
@@ -474,11 +478,10 @@ public abstract class Level extends Screen {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_OFF);
-		
-		if (transition >= -0.1f) {
-			transition -= 0.008f;
+		if (transition >= -0.4f) {
 			// player.moving = false;
 			// canMove = false;
+			Main.doWave += 2.0f;
 			if (scene != null) {
 			scene.getPlayer().moving = false;
 			scene.setPlayerMovable(false);
@@ -496,6 +499,7 @@ public abstract class Level extends Screen {
 			}
 			if (transition <= 0.00) {
 				transition = -10;
+				//Main.doWave = false;
 				if (nextScreen != null) {
 					boolean firstLoad = false;
 					if (!getMain().screenExists(nextScreen.getName())) {
@@ -517,6 +521,11 @@ public abstract class Level extends Screen {
 					gameHalt = false;
 					//getScene().setPlayerPosition(nextPlayerLoc);
 				}
+			}
+		}
+		else {
+			if (Main.doWave > 0) {
+				Main.doWave -= 2.5f;
 			}
 		}
 	}

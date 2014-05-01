@@ -262,9 +262,20 @@ public class PointTesselator {
 	public void normal(float x, float y, float z) {
 		normal(new P3D(x, y, z));
 	}
+	
+	class IKSolver extends Operation3D {
+		public P3D location, newLocation;
+		public float tensileRadius;
+		public IKSolver(P3D loc, float rad, P3D sec) {
+			location = loc;
+			tensileRadius = rad;
+			newLocation = sec;
+			id = 7;
+		}
+	}
 
 	public void bone(P3D location, float tensileRadius, P3D newLocation) {
-		
+		operationStack.enqueue(new IKSolver(location,tensileRadius,newLocation));
 	}
 	
 	public void setFaceLighting(boolean value) {

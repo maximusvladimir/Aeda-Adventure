@@ -54,6 +54,7 @@ public abstract class Screen {
 			wordsToColor.put("whoami", Color.magenta.darker());
 			wordsToColor.put("time", new Color(122, 59, 155));
 			wordsToColor.put("sound", new Color(34, 180, 60));
+			wordsToColor.put("recorder", Color.red.darker().darker());
 			final Color numerics = Color.red;
 			wordsToColor.put("0", numerics);
 			wordsToColor.put("1", numerics);
@@ -198,6 +199,9 @@ public abstract class Screen {
 		consoleDisplay = str;
 		consoleDisplayTime = System.currentTimeMillis();
 		messageTime = (long) (str.length() * 28.7f);
+		if (consoleDisplay.indexOf("http:") > -1) {
+			messageTime = messageTime + 10000;
+		}
 		if (messageTime < 8000)
 			messageTime = 8000;
 	}
@@ -249,7 +253,7 @@ public abstract class Screen {
 				return;
 			}
 			String hs = noSpace.replace("teleport", "");
-			String telNames = "Try: \"teleport <name of location>\" (no quotes)\nThe following is acceptable:\nholm, fiace, sailor, harbour, harbor, caden, sea";
+			String telNames = "Try: \"teleport <name of location>\" (no quotes)\nThe following is accepted:\nholm, fiace, sailor, harbour, harbor, caden, sea, banicia, cave";
 			try {
 				if (hs.indexOf("holm") > -1) {
 					if (this instanceof HolmVillage)
@@ -297,6 +301,17 @@ public abstract class Screen {
 							getMain().setActiveScreen("lilo");
 						}
 					}
+				} else if (hs.indexOf("banicia") > -1 || hs.indexOf("cave") > -1) {
+					if (this instanceof Banicia)
+						consoleDisplay("You are already there/here.");
+					else {
+						if (getMain().screenExists("tumalarda")) {
+							getMain().setActiveScreen("tumalarda");
+						} else {
+							getMain().addScreen(new Banicia(getMain()));
+							getMain().setActiveScreen("tumalarda");
+						}
+					}
 				} else {
 					consoleDisplay(telNames);
 				}
@@ -316,6 +331,8 @@ public abstract class Screen {
 			} catch (Throwable t) {
 				consoleDisplay("Try: \"health <floating point number>\" (no quotes)");
 			}
+		} else if (noSpace.startsWith("solver")) {
+			consoleDisplay("Under construction.");
 		} else if (noSpace.startsWith("score")) {
 			if (!GameState.DEBUGMODE) {
 				consoleDisplay("You cannot set score in non debugging mode.");
@@ -392,6 +409,7 @@ public abstract class Screen {
 			else {
 				FPSUtil.screenRecorderEnd();
 				try {
+					// create the .bat file for compiling.
 					File builder = new File(Main.screenRecorderPath + "build.bat");
 					builder.createNewFile();
 					FileWriter writer = new FileWriter(builder);
@@ -407,7 +425,10 @@ public abstract class Screen {
 					consoleDisplay("Fatal error creating bat file!");
 				}
 				finally {
-					consoleDisplay("Screen recorder turned off.\nData recorded to:\n" + new File(Main.screenRecorderPath).getAbsolutePath() + "\nUse build.bat within folder to build movie, after copying ffmpeg.exe\nto the directory.");
+					String bits = "32";
+					if (System.getProperty("sun.arch.data.model") != null && System.getProperty("sun.arch.data.model").equals("64"))
+						bits = "64";
+					consoleDisplay("Screen recorder turned off.\nData recorded to:\n" + new File(Main.screenRecorderPath).getAbsolutePath() + "\nUse build.bat within folder to build movie, after copying ffmpeg.exe\nto the directory.\nIt can be downloaded at http://ffmpeg.zeranoe.com/builds/ look for \n\"Download FFmpeg git-XXXXXXX " + bits + "-bit Static\".");
 				}
 			}
 			}

@@ -68,6 +68,9 @@ public class Main extends JFrame implements IMain {
 	public static boolean screenRecorder = false;
 	public static String screenRecorderPath = "tmp" + (int)(Math.random() * 523897) + "\\";
 	private static long screenRecorderFrame = 0;
+	
+	public static float doWave = 0;
+	public static float waveTick = 0;
 
 	public static void main(String[] args) {
 		new Main();
@@ -320,6 +323,7 @@ public class Main extends JFrame implements IMain {
 			}
 			Graphics internalGraphics2 = vRAMBuffer.createGraphics();
 			BufferedImage swapper = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_RGB);
+			BufferedImage device = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_RGB);
 			Graphics internalGraphics = swapper.getGraphics();
 			while (!vRAMBuffer.contentsLost() && !justEnteredFullscreen) {
 				while (painting) {
@@ -370,8 +374,23 @@ public class Main extends JFrame implements IMain {
 						GameState.DTIME = drawTime;
 					}
 					drawHUD(internalGraphics);
-					recordScreen(swapper);
-					internalGraphics2.drawImage(swapper, 0, 0, null);
+					Graphics internalGraphics3 = device.getGraphics();
+					if (doWave > 0.0001f) {
+						waveTick += 0.5f;
+						int[] data = ((DataBufferInt)swapper.getRaster().getDataBuffer()).getData();
+						for (int y = 0; y < swapper.getHeight(); y++) {
+							int offset = (int)(Math.cos(waveTick + (y * 0.1f)) * doWave);
+							for (int x = 0; x < swapper.getWidth(); x++) {
+								internalGraphics3.setColor(new Color(data[y * swapper.getWidth() + x]));
+								internalGraphics3.drawLine(x+offset, y, x+offset, y);
+							}
+						}
+					}
+					else
+						internalGraphics3.drawImage(swapper, 0, 0, null);
+					
+					recordScreen(device);
+					internalGraphics2.drawImage(device,0,0,null);
 					FPSUtil.queryEnd();
 					/*
 					 * Graphics2D sn = (Graphics2D)internalGraphics; int s =

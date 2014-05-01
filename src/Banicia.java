@@ -62,6 +62,11 @@ public class Banicia extends Level {
 		barrel[4].setInstanceLoc(-1000, -300, -450);
 
 		scene.add(new Bat(scene));
+		scene.add(new Bat(scene));
+		scene.add(new Bat(scene));
+		scene.add(new Bat(scene));
+		scene.add(new Bat(scene));
+		scene.add(new Bat(scene));
 		
 		setSigns(signs);
 		scene.add(signs);
