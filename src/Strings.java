@@ -19,7 +19,7 @@ public class Strings {
 		HOLM_VILLAGE_RULF_O = "Rulf";
 		HOLM_VILLAGE_WELL_MSG_0 = "This old well is very deep and filled with water.\nSomething appears to be moving in it.";
 		HOLM_HAUZ_GRAND_PURCHASED_RAFT = GameState.instance.playerGUID + " that's a nice raft you have there.\nYour Grandpa had one just like it.\nHe use to go to Sailor's Harbour and fish.";
-		HOLM_HAUZ_GRAND_NOT_PURCHASED_RAFT = "Have you considered buying a raft? I hear they're really cheap at\nRulf's Shop";
+		HOLM_HAUZ_GRAND_NOT_PURCHASED_RAFT = "Have you considered buying a raft? I hear they're really cheap at\nRulf's Shop.";
 		SHOP_ENTRY_MSG = "Welcome to Rulf's Shop!\nI'm in the back, but you can toggle options with \"W\".\nYou can perform a transaction with \"E\".\nExit with \"ESC\".";
 		SHOP_LEAVE_MSG = "Thanks for coming. Come again any time!";
 		SHOP_DISPL_RAFT = "Raft (200 Gems)";
@@ -37,9 +37,11 @@ public class Strings {
 		NAME_HARBOUR_SHORT = "Harbour";
 		NAME_CADEN_SEA = "Caden Sea";
 		NAME_BANICIA_CAVE = "Banicia Cave";
+		NAME_BOSSLEVEL = "Blackwood Peak";//11
 	}
 	
 	public String NAME_FIACE;
+	public String NAME_BOSSLEVEL;
 	public String NAME_HOLM;
 	public String NAME_HARBOUR;
 	public String NAME_HARBOUR_SHORT;

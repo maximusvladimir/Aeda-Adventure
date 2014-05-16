@@ -10,6 +10,7 @@ public class Barrel extends Drawable {
 	private float delta = 0.0f;
 	public Barrel(Scene<Drawable> scene, Rand rand) {
 		super(scene,new Hitbox(new P3D(-75,0,-75), new P3D(75,200,75)));
+		//super(scene,new Hitbox(new P3D(-125,0,-125), new P3D(125,225,125)));
 		tesselator = new PointTesselator();
 		tesselator.setDrawType(DrawType.Triangle);
 		tesselator.setSkipCullCheck(true);

@@ -364,6 +364,8 @@ public class SceneTesselator extends PointTesselator {
 		avaiableTriangles = 0;
 		for (int i = 0; i < size(); i++) {
 			final PointTesselator sample = getTesselator(i);
+			if (sample == null)
+				continue;
 			sample.translatePreX = sample.translatePreY = sample.translatePreZ = 0;
 			sample.translatePostX = sample.translatePostY = sample.translatePostZ = 0;
 			sample.rotationX = sample.rotationY = sample.rotationZ = 0;

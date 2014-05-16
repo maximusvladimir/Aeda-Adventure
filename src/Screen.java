@@ -413,8 +413,10 @@ public abstract class Screen {
 					File builder = new File(Main.screenRecorderPath + "build.bat");
 					builder.createNewFile();
 					FileWriter writer = new FileWriter(builder);
-					writer.write("ffmpeg -r " + ((int)(FPSUtil.getAverageFPS()*1.1f)) + " -i img%%05d.png -vcodec mpeg4 -b 20000k output.mp4\n\r");
-					writer.write("move /Y output.mp4 ..\n\r");
+					int fps = ((int)(FPSUtil.getAverageFPS()));
+					String outputName = "output.wmv";
+					writer.write("ffmpeg -r " + fps + " -f image2 -i img%%05d.png -vcodec mpeg4 -qscale 1 -b 20000 -r 30 " + outputName + "\n\r");
+					writer.write("move /Y " + outputName + " ..\n\r");
 					writer.write("set startdir=%cd%\n\r");
 					writer.write("cd ..\n\r");
 					writer.write("del /q %startdir%\n\r");

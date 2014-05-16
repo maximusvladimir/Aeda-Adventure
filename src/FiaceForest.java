@@ -174,10 +174,10 @@ public class FiaceForest extends Level {
 																			.getLevel()
 																			.addMessage(
 																					"This dark fog has taken over the land..."
-																							+ "\nYou should go to Holm Village to see what you can do.<PAUSE>"
+																							+ "\nYou should go to Holm Village to see what you can do."
 																							+ "\n(JK- The fog is actually here because this graphics engine isn't"
 																							+ "\nfast enough to fully render the level.)"
-																							+ "\nHolm town is just due north of here.",
+																							+ "\nHolm town is just due north of here. Press 'Z' to open the map.",
 
 																					"GRAND7");
 																	getScene()

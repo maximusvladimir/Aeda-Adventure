@@ -309,9 +309,17 @@ public class Enemy extends Character {
 	private boolean dead = false;
 	public void kill() {
 		dead = true;
-		dropGoodies();
+		onDeadDrop();
 		fader = 1;
 		getHitbox().disable();
+	}
+	
+	public void onDeadDrop() {
+		dropGoodies();
+	}
+	
+	public void onPlayerHit() {
+		
 	}
 	
 	private long timeSinceLastHit2 = 0;
@@ -344,6 +352,7 @@ public class Enemy extends Character {
 			if (getHealth() <= 0.00001) {
 				kill();
 			}
+			onPlayerHit();
 			timeSinceLastHit2 = System.currentTimeMillis();
 			getScene().getPlayer().antiHit();
 		}
@@ -367,7 +376,7 @@ public class Enemy extends Character {
 		if (isPersuingPlayer()) {
 			if (!checker)
 				moveTowards(new P3D(getScene().getPlayerX(),0,getScene().getPlayerZ()-500));
-			super.tick();
+			doCharacterTick();
 			checker = true;
 			if (!isMovingTowards())
 				checker = false;
@@ -387,6 +396,10 @@ public class Enemy extends Character {
 			checker = false;
 			getScene().getPlayer().setFaceEmotion(FacialExpression.EMOTION_PLAIN);
 		}*/
+	}
+	
+	public void doCharacterTick() {
+		super.tick();
 	}
 
 	public void uponArrival() {

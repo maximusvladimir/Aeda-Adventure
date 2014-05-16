@@ -27,6 +27,7 @@ public class Hitbox {
 	private P3D location = new P3D(0, 0, 0);
 
 	private boolean enabled = true;
+	public float scale = 1;
 	private boolean concernedWithHeight =false;
 	public static HitAction getDefaultHitAction() {
 		return defaultAction;
@@ -41,15 +42,57 @@ public class Hitbox {
 	}
 	
 	public Hitbox() {
-
+		render = new PointTesselator();
 	}
 
 	public Hitbox(P3D boundStart, P3D boundEnd) {
 		bounds = new P3D[] { boundStart, boundEnd };
+		render = new PointTesselator();
+		render.setSkipCullCheck(true);
+		render.setDrawType(DrawType.Triangle);
 	}
 	
 	public Hitbox(P3D... multiple) {
 		bounds = multiple;
+		render = new PointTesselator();
+		render.setSkipCullCheck(true);
+		render.setDrawType(DrawType.TriangleLines);
+	}
+	
+	public void doTesselator() {
+		if (bounds == null || bounds.length == 0)
+			return;
+		render.translate(getDrawable().pos.x,getDrawable().pos.y,getDrawable().pos.z,false);
+		if (isEnabled())
+		render.color(java.awt.Color.red);
+		else
+			render.color(java.awt.Color.green);
+		for (int i = 0; i < bounds.length/2;i++) {
+			P3D p1 = bounds[i * 2 + 0];
+			P3D p2 = bounds[i * 2 + 1];
+			render.point(p1);
+			render.point(p1.x,p1.y,p2.z);
+			render.point(p1.x,p2.y,p2.z);
+			
+			render.point(p2.x,p1.y,p1.z);
+			render.point(p2.x,p1.y,p2.z);
+			render.point(p2);
+			
+			
+			render.point(p1.x,p1.y,p1.z);
+			render.point(p2.x,p1.y,p1.z);
+			render.point(p2.x,p2.y,p1.z);
+			render.point(p1.x,p1.y,p1.z);
+			render.point(p1.x,p2.y,p1.z);
+			render.point(p2.x,p2.y,p1.z);
+			
+			render.point(p1.x,p1.y,p2.z);
+			render.point(p2.x,p1.y,p2.z);
+			render.point(p2.x,p2.y,p2.z);
+			render.point(p1.x,p1.y,p2.z);
+			render.point(p1.x,p2.y,p2.z);
+			render.point(p2.x,p2.y,p2.z);
+		}
 	}
 	
 	public void rotate90deg() {
@@ -170,11 +213,16 @@ public class Hitbox {
 		}*/
 
 		float alpha = (float) (Math.atan2(hc.z - pc.z, hc.x - pc.x) + Math.PI);
-		float dist = hc.dist(pc) * 0.1f;
+		float dist = hc.dist(pc) * 0.1f * h1.scale;
 		return new P3D((float) (MathCalculator.cos(alpha) * dist),
 				player.getLocation().y, (float) (MathCalculator.sin(alpha) * dist));
 	}
 
+	public PointTesselator getHitboxRender() {
+		return render;
+	}
+	
+	private PointTesselator render;
 	private Drawable drawable;
 
 	public Drawable getDrawable() {

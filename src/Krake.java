@@ -12,7 +12,7 @@ public class Krake extends Enemy {
 	private static float xEye = 0;
 	private static float zEye = 0;
 	public Krake(Scene<Drawable> scene) {
-		super(scene, new Hitbox());
+		super(scene, buildHitbox());
 		tesselator = new PointTesselator();
 		tesselator.setSkipCullCheck(true);
 		tesselator.setDrawType(DrawType.Triangle);
@@ -25,6 +25,29 @@ public class Krake extends Enemy {
 			cache = genBody();
 			headBase = genHeadBase();
 		}
+	}
+	
+	private static Hitbox buildHitbox() {
+		final Hitbox box = new Hitbox(new P3D(-300, -80, -300), new P3D(300, 120, 300));
+		box.setHitAction(new HitAction() {
+			public void onHit(Drawable d0, Drawable d1, int indexd0, int indexd1) {
+				if (!(d0 instanceof Player) && !(d1 instanceof Player))
+					return;
+				Enemy en = null;
+				if (d0 instanceof Enemy)
+					en = (Enemy)d0;
+				else
+					en = (Enemy)d1;
+				en.persueHalt = true;
+				if (!en.alreadyHit){
+					GameState.instance.health -= 0.25f;
+					en.getScene().getPlayer().hitBlur();
+					en.alreadyHit = true;
+					en.timeSinceLastHit = System.currentTimeMillis();
+				}
+			}		
+		});
+		return box;
 	}
 	
 	public void createPic() {

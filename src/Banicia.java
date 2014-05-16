@@ -16,8 +16,7 @@ public class Banicia extends Level {
 	public static long mapDrawTime = 0;
 
 	public void init() {
-		Barrel[] barrel = new Barrel[5];
-		Sign[] signs = new Sign[3];
+		Barrel[] barrel = new Barrel[15];
 		scene = new Scene<Drawable>(this, getRand());
 		GamePlane plane = new GamePlane(scene, getRand(), 55, new Color(113,77,53), 14, 0.5f);
 		for (int x = 0; x < 55; x++) {
@@ -40,36 +39,32 @@ public class Banicia extends Level {
 		plane.genWorld();
 		scene.setFog(-2000, -2600);
 		scene.setFogColor(new Color(75, 70, 54).darker());
-		for (int i = 0; i < signs.length; i++) {
+		/*for (int i = 0; i < signs.length; i++) {
 			signs[i] = new Sign(scene);
-		}
+		}*/
 		for (int i = 0; i < barrel.length; i++) {
 			barrel[i] = new Barrel(scene, getRand());
+			barrel[i].setInstanceLoc(getRand().nextLocation(-350));
 		}
-		signs[0].setInstanceLoc(600, -220, 2500);
-		signs[0].setSignMessage(Strings.inst.HOLM_VILLAGE_SIGN);
 
-		signs[1].setInstanceLoc(600, -220, -9800);
-		signs[1].setSignMessage(Strings.inst.HOLM_VILLAGE_NORTH_ENTRY);
-
-		signs[2].setInstanceLoc(300, -220, 7200);
-		signs[2].setSignMessage("Don't forget to fight enemies with ENTER.\nYou can also break barrels as well.");
-
-		barrel[0].setInstanceLoc(600, -350, 2000);
-		barrel[1].setInstanceLoc(-900, -350, 2075);
-		barrel[2].setInstanceLoc(600, -350, 3500);
-		barrel[3].setInstanceLoc(850, -300, -450);
-		barrel[4].setInstanceLoc(-1000, -300, -450);
-
-		scene.add(new Bat(scene));
-		scene.add(new Bat(scene));
-		scene.add(new Bat(scene));
-		scene.add(new Bat(scene));
-		scene.add(new Bat(scene));
-		scene.add(new Bat(scene));
 		
-		setSigns(signs);
-		scene.add(signs);
+		for (int i = 0; i < 30; i++) {
+			Drawable gem = new Gem(getScene(),getRand());
+			if (getRand().nextFloat() < 0.2) {
+				gem = new RedGem(getScene(),getRand());
+			}
+			gem.setInstanceLoc(getRand().nextLocation(-150));
+			scene.add(gem);
+		}
+		
+		for (int i = 0; i < 27; i++) {
+			Bat bat = new Bat(scene);
+			bat.setInstanceLoc(getRand().nextLocation(-75));
+			scene.add(bat);
+		}
+		
+		//setSigns(signs);
+		//scene.add(signs);
 		scene.add(barrel);
 		// roughness, color variance, resolution
 		SimplePlane roof = new SimplePlane(scene, new Color(135,111,52), 250, 30, 50, plane.getWorldSize());
@@ -80,6 +75,14 @@ public class Banicia extends Level {
 		notfs.setInstanceLoc(-6000, -375, 0);
 		notfs.updateInstLoc();
 		scene.add(notfs);
+		
+		if (!GameState.instance.hasKey) {
+			Key key = new Key(scene);
+			Rand rand = new Rand();
+			rand.setScene(scene);
+			key.setInstanceLoc(rand.nextLocation(-50));
+			scene.add(key);
+		}
 	}
 
 	public void tick() {

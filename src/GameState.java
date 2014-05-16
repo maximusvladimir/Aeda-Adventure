@@ -12,8 +12,10 @@ public class GameState {
 	public float playerDelta = 0.0f;
 	public Color playerColor = Color.green.darker();
 	public static P3D ORIGINS = new P3D(0,0,0);
+	public static boolean drawHitbox = false;
 	public int healthPieces = 10;
 	public long timePlayed = 0;
+	public boolean gameOver = false;
 	
 	public float oilFill = 1;
 	
@@ -24,6 +26,7 @@ public class GameState {
 	public boolean hasFishOil = false;
 	public boolean hasSword = false;
 	public boolean hasGivenSecondAmount = false;
+	public boolean hasKey = false;
 	
 	public String toString() {
 		return  "playerStage     = " + playerStage + "\n" +
@@ -42,7 +45,8 @@ public class GameState {
 				"timePlayed     = " + timePlayed + "\n" + 
 				"hasFishOil     = " + hasFishOil + "\n" +
 				"hasSword       = " + hasSword + "\n" +
-				"has600Gems     = " + hasGivenSecondAmount;
+				"has600Gems     = " + hasGivenSecondAmount + "\n" + 
+				"hasKey         = " + hasKey;
 	}
 	public static GameState instance;
 	private static FileSave saver = new FileSave();
@@ -53,7 +57,7 @@ public class GameState {
 	public static int TOTAL3DOBJECTS = 0;
 	public static int DTIME = 0;
 	public static String appletInstance = null;
-	public static final boolean DEBUGMODE = true;
+	public static final boolean DEBUGMODE = false;//true;
 	public static void save() {
 		if (instance == null || Network.RUNNING)
 			return;

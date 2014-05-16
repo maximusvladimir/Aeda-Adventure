@@ -6,6 +6,8 @@ import java.awt.Polygon;
 import java.awt.RadialGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -26,6 +28,13 @@ public class Utility {
 		float pz = p0.z + p1.z + p2.z;
 		return new P3D(px * 0.333333f, py * 0.333333f, pz * 0.333333f);
 	}
+	
+	public static BufferedImage deepCopy(BufferedImage bi) {
+		 ColorModel cm = bi.getColorModel();
+		 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		 WritableRaster raster = bi.copyData(null);
+		 return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+	}
 
 	public static void doSound(Screen s) {
 		if (SoundManager.soundEnabled) {
@@ -41,6 +50,8 @@ public class Utility {
 				SoundManager.backgroundSound = new Sound("title");
 			if (s instanceof Banicia)
 				SoundManager.backgroundSound = new Sound("cave");
+			if (s instanceof BossLevel)
+				SoundManager.backgroundSound = new Sound("lava");
 			if (s instanceof FiaceForest)
 				SoundManager.backgroundSound = new Sound("fiace");
 			if (SoundManager.backgroundSound != null) {
@@ -128,6 +139,7 @@ public class Utility {
 		Color def3 = new Color(255, 255, 255, 45);
 		Color def4 = new Color(255, 255, 255, 45);
 		Color def5 = new Color(255, 255, 255, 45);
+		Color def6 = new Color(255, 255, 255, 45);
 		Color def1a = new Color(255, 255, 255, 45);
 		Color def2a = new Color(255, 255, 255, 45);
 		Color def3a = new Color(255, 255, 255, 45);
@@ -145,6 +157,10 @@ public class Utility {
 		float def4py = (m.getHeight() * 0.72f) - (rectSizeHalf * 3);
 		float def5px = (m.getWidth() * 0.5f) + (rectSizeHalf);
 		float def5py = (m.getHeight() * 0.72f) - (rectSizeHalf * 3);
+		
+		float def6px = (m.getWidth() * 0.5f) - (rectSizeHalf);
+		float def6py = (m.getHeight() * 0.72f) - (rectSizeHalf * 5);
+		
 		g.setColor(new Color(255, 255, 255));
 		g.setFont(new Font("Arial", 0, 14));
 		if (s.getLevel().getName().equals("vbm")) {
@@ -153,6 +169,13 @@ public class Utility {
 			defpx = def2px;
 			defpy = def2py;
 			g.drawString(Strings.inst.NAME_HOLM, sx + 6, sy + 18);
+		}
+		if (s.getLevel().getName().equals("sauce")) {
+			def6 = current;
+			//def6a = currentBack;
+			defpx = def6px;
+			defpy = def6py;
+			g.drawString(Strings.inst.NAME_BOSSLEVEL, sx + 6, sy + 18);
 		}
 		if (s.getLevel().getName().equals("level")) {
 			def1 = current;
@@ -193,6 +216,10 @@ public class Utility {
 				rectSize, 4);
 		Utility.drawBorderRect(g, def5, def5a, def5px, def5py, rectSize,
 				rectSize, 4);
+		if (GameState.instance.hasKey) {
+			Utility.drawBorderRect(g, def6, new Color(200,127,127,127), def6px, def6py, rectSize,
+					rectSize, 4);
+		}
 
 		flash += 0.013f;
 
@@ -225,6 +252,8 @@ public class Utility {
 				rectSizeHalf + (int) def4py);
 		g.drawString(Strings.inst.NAME_BANICIA_CAVE, 3 + (int) def5px,
 				rectSizeHalf + (int) def5py);
+		g.drawString(Strings.inst.NAME_BOSSLEVEL, 7 + (int) def6px,
+				rectSizeHalf + (int) def6py);
 	}
 
 	public static Color adjustAlpha(Color base, int alpha) {
@@ -498,6 +527,23 @@ public class Utility {
 			g.drawLine(sx - 1, sy, sx + 1, sy);
 			g.drawLine(sx, sy - 1, sx, sy + 1);
 		}
+		
+		g.setColor(new Color(230,203,40));
+		ArrayList<Key> keys = scene
+				.<Key> getObjectsByType(Key.class);
+		for (int i = 0; i < keys.size(); i++) {
+			if (!keys.get(i).isVisible())
+				continue;
+			int entityx = (int) ((keys.get(i).getInstanceLoc().x + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int entityz = (int) ((keys.get(i).getInstanceLoc().z + scene
+					.getWorldSizeHalf()) * mapw / scene.getWorldSize());
+			int sx = mapx + entityx + 5;
+			int sy = mapy + entityz + 5;
+			g.drawLine(sx - 1, sy, sx + 1, sy);
+			g.drawLine(sx, sy - 1, sx, sy + 1);
+		}
+		
 		g.setColor(new Color(144, 109, 74));
 		ArrayList<Tree> trees = scene.<Tree> getObjectsByType(Tree.class);
 		for (int i = 0; i < trees.size(); i++) {

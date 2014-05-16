@@ -80,6 +80,7 @@ public class FileSave {
 		writer.append(store("germanyEnglndFrance" + state.hasFishOil) + "\n");
 		writer.append(store("LaEspada" + state.hasSword) + "\n");
 		writer.append(store("moneFsm" + state.hasGivenSecondAmount) + "\n");
+		writer.append(store("KEtjKEY" + state.hasKey) + "\n");
 	}
 	
 	private String store(int value) {
@@ -190,6 +191,8 @@ public class FileSave {
 			    		state.hasSword = Boolean.parseBoolean(line.replace("LaEspada",""));
 			    	} else if (line.indexOf("moneFsm") > -1) {
 			    		state.hasGivenSecondAmount = Boolean.parseBoolean(line.replace("moneFsm",""));
+			    	} else if (line.indexOf("KEtjKEY") > -1) {
+			    		state.hasKey = Boolean.parseBoolean(line.replace("KEtjKEY",""));
 			    	}
 			    }
 			}

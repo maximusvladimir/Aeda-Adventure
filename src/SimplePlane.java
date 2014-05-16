@@ -40,7 +40,7 @@ public class SimplePlane extends Drawable {
 	
 	private float lookup(float x, float z) {
 		if (Berlin.noise(x*0.4,-z*0.4) < 0.3)
-			return -280;
+			return -180;
 		return (float) (Berlin.noise(x * 0.2, z * 0.2) * hillHeight);
 	}
 	
@@ -96,6 +96,20 @@ public class SimplePlane extends Drawable {
 				tesselator.point(points[(z * resolution + x) * 6 + 5]);
 			}
 		}
+	}
+	
+	public int getPlanePlayerTileX() {
+		float px = getScene().getPlayerX();
+		int size = resolution;
+		float WORLDSIZEHALF = WORLDSIZE / 2;
+		return (int) ((px + WORLDSIZEHALF) / WORLDSIZE * size);
+	}
+	
+	public int getPlanePlayerTileZ(){
+		float pz = getScene().getPlayerZ();
+		int size = resolution;
+		float WORLDSIZEHALF = WORLDSIZE / 2;
+		return (int) ((pz + WORLDSIZEHALF - 260) / WORLDSIZE * size);
 	}
 
 	public void tick() {

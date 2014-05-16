@@ -2,6 +2,7 @@ import java.awt.AWTException;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.DisplayMode;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
@@ -64,35 +65,68 @@ public class Main extends JFrame implements IMain {
 	private boolean paused = false;
 	private static float[] cel;
 	private static long frames;
-	
+
 	public static boolean screenRecorder = false;
-	public static String screenRecorderPath = "tmp" + (int)(Math.random() * 523897) + "\\";
+	public static String screenRecorderPath = "tmp"
+			+ (int) (Math.random() * 523897) + "\\";
 	private static long screenRecorderFrame = 0;
-	
+	private Thread recordingThread;
+	private static Queue<ScreenShot> screenShots = new Queue<ScreenShot>(true);
+
 	public static float doWave = 0;
 	public static float waveTick = 0;
+	
+	class ScreenShot {
+		public boolean locked = false;
+		public BufferedImage buffer;
+		public ScreenShot(BufferedImage img) {
+			buffer = img;
+		}
+	}
 
 	public static void main(String[] args) {
 		new Main();
 		System.out.println("Shutting down.");
 		Network.RUNNING = false;
 	}
-	
+
 	public DataBufferInt getDBI() {
-		return (DataBufferInt)buffer.getRaster().getDataBuffer();
+		return (DataBufferInt) buffer.getRaster().getDataBuffer();
 	}
 
 	public BufferedImage getBuffer() {
 		return buffer;
 	}
-	
+
+	public void createAndStartRecorder() {
+		final Runnable runner = new Runnable() {
+			public void run() {
+				while (screenRecorder) {
+					if (!screenShots.isEmpty()) {
+						ScreenShot pulled = screenShots.dequeue();
+						if (pulled == null || pulled.locked)
+							continue;
+						pulled.locked = true;
+						FPSUtil.queryStart();
+						recordScreen(pulled.buffer);
+						FPSUtil.queryEnd();
+					}
+				}
+			}
+		};
+		recordingThread = new Thread(runner);
+		recordingThread.setName("AAScreenRecorder1");
+		recordingThread.start();
+		recordingThread.setPriority(Thread.MAX_PRIORITY);
+	}
+
 	public static long findNumFramesDrawn() {
 		long sd = getNumFramesDrawn();
 		if (sd == 0)
 			sd = MainApplet.getNumFramesDrawn();
 		return sd;
 	}
-	
+
 	public static long getNumFramesDrawn() {
 		return frames;
 	}
@@ -137,7 +171,15 @@ public class Main extends JFrame implements IMain {
 					if (fullscreen)
 						leaveFullscreen();
 					else
-						goFullscreen();
+						goFullscreen(1);
+					if (active != null && !active.isInConsoleMode()
+							&& !isPaused())
+						active.keyReleased(arg0);
+				}  else if (arg0.getKeyCode() == KeyEvent.VK_F10) {
+					if (fullscreen)
+						leaveFullscreen();
+					else
+						goFullscreen(0);
 					if (active != null && !active.isInConsoleMode()
 							&& !isPaused())
 						active.keyReleased(arg0);
@@ -213,23 +255,19 @@ public class Main extends JFrame implements IMain {
 		});
 		addScreen(new MainMenu(this));
 		setActiveScreen("mainmenu");
-		/*Timer timer = new Timer(10, new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				if (active != null && active.isActiveScreen()
-						&& !active.isInConsoleMode() && !isPaused()) {
-					if (active instanceof Level)
-						((Level) active).silentTick();
-					active.tick();
-					if (active instanceof Level)
-						((Level) active).postSilentTick();
-				}
-			}
-		});
-		timer.start();*/
+		/*
+		 * Timer timer = new Timer(10, new ActionListener() { public void
+		 * actionPerformed(ActionEvent arg0) { if (active != null &&
+		 * active.isActiveScreen() && !active.isInConsoleMode() && !isPaused())
+		 * { if (active instanceof Level) ((Level) active).silentTick();
+		 * active.tick(); if (active instanceof Level) ((Level)
+		 * active).postSilentTick(); } } }); timer.start();
+		 */
 		Thread updateThread = new Thread(new Runnable() {
 			public void run() {
 				long lastSync = System.currentTimeMillis();
 				while (true) {
+					recoTick += 0.05f;
 					if (active != null && active.isActiveScreen()
 							&& !active.isInConsoleMode() && !isPaused()) {
 						if (active instanceof Level)
@@ -243,11 +281,12 @@ public class Main extends JFrame implements IMain {
 					}
 					lastSync = System.currentTimeMillis();
 				}
-			}			
+			}
 		});
 		updateThread.setPriority(Thread.MAX_PRIORITY);
 		updateThread.setName("UpdateThread");
 		updateThread.start();
+
 		cnt = new ControllerSupport();
 		if (cnt.isAvaliable())
 			System.out.println("Valid controller found.");
@@ -322,8 +361,10 @@ public class Main extends JFrame implements IMain {
 				justEnteredFullscreen = false;
 			}
 			Graphics internalGraphics2 = vRAMBuffer.createGraphics();
-			BufferedImage swapper = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_RGB);
-			BufferedImage device = new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_RGB);
+			BufferedImage swapper = new BufferedImage(getWidth(), getHeight(),
+					BufferedImage.TYPE_INT_RGB);
+			BufferedImage device = new BufferedImage(getWidth(), getHeight(),
+					BufferedImage.TYPE_INT_RGB);
 			Graphics internalGraphics = swapper.getGraphics();
 			while (!vRAMBuffer.contentsLost() && !justEnteredFullscreen) {
 				while (painting) {
@@ -336,7 +377,6 @@ public class Main extends JFrame implements IMain {
 						framesDrawn = 0;
 						timeSinceUpdate = System.currentTimeMillis();
 					}
-					FPSUtil.queryStart();
 					long qSt = System.currentTimeMillis();
 					Graphics2D bufferedGraphics = (Graphics2D) buffer
 							.getGraphics();
@@ -358,7 +398,7 @@ public class Main extends JFrame implements IMain {
 								RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 					}
 					bufferedGraphics.dispose();
-					
+
 					if (blurAmount > 0.001) {
 						GaussianFilter filter = new GaussianFilter(blurAmount);
 						BufferedImage dest = new BufferedImage(
@@ -377,21 +417,42 @@ public class Main extends JFrame implements IMain {
 					Graphics internalGraphics3 = device.getGraphics();
 					if (doWave > 0.0001f) {
 						waveTick += 0.5f;
-						int[] data = ((DataBufferInt)swapper.getRaster().getDataBuffer()).getData();
+						internalGraphics3.setColor(Color.black);
+						internalGraphics3.fillRect(0, 0, getWidth(), getHeight());
+						int[] data = ((DataBufferInt) swapper.getRaster()
+								.getDataBuffer()).getData();
 						for (int y = 0; y < swapper.getHeight(); y++) {
-							int offset = (int)(Math.cos(waveTick + (y * 0.1f)) * doWave);
+							int offset = (int) (Math.cos(waveTick + (y * 0.1f)) * doWave);
 							for (int x = 0; x < swapper.getWidth(); x++) {
-								internalGraphics3.setColor(new Color(data[y * swapper.getWidth() + x]));
-								internalGraphics3.drawLine(x+offset, y, x+offset, y);
+								internalGraphics3.setColor(new Color(data[y
+										* swapper.getWidth() + x]));
+								internalGraphics3.drawLine(x + offset, y, x
+										+ offset, y);
 							}
 						}
-					}
-					else
+					} else
 						internalGraphics3.drawImage(swapper, 0, 0, null);
-					
-					recordScreen(device);
-					internalGraphics2.drawImage(device,0,0,null);
-					FPSUtil.queryEnd();
+
+					if (screenRecorder) {
+						if (recordingThread != null && recordingThread.isAlive()) {
+							if (screenShots.size() < 30)
+								screenShots.enqueue(new ScreenShot(Utility.deepCopy(device)));
+						} else {
+							createAndStartRecorder();
+						}
+					}
+					internalGraphics2.drawImage(device, 0, 0, null);
+					if (screenRecorder) {
+						if (recoFont == null) {
+							recoFont = new Font("Courier New",Font.BOLD,12);
+							recoLength = internalGraphics2.getFontMetrics(recoFont).stringWidth("Recording...   ");
+						}
+						internalGraphics2.setColor(Color.red);
+						internalGraphics2.fillRect(getWidth() - recoLength,0,recoLength,14);
+						internalGraphics2.setFont(recoFont);
+						internalGraphics2.setColor(new Color(255,255,255,(int)(Math.sin(recoTick) * 55 + 200)));
+						internalGraphics2.drawString("Recording...", getWidth() - recoLength + 3, 12);
+					}
 					/*
 					 * Graphics2D sn = (Graphics2D)internalGraphics; int s =
 					 * framesDrawn * 3 + 50; sn.setColor(Color.black);
@@ -436,6 +497,10 @@ public class Main extends JFrame implements IMain {
 		}
 	}
 
+	private int recoLength = 0;
+	private Font recoFont;
+	private float recoTick =0;
+	
 	public boolean isFullscreen() {
 		return fullscreen;
 	}
@@ -443,7 +508,7 @@ public class Main extends JFrame implements IMain {
 	public int getNumScreens() {
 		return screens.size();
 	}
-	
+
 	private void recordScreen(BufferedImage img) {
 		if (screenRecorder) {
 			try {
@@ -451,14 +516,15 @@ public class Main extends JFrame implements IMain {
 					File folder = new File(screenRecorderPath);
 					if (!folder.exists())
 						folder.mkdirs();
-					
+					ImageIO.setUseCache(false);
+
 				}
-				File outputfile = new File(screenRecorderPath + "img" + String.format("%05d", screenRecorderFrame) + ".png");
-			    ImageIO.write(img, "png", outputfile);
-			    screenRecorderFrame++;
-			}
-			catch (Throwable t) {
-				
+				File outputfile = new File(screenRecorderPath + "img"
+						+ String.format("%05d", screenRecorderFrame) + ".png");
+				ImageIO.write(img, "png", outputfile);
+				screenRecorderFrame++;
+			} catch (Throwable t) {
+
 			}
 		}
 	}
@@ -490,7 +556,7 @@ public class Main extends JFrame implements IMain {
 		}
 		return null;
 	}
-	
+
 	public int getPixel(int x, int y) {
 		return buffer.getRGB(x, y);
 	}
@@ -560,12 +626,16 @@ public class Main extends JFrame implements IMain {
 		painting = false;
 	}
 
-	public void goFullscreen() {
+	public void goFullscreen(int inde) {
 		GraphicsEnvironment ge = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
 		int w = -1;
 		int h = -1;
-		GraphicsDevice device = ge.getScreenDevices()[0];
+		int ss = 0;
+		GraphicsDevice[] devices = ge.getScreenDevices();
+		if (inde > devices.length - 1)
+			return;
+		GraphicsDevice device = ge.getScreenDevices()[inde];
 		for (int i = 0; i < ge.getScreenDevices().length; i++) {
 			GraphicsDevice d = ge.getScreenDevices()[i];
 			if (d.getDisplayMode().getWidth() > w
@@ -584,21 +654,24 @@ public class Main extends JFrame implements IMain {
 			int setupW = 10000000;
 			int setupH = 10000000;
 			for (int i = 0; i < device.getDisplayModes().length; i++) {
-				 DisplayMode m = device.getDisplayModes()[i];
-				 if (m.getWidth() < 512 || m.getHeight() < 384)
-					 continue;
-				 if (m.getWidth() < setupW && m.getHeight() < setupH && m.getRefreshRate() == 60 && m.getBitDepth() == 32) {
-					 setupW = m.getWidth();
-					 setupH = m.getHeight();
-				 }
+				DisplayMode m = device.getDisplayModes()[i];
+				if (m.getWidth() < 512 || m.getHeight() < 384)
+					continue;
+				if (m.getWidth() < setupW && m.getHeight() < setupH
+						&& m.getRefreshRate() == 60 && m.getBitDepth() == 32) {
+					setupW = m.getWidth();
+					setupH = m.getHeight();
+				}
 			}
 			if (setupW == 10000000) {
-				JOptionPane.showMessageDialog(this, "Unable to set fullscreen: Device is unsupported.");
+				JOptionPane.showMessageDialog(this,
+						"Unable to set fullscreen: Device is unsupported.");
 				if (setupW != 512 && setupH != 384)
-					System.err.println("Fullscreen was set to an undesired mode. There may be artifacts and errors present.");
+					System.err
+							.println("Fullscreen was set to an undesired mode. There may be artifacts and errors present.");
 			} else {
-				device.setDisplayMode(new DisplayMode(setupW,setupH,32,60));
-				//device.setDisplayMode(new DisplayMode(512, 384, 32, 60));
+				device.setDisplayMode(new DisplayMode(setupW, setupH, 32, 60));
+				// device.setDisplayMode(new DisplayMode(512, 384, 32, 60));
 				// device.setDisplayMode(new DisplayMode(1280,768,32,60));
 				justEnteredFullscreen = true;
 				fullscreen = true;

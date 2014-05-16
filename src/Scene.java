@@ -262,6 +262,7 @@ public class Scene<T> {
 		for (int i = 0; i < d.length; i++) {
 			objs.add((Drawable)d[i]);
 			scene.addTesselator(((Drawable)d[i]).getTesselator());
+			scene.addTesselator(((Drawable)d[i]).getHitbox().getHitboxRender());
 		}
 	}
 	
@@ -348,11 +349,15 @@ public class Scene<T> {
 				if (d.isCullable()) {
 					if (isVisible(d)) {
 						display++;
+						if (GameState.drawHitbox)
+						d.getHitbox().doTesselator();
 						d.draw(getSceneDarkness()+d.getIndividualDarkness()-lightningAmount);
 					}
 				}
 				else {
 					display++;
+					if (GameState.drawHitbox)
+					d.getHitbox().doTesselator();
 					d.draw(getSceneDarkness()+d.getIndividualDarkness()-lightningAmount);
 				}
 			}

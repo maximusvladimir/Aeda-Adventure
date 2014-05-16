@@ -1,9 +1,21 @@
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Vector;
 
 public class Queue<T> {
-	private ArrayList<Object> objs;
+	private AbstractList<Object> objs;
+	private boolean threadSafe = false;
 	public Queue() {
-		objs = new ArrayList<Object>();
+		this(false);
+	}
+	
+	public Queue(boolean needsThreadSafe) {
+		threadSafe = needsThreadSafe;
+		if (needsThreadSafe)
+			objs = new Vector<Object>();
+		else
+			objs = new ArrayList<Object>();
 	}
 	
 	public void enqueue(T element) {
@@ -11,11 +23,18 @@ public class Queue<T> {
 	}
 	
 	public T dequeue() {
-		return (T)objs.remove(0);
+		try {
+			return (T)objs.remove(0);
+		} catch (Throwable t) {
+			return null;
+		}
 	}
 	
 	public void consolidate() {
-		objs.trimToSize();
+		if (objs instanceof Vector)
+			((Vector<Object>)objs).trimToSize();
+		else
+			((ArrayList<Object>)objs).trimToSize();
 	}
 	
 	public void clear() {
@@ -24,6 +43,10 @@ public class Queue<T> {
 	
 	public boolean isEmpty() {
 		return objs.size() == 0;
+	}
+	
+	public int size() {
+		return objs.size();
 	}
 	
 	/**

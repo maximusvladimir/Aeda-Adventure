@@ -132,6 +132,14 @@ public class SailorHarbour extends Level implements IWaterLevel {
 			}
 			trees[i].setInstanceLoc(treeLoc);
 		}
+		for (int i = 0; i < 30; i++) {
+			Drawable gem = new Gem(getScene(),getRand());
+			if (getRand().nextFloat() < 0.2) {
+				gem = new RedGem(getScene(),getRand());
+			}
+			gem.setInstanceLoc(getRand().nextLocation(-150));
+			scene.add(gem);
+		}
 		for (int i = 0; i < 20; i++) {
 			Enemy enemyOfTheRepublic = new Enemy(scene);
 			float x = 0;

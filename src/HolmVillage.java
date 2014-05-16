@@ -14,7 +14,8 @@ public class HolmVillage extends Level {
 	private House[] houses;
 	private Lamppost[] lamps;
 	private P3D lastLoc = new P3D();
-
+	private boolean hasKeyUpdate = false;
+	private GamePlane plane;
 	public House[] getHouses() {
 		return houses;
 	}
@@ -40,11 +41,21 @@ public class HolmVillage extends Level {
 			houses[1].lightsOn = true;
 		else
 			houses[1].lightsOn = false;
+		
+		//System.out.println(hasKeyUpdate + "," + GameState.instance.hasKey);
+		if (hasKeyUpdate != GameState.instance.hasKey) {
+			hasKeyUpdate = true;
+			for (int i = 0;i < scene.getSceneSize(); i++) {
+				scene.remove(i);
+			}
+			init();
+		}
 	}
 
 	public static long mapDrawTime = 0;
 
 	public void init() {
+		hasKeyUpdate = GameState.instance.hasKey;
 		Tree[] trees = new Tree[120];// 20
 		Grass[] grass = new Grass[80];
 		Barrel[] barrel = new Barrel[5];
@@ -53,7 +64,7 @@ public class HolmVillage extends Level {
 		lamps = new Lamppost[10];
 		Enemy[] enemies = new Enemy[4];
 		scene = new Scene<Drawable>(this, getRand());
-		GamePlane plane = new GamePlane(scene, getRand(), 55, new Color(99,
+		plane = new GamePlane(scene, getRand(), 55, new Color(99,
 				126, 61).darker(), 14, 0.5f);
 		for (int x = 0; x < 55; x++) {
 			for (int z = 0; z < 55; z++) {
@@ -62,7 +73,12 @@ public class HolmVillage extends Level {
 		}
 		scene.setPlane(plane);
 		for (int z = 0; z < 55; z++) {
-			if (z > 26) {
+			if (hasKeyUpdate) {
+				plane.setColorPoint(26, z, getRoadColor(plane.getColorPoint(26, z)));
+				plane.setColorPoint(27, z, getRoadColor(plane.getColorPoint(27, z)));
+				plane.setColorPoint(28, z, getRoadColor(plane.getColorPoint(28, z)));
+			}
+			else if (z > 26){
 				plane.setColorPoint(26, z, getRoadColor(plane.getColorPoint(26, z)));
 				plane.setColorPoint(27, z, getRoadColor(plane.getColorPoint(27, z)));
 				plane.setColorPoint(28, z, getRoadColor(plane.getColorPoint(28, z)));
@@ -177,7 +193,11 @@ public class HolmVillage extends Level {
 							float dist = getDistToPlayer();
 							if (dist < 400 && !grandmaMessage) {
 								grandmaMessage = true;
-								if (GameState.instance.hasSword) {
+								if (GameState.instance.hasKey) {
+									addMessage("That key that you have is very powerful.\nIt will let you go to " + Strings.inst.NAME_BOSSLEVEL + ".\nPress 'Z' to open the map to see the location.","noti");
+									setActiveMessage("noti");
+								}
+								else if (GameState.instance.hasSword) {
 									final String secondary = GameState.instance.playerGUID + ". I know you need to get something at Rulf's.";
 									final String third = "Here is 400 gems that I have saved up for you.\nThis is all I have left.";
 									addMessage(
@@ -309,12 +329,21 @@ public class HolmVillage extends Level {
 		enemies[1].setInstanceLoc(0, -350, 5000);
 		enemies[2].setInstanceLoc(0, -350, 6000);
 		enemies[3].setInstanceLoc(0, -350, 6800);
+		
+		for (int i = 0; i < 30; i++) {
+			Drawable gem = new Gem(getScene(),getRand());
+			if (getRand().nextFloat() < 0.2) {
+				gem = new RedGem(getScene(),getRand());
+			}
+			gem.setInstanceLoc(getRand().nextLocation(-150));
+			scene.add(gem);
+		}
 
-		// Very "heavy" object
+		// Very "heavy" object (puts a lot of load on the CPU)
 		Horse horse = new Horse(scene);
 		horse.setInstanceLoc(-6000, -350, -850);
 		scene.add(horse);
-
+		
 		RedGem jewel = new RedGem(getScene(), getRand());
 		jewel.setInstanceLoc(-2000, -170, 5000);
 		scene.add(jewel);
@@ -387,6 +416,14 @@ public class HolmVillage extends Level {
 				addMessage("You need a lantern and oil to go into Banicia Cave.", "CAVENOTICE");
 				setActiveMessage("CAVENOTICE");
 			}
+			return;
+		}
+		if (getScene().getPlayerZ() < -9000 && getScene().getPlayerX() > -600
+				&& getScene().getPlayerX() < 1100 && getScene().canPortalize() && GameState.instance.hasKey) {
+			startTransition(getMain().getScreen("sauce"), new P3D(
+					getScene().getPlayerX(),0,-8500), getScene().getPlayerDelta());
+			getScene().deportal();
+			GameState.instance.playerLevel = 5;
 			return;
 		}
 		

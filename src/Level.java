@@ -83,6 +83,17 @@ public abstract class Level extends Screen {
 			transition -= 0.008f;
 		}
 		
+		if (GameState.instance.gameOver && !deadFault) {
+			deadFault = true;
+			if (!MainApplet.isApplet) {
+				new FileSave().delete();
+			}
+			return;
+		}
+		
+		if (GameState.instance.health <= 0)
+			GameState.instance.gameOver = true;
+		
 		if (getScene() == null)
 			return;
 		if (GameState.instance.oilFill < 1)
@@ -241,7 +252,9 @@ public abstract class Level extends Screen {
 	}
 
 	public void keyDown(int code) {
-		if (getScene() == null)
+		if (GameState.instance.gameOver && code == KeyEvent.VK_ESCAPE)
+			System.exit(0);
+		if (getScene() == null || GameState.instance.gameOver)
 			return;
 		if (!getScene().canPlayerMove() || showWorldMap)
 			return;
@@ -283,6 +296,9 @@ public abstract class Level extends Screen {
 	private float playerDelta = 0.0f;
 
 	public void keyReleased(KeyEvent ke) {
+		if (GameState.instance.gameOver) {
+			return;
+		}
 		if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			GameState.save();
 			getMain().setActiveScreen("mainmenu");
@@ -387,6 +403,7 @@ public abstract class Level extends Screen {
 	private float transition;
 	private boolean showWorldMap = false;
 	private boolean gameHalt = false;
+	private boolean deadFault = false;
 	
 	public boolean isGameHalted() {
 		return gameHalt;
@@ -454,6 +471,15 @@ public abstract class Level extends Screen {
 			Utility.drawWorldMap(g, getMain(), scene);
 		}
 
+		if (deadFault) {
+			g.setColor(Color.black);
+			g.fillRect(0, 0, getMain().getWidth(), getMain().getHeight());
+			g.setColor(Color.red);
+			g.setFont(new Font("Arial",0,36));
+			int m = g.getFontMetrics().stringWidth("You died. Press ESC to quit.");
+			g.drawString("You died. Press ESC to quit.", getMain().getWidth()/2 - (m/2), 75);
+		}
+		
 		g.setFont(new Font("Arial", 0, 12));
 		g.setColor(Color.white);
 		g.drawString("FPS:" + getMain().getFPS(), 0, 10);

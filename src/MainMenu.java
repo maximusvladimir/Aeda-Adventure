@@ -170,6 +170,9 @@ public class MainMenu extends Screen {
 	float moon = 0.0f;
 
 	public void draw(Graphics g) {
+		if (Main.doWave > 0) {
+			Main.doWave -= 2.5f;
+		}
 		// Remove any bluring or redding.
 		Main.blurAmount = 0;
 		Main.redAmount = 0;
@@ -442,6 +445,9 @@ public class MainMenu extends Screen {
 				if (!getMain().screenExists("tumalarda")) {
 					getMain().addScreen(new Banicia(getMain()));
 				}
+				if (!getMain().screenExists("sauce")) {
+					getMain().addScreen(new BossLevel(getMain()));
+				}
 				if (GameState.instance.playerLevel == 0) {
 					getMain().setActiveScreen("level");
 					System.out.println("Going to level");
@@ -457,6 +463,9 @@ public class MainMenu extends Screen {
 				} else if (GameState.instance.playerLevel == 4) {
 					getMain().setActiveScreen("tumalarda");
 					System.out.println("Going to tumalarda station.");
+				} else if (GameState.instance.playerLevel == 5) {
+					getMain().setActiveScreen("sauce");
+					System.out.println("Going to sauce station.");
 				}
 				Screen s = getMain().getScreen(getMain().getActiveScreen());
 				if (s instanceof Level)

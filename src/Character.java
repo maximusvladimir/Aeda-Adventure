@@ -8,6 +8,7 @@ public abstract class Character extends Drawable {
 	
 	private float destX = 0.0f;
 	private float destZ = 0.0f;
+	private float destY = 0.0f;
 	private float startX = 0.0f;
 	private float startZ = 0.0f;
 	private float destDist = 0.0f;
@@ -31,8 +32,12 @@ public abstract class Character extends Drawable {
 		return moveSpeed;
 	}
 	
-	public void moveTowards(float x, float z) {
-		moveTowards(new P3D(x,0,z));
+	public void moveTowards(float x, float z){
+		moveTowards(x,0,z);
+	}
+	
+	public void moveTowards(float x, float y, float z) {
+		moveTowards(new P3D(x,y,z));
 	}
 	
 	public void moveTowards(P3D p) {
@@ -41,6 +46,7 @@ public abstract class Character extends Drawable {
 		firedArrival = false;
 		destX = p.x;
 		destZ = p.z;
+		destY = p.y;
 		p.y = 0;
 		startX = getInstanceLoc().x;
 		startZ = getInstanceLoc().z;
@@ -96,6 +102,13 @@ public abstract class Character extends Drawable {
 			 if (!(this instanceof Player)) {
 				float yd = getInstanceLoc().y - getScene().getGamePlane().getPlayerLocation(startX,startZ);
 				y = getScene().getGamePlane().getPlayerLocation(startX - ux * destAlt, startZ - uz * destAlt) + yd;
+			 }
+			 if (destY != 0 && y + getMoveSpeed()+10 > destY && y - 10 - getMoveSpeed() < destY) {
+				 if (y < destY)
+					 y += getMoveSpeed();
+				 else
+					 y -= getMoveSpeed();
+				 
 			 }
 			 setInstanceLoc(startX - ux * destAlt, y, startZ - uz * destAlt);
 			 if (destAlt >= destDist) {
