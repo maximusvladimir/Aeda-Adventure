@@ -494,7 +494,6 @@ public class Main extends JFrame implements IMain {
 					 * sn.drawLine((int)(s * 7.5f/8.0f), (int)(s *
 					 * 5.0f/8.0f),(int)(s * 7.0f/8.0f),(int)(s * 5.5f/8.0f));
 					 */
-					painting = true;
 					repaint();
 				}
 			}
@@ -621,6 +620,7 @@ public class Main extends JFrame implements IMain {
 	}
 
 	public void paint(Graphics g2) {
+		painting = true;
 		Graphics2D g = (Graphics2D) g2;
 		if (fullscreen)
 			g.drawImage(vRAMBuffer, 0, 0, this);
