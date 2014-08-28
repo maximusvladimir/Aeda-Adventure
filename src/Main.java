@@ -345,6 +345,7 @@ public class Main extends JFrame implements IMain {
 	}
 
 	private void updater() {
+		boolean firstCall = true;
 		while (running) {
 			if (vRAMBuffer == null || vRAMBuffer.contentsLost()
 					|| justEnteredFullscreen) {
@@ -367,8 +368,12 @@ public class Main extends JFrame implements IMain {
 					BufferedImage.TYPE_INT_RGB);
 			Graphics internalGraphics = swapper.getGraphics();
 			while (!vRAMBuffer.contentsLost() && !justEnteredFullscreen) {
+				long startOperation = System.currentTimeMillis();
 				while (painting) {
-
+					if (firstCall && System.currentTimeMillis() - startOperation > 100) {
+						firstCall = false;
+						painting = false;
+					}
 				}
 				if (vRAMBuffer.validate(getGraphicsConfiguration()) != VolatileImage.IMAGE_INCOMPATIBLE) {
 					framesDrawn++;
