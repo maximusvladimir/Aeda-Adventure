@@ -390,11 +390,12 @@ public class HolmVillage extends Level {
 	public void tick() {
 		GameState.instance.playerLevel = 1;
 		lastLoc = getScene().getPosition();
+		if (houses != null && houses[0] != null) {
 		if (GameState.instance.talkedToGrandmaFiace) {
 			houses[0].lightsOn = true;
 		} else
 			houses[0].lightsOn = false;
-
+		}
 		if (Rand.random() < 0.0002)
 			getScene().makeLightning();
 
