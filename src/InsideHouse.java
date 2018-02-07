@@ -33,7 +33,7 @@ public class InsideHouse extends Level {
 		PortalFront front = new PortalFront(scene);
 		front.setLevelGotoName("vbm");
 		front.setLevelGotoPos(ths.getScene().getPosition());
-		front.setInstanceLoc(0, -2000);
+		front.setInstanceLoc(0, -5.33333333f * getScene().getGamePlane().getSpacing());
 		scene.add(front);
 		
 		// Turn off "dust" for inside the house.

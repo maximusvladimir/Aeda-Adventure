@@ -57,7 +57,7 @@ public class HolmVillage extends Level {
 	public void init() {
 		hasKeyUpdate = GameState.instance.hasKey;
 		Tree[] trees = new Tree[120];// 20
-		Grass[] grass = new Grass[80];
+		Grass[] grass = new Grass[200];
 		Barrel[] barrel = new Barrel[5];
 		Sign[] signs = new Sign[3];
 		houses = new House[4];
@@ -65,7 +65,7 @@ public class HolmVillage extends Level {
 		Enemy[] enemies = new Enemy[4];
 		scene = new Scene<Drawable>(this, getRand());
 		plane = new GamePlane(scene, getRand(), 55, new Color(99,
-				126, 61).darker(), 14, 0.5f);
+				126, 61).darker(), 8, 0.5f);
 		for (int x = 0; x < 55; x++) {
 			for (int z = 0; z < 55; z++) {
 				plane.setHeightPoint(x, z, plane.getHeightPoint(x, z) / 4);
@@ -89,13 +89,13 @@ public class HolmVillage extends Level {
 			plane.setColorPoint(z, 29, getRoadColor(plane.getColorPoint(z, 29)));
 		}
 		plane.genWorld();
-		scene.setFog(-2000, -2600);
+		scene.setFog(-2000, -3100);
 		scene.setFogColor(new Color(93, 109, 120));
 		// an interesting grass placement algorithm that i came up with.
 		int currentGrass = 0;
 		while (currentGrass < grass.length) {
 			int remaining = grass.length - currentGrass;
-			int currentNum = getRand().nextInt(remaining / 6, remaining / 4);
+			int currentNum = getRand().nextInt(remaining / 15, remaining / 10);
 			if (currentNum <= 0)
 				currentNum = 1;
 			int indexer = 0;
@@ -386,6 +386,8 @@ public class HolmVillage extends Level {
 
 		scene.setSceneDarkness(40);
 	}
+	
+	private boolean lastSetCamState = false;
 
 	public void tick() {
 		GameState.instance.playerLevel = 1;
@@ -404,52 +406,77 @@ public class HolmVillage extends Level {
 		super.tick();
 		if (isGameHalted())
 			return;
-		if (getScene().getPlayerX() > 9000 && getScene().getPlayerZ() > -600
-				&& getScene().getPlayerZ() < 1100 && getScene().canPortalize()) {
+		//-28 * getScene().getGamePlane().getSpacing()
+		float space = getScene().getGamePlane().getSpacing();
+		
+		float playerX = getScene().getPlayerX();
+		float playerZ = getScene().getPlayerZ();
+		boolean setDisplayCam = false;
+		for (int i = 0; i < houses.length; i++) {
+			House h = houses[i];
+			float hz = h.getInstanceLoc().z - Scene.camDist - 200;
+			if (playerZ < hz && playerZ > hz - 1500 && playerX > hminx && playerX < hmaxx) {
+				setDisplayCam = true;
+			}
+		}
+		if (setDisplayCam != lastSetCamState) {
+			if (!setDisplayCam) {
+				Scene.camDist = Scene.regCamDist;
+				getScene().setPlayerZ(playerZ - Scene.regCamDist);
+				getScene().setSceneDown(getScene().getSceneDownDefault());
+				lastSetCamState = false;
+			} else {
+				Scene.camDist = Scene.regCamDist * 0.2f;
+				getScene().setPlayerZ(playerZ + Scene.regCamDist);
+				getScene().setSceneDown(0);
+				lastSetCamState = true;
+			}
+		}
+		
+		if (playerX > space * 24 && playerZ > -600
+				&& playerZ < 1100 && getScene().canPortalize()) {
 			if (GameState.instance.hasLantern && GameState.instance.hasFishOil) {
-			startTransition(getMain().getScreen("tumalarda"), new P3D(-9000, 0,
-					getScene().getPlayerZ()), getScene().getPlayerDelta());
+			startTransition(getMain().getScreen("tumalarda"), new P3D(-24 * space, 0,
+					playerZ), getScene().getPlayerDelta());
 			getScene().deportal();
 			GameState.instance.playerLevel = 4;
 			}
 			else {
-				getScene().setPlayerX(8700);
+				getScene().setPlayerX(23.4f * space);
 				addMessage("You need a lantern and oil to go into Banicia Cave.", "CAVENOTICE");
 				setActiveMessage("CAVENOTICE");
 			}
 			return;
 		}
-		if (getScene().getPlayerZ() < -9000 && getScene().getPlayerX() > -600
-				&& getScene().getPlayerX() < 1100 && getScene().canPortalize() && GameState.instance.hasKey) {
+		if (playerZ < -24 * space && playerX > -600
+				&& playerX < 1100 && getScene().canPortalize() && GameState.instance.hasKey) {
 			startTransition(getMain().getScreen("sauce"), new P3D(
-					getScene().getPlayerX(),0,-8500), getScene().getPlayerDelta());
+					playerX,0,-22.66666666f * space), getScene().getPlayerDelta());
 			getScene().deportal();
 			GameState.instance.playerLevel = 5;
 			return;
 		}
 		
-		if (getScene().getPlayerX() < -9500 && getScene().getPlayerZ() > -600
+		if (playerX < -25.3333 * space && playerZ > -600
 				&& getScene().getPlayerZ() < 1100 && getScene().canPortalize()) {
-			startTransition(getMain().getScreen("yLENIN"), new P3D(9000, 0,
-					getScene().getPlayerZ()), getScene().getPlayerDelta());
+			startTransition(getMain().getScreen("yLENIN"), new P3D(24 * space, 0,
+					playerZ), getScene().getPlayerDelta());
 			getScene().deportal();
 			GameState.instance.playerLevel = 2;
 			return;
 		}
 
-		if (getScene().getPlayerZ() > 9500 && getScene().getPlayerX() < 600
-				&& getScene().getPlayerX() > -600 && getScene().canPortalize()) {
-			startTransition(getMain().getScreen("level"), new P3D(0, 0, -9200),
+		if (playerZ > 25.63333 * space && playerX < 600
+				&& playerX > -600 && getScene().canPortalize()) {
+			startTransition(getMain().getScreen("level"), new P3D(0, 0, -23.53f * space),
 					4.712388980384689f);
 			getScene().deportal();
 			GameState.instance.playerLevel = 0;
 			return;
 		}
-		if ((getScene().getPlayerZ() < 9400 || getScene().getPlayerX() > 700 || getScene()
-				.getPlayerZ() < -700)
-				&& (getScene().getPlayerZ() > 700
-						|| getScene().getPlayerX() > 9400 || getScene()
-						.getPlayerZ() < -700))
+		if ((playerZ < 25.06 * space || playerX > 700 || playerZ < -700)
+				&& (playerZ > 700
+						|| playerX > 25.06 * space || playerZ < -700))
 			getScene().reportal();
 	}
 

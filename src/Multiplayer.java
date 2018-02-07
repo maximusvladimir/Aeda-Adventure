@@ -211,7 +211,7 @@ public class Multiplayer extends Screen {
 			if (flake.size == 1)
 				g.drawLine((int)flake.x,(int)flake.y,(int)flake.x,(int)flake.y);
 			else
-				g.drawOval((int)flake.x,(int)flake.y,flake.size,flake.size);
+				g.drawOval((int)flake.x,(int)flake.y, (int)flake.size, (int)flake.size);
 		}
 	}
 	

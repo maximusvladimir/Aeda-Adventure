@@ -14,7 +14,7 @@ public class GamePlane extends Drawable {
 	private Color[] colors2;
 	private float[] waters;
 	private float px, pz;
-	private static final float space = 375.0f;
+	private static final float space = 350.0f;
 	private float WORLDSIZE;
 	private float WORLDSIZEHALF;
 	private float WORLDSIZESIZE;
@@ -380,25 +380,25 @@ public class GamePlane extends Drawable {
 		tesselator.setSkipCullCheck(true);
 		tesselator.translate(pos.x - (space * size * 0.5f), pos.y, pos.z
 				- (space * size * 0.5f), false);
-		int zlim = (int) ((pz + WORLDSIZEHALF) / WORLDSIZE * size) + 2;
+		int zlim = (int) ((pz + WORLDSIZEHALF) / WORLDSIZE * size) + 4;
 		if (zlim > size - 1)
 			zlim = size - 1;
 		if (zlim < 1)
 			zlim = 1;
-		int zmin = (int) ((pz + WORLDSIZEHALF - FOGAMOUNT) / WORLDSIZE * size) + 1;
+		int zmin = (int) ((pz + WORLDSIZEHALF - FOGAMOUNT) / WORLDSIZE * size);
 		if (zmin < 0)
 			zmin = 0;
 		if (zmin > size - 1)
 			zmin = size - 1;
 
 		int xlim = (int) ((px + WORLDSIZEHALF + (1400 / space * 400))
-				/ WORLDSIZE * size) + 2;
+				/ WORLDSIZE * size) + 3;
 		if (xlim > size - 1)
 			xlim = size - 1;
 		if (xlim < 1)
 			xlim = 1;
 		int xmin = (int) ((px + WORLDSIZEHALF - (2200 / space * 400))
-				/ WORLDSIZE * size) + 1;
+				/ WORLDSIZE * size) - 2;
 		if (xmin < 0)
 			xmin = 0;
 		if (xmin > size - 1)
@@ -446,14 +446,15 @@ public class GamePlane extends Drawable {
 				} else {
 					int indi = getColor(x, z);
 					Color sample1 = colors[indi];
-					if (xshad == x && zshad == z) {
+					/* Ignore player shadow for now.
+					 * if (xshad == x && zshad == z) {
 						if (getScene().getPlayer().flameSize > 0.001f) {
 							darkness = darkness - (int)(getScene().getPlayer().flameSize * 40) - 20;
 						}
 						else {
 							darkness = darkness + 20;
 						}
-					}
+					}*/
 					tesselator.color(sample1.getRed() - darkness,
 							sample1.getGreen() - darkness, sample1.getBlue()
 									- darkness);
@@ -473,14 +474,14 @@ public class GamePlane extends Drawable {
 							getHeightPoint(x + 1, z + 1), (1 + z) * space);
 					tesselator.point((x) * space, getHeightPoint(x, z + 1),
 							(z + 1) * space);
-					if (xshad == x && zshad == z) {
+					/*if (xshad == x && zshad == z) {
 						if (getScene().getPlayer().flameSize > 0.001f) {
 							darkness = darkness + (int)(getScene().getPlayer().flameSize * 40) + 20;
 						}
 						else {
 							darkness = darkness - 20;
 						}
-					}
+					}*/
 				}
 			}
 		}

@@ -13,8 +13,9 @@ public class Flakes {
 			parts[i].x = (float) (rand.nextDouble() * main.getWidth());
 			parts[i].y = (float) (rand.nextDouble() * main.getHeight());
 			parts[i].dx = (float) (rand.nextDouble() * 1.1f);
-			parts[i].size = (int) (rand.nextDouble() * 4);
+			parts[i].size = (int) (rand.nextDouble() * 5);
 			parts[i].clr = (int) (rand.nextDouble() * 127) + 127;
+			parts[i].alter = (float)(rand.nextDouble() * 0.25f);
 			if (rand.nextDouble() < 0.5)
 				parts[i].dx *= -1;
 		}
@@ -22,11 +23,11 @@ public class Flakes {
 		this.rand = rand;
 	}
 	
-	public void tick() {
+	public void tick(float playerDeltaX, float playerDeltaZ) {
 		for (int i = 0; i < parts.length; i++) {
 			Flake flake = parts[i];
-			flake.x += flake.dx * 0.3f;
-			flake.y += flake.size * 0.05f;
+			flake.x += flake.dx * 0.3f + playerDeltaX * playerDeltaX * playerDeltaX * flake.size * 0.0004f;//flake.alter;
+			flake.y += flake.size * 0.05f + flake.alter;
 			if (flake.dx < 0)
 				if (flake.x < 0) {
 					flake.x = (float) (main.getWidth() + (rand
@@ -34,9 +35,11 @@ public class Flakes {
 				} else if (flake.x > main.getWidth())
 					flake.x = (float) (-rand.nextDouble() * (main
 							.getWidth() / 4.0f));
-			if (rand.nextDouble() < 0.005)
-				flake.size--;
-			if (flake.size <= 0) {
+			//flake.size += playerDeltaZ * 0.005f;
+			if ((rand.nextDouble() < 0.01 && flake.size < 1.0001f) || flake.size > 8)
+				flake.size = 0;
+			if (flake.size <= 0 || flake.x > main.getWidth() + 15 || flake.x < - 15) {
+				flake.x = rand.nextDouble() > 0.5 ? main.getWidth() + 8 : -8;
 				flake.y = (int) (rand.nextDouble() * main.getHeight());
 				flake.size = (int) ((rand.nextDouble() * 3) + 4);
 			}
@@ -51,7 +54,7 @@ public class Flakes {
 				g.drawLine((int) flake.x, (int) flake.y, (int) flake.x,
 						(int) flake.y);
 			else
-				g.drawOval((int) flake.x, (int) flake.y, flake.size, flake.size);
+				g.drawOval((int) flake.x, (int) flake.y, (int)flake.size, (int)flake.size);
 		}
 	}
 }

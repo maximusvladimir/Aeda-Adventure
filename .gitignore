@@ -1,5 +1,7 @@
 *.class
 
+*.sav
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
@@ -19,3 +21,5 @@ bin/*.*
 FFMPEG.EXE
 *.mp4
 *.bat
+
+doc/

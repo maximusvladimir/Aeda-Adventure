@@ -63,7 +63,7 @@ public abstract class Drawable {
 	}
 	
 	public float getDistToPlayer() {
-		float dist = new P3D(0, -100, -625).dist(new P3D(-getScene().getPlayerX() + getInstanceLoc().x, getInstanceLoc().y,
+		float dist = new P3D(0, -100, Scene.camDist).dist(new P3D(-getScene().getPlayerX() + getInstanceLoc().x, getInstanceLoc().y,
 				-getScene().getPlayerZ() + getInstanceLoc().z));
 		return dist;
 	}
@@ -75,7 +75,7 @@ public abstract class Drawable {
 	}
 	
 	public float getDistToPlayerZ() {
-		return -625 + getScene().getPlayerZ() + getInstanceLoc().z;
+		return Scene.camDist + getScene().getPlayerZ() + getInstanceLoc().z;
 	}
 	
 	public int getIndividualDarkness() {

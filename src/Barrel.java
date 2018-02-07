@@ -141,7 +141,7 @@ public class Barrel extends Drawable {
 				setVisible(false);
 		}
 		
-		if (getDistToPlayer() < 375 && !done) {
+		if (getDistToPlayer() < 390 && !done) {
 			if (getScene().getPlayer().isHitting()) {
 				getHitbox().disable();
 				rotateOver = 0;

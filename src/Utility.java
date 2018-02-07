@@ -252,8 +252,10 @@ public class Utility {
 				rectSizeHalf + (int) def4py);
 		g.drawString(Strings.inst.NAME_BANICIA_CAVE, 3 + (int) def5px,
 				rectSizeHalf + (int) def5py);
-		g.drawString(Strings.inst.NAME_BOSSLEVEL, 7 + (int) def6px,
-				rectSizeHalf + (int) def6py);
+		if (GameState.instance.hasKey) {
+			g.drawString(Strings.inst.NAME_BOSSLEVEL, 7 + (int) def6px,
+					rectSizeHalf + (int) def6py);
+		}
 	}
 
 	public static Color adjustAlpha(Color base, int alpha) {

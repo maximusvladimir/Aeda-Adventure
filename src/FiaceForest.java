@@ -16,8 +16,8 @@ public class FiaceForest extends Level {
 
 	public void init() {
 		Gem[] gems = new Gem[40];// 40
-		Tree[] trees = new Tree[500];// 20, LATEST: 60
-		Grass[] grass = new Grass[80];
+		Tree[] trees = new Tree[90];// 20, LATEST: 60
+		Grass[] grass = new Grass[120];
 		Barrel[] barrel = new Barrel[20];
 		Sign[] signs = new Sign[10];
 		scene = new Scene<Drawable>(this, getRand());
@@ -86,7 +86,8 @@ public class FiaceForest extends Level {
 		scene.add(well);
 
 		PortalFront frontPortal = new PortalFront(scene);
-		frontPortal.setInstanceLoc(0, -10500);
+		frontPortal.setLevelGotoPos(new P3D(0,0,getScene().getGamePlane().getSpacing() * 24));
+		frontPortal.setInstanceLoc(0, -28 * getScene().getGamePlane().getSpacing());
 		scene.add(frontPortal);
 		// Water feature = new Water(scene,10);
 		// feature.setInstanceLoc(new P3D(2000,-200,1300));
@@ -200,7 +201,7 @@ public class FiaceForest extends Level {
 				doMovement();
 			}
 		};
-		grandma.setInstanceLoc(new P3D(2000, -350, 600));
+		grandma.setInstanceLoc(new P3D(1700, -350, 600));
 		scene.add(grandma);
 		}
 		// scene.add(new Windmill(scene));

@@ -1,7 +1,7 @@
 
 public class Flake {
-	public float x, y, dx;
-	public int size, clr;
+	public float x, y, dx, size, alter;
+	public int clr;
 	public Flake() {
 		
 	}

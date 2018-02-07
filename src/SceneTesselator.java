@@ -28,6 +28,7 @@ public class SceneTesselator extends PointTesselator {
 	private float fogStart = 0.0f;
 	private float fogEnd = 0.0f;
 	private boolean fogUsed = false;
+	private boolean fogNoClearBuffer = false;
 	private boolean reverseFogEquation = false;
 	private boolean useWireframeAdditionally = false;
 
@@ -44,6 +45,14 @@ public class SceneTesselator extends PointTesselator {
 
 	public boolean getUseWireframeWithShader() {
 		return useWireframeAdditionally;
+	}
+	
+	public void setFogNoClearBuffer(boolean value) {
+		fogNoClearBuffer = value;
+	}
+	
+	public boolean isFogNoClearBuffer() {
+		return fogNoClearBuffer;
 	}
 
 	public void setReverseFogEquation(boolean value) {
@@ -76,25 +85,34 @@ public class SceneTesselator extends PointTesselator {
 		sceneObjects.remove(index);
 	}
 
+	public void setSceneTesselatorDown(float y) {
+		downOffsetY = y;
+	}
+	
+	public float getSceneTesselatorDown() {
+		return downOffsetY;
+	}
+	
+	private float downOffsetY = 0;
 	private Polygon p = new Polygon();
+	private boolean errorOnce = false;
 
 	public void draw(Graphics g2) {
 		Graphics2D g = (Graphics2D)g2;
 		// Compiler.disable();
-		if (fogUsed) {
+		if (fogUsed && !isFogNoClearBuffer()) {
 			g.setColor(fogColor);
 			g.fillRect(0, 0, maxWidth, maxHeight);
 		}
 		for (int i = 0; i < size(); i++) {
 			try {
 				PointTesselator tess = getTesselator(i);
-				tess.translate(translatePreX, translatePreY,
+				tess.translate(translatePreX, translatePreY - downOffsetY,
 						translatePreZ, true);
 				tess.translate(translatePostX, translatePostY,
 						translatePostZ, false);
 				tess.rotate(rotationX, rotationY, rotationZ);
-				tess
-						.scale(getScale().x, getScale().y, getScale().z);
+				tess.scale(getScale().x, getScale().y, getScale().z);
 				tess.partialDraw(g);
 				if (tess.getTransparency() < 253 && !PointTesselator.removeAlpha) {
 					for (int u = 0; u < getTesselator(i).getTriangles().size(); u++) {
@@ -123,7 +141,10 @@ public class SceneTesselator extends PointTesselator {
 		try {
 			Collections.sort(triangles, cmp2);
 		} catch (Throwable t) {
-			t.printStackTrace();
+			if (!errorOnce) {
+				t.printStackTrace();
+				errorOnce = true;
+			}
 		}
 
 		for (int i = 0; i < triangles.size(); i++) {

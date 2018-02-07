@@ -11,7 +11,7 @@ public class Scene<T> {
 	private float playerX;
 	private float playerZ;
 	private int darkness;
-	private float walkSpeed = 19;
+	private float walkSpeed = 30;
 	private Rand rand;
 	private float playerDelta;
 	private Player player;
@@ -23,6 +23,7 @@ public class Scene<T> {
 	private boolean portalize = true;
 	private float playerY = 0;
 	private boolean fogEnabled = true;
+	private float sceneDown = 250;
 	public Scene(Level level, Rand rand) {
 		playerX = GameState.instance.playerLocation.x;
 		playerZ = GameState.instance.playerLocation.z;
@@ -41,7 +42,20 @@ public class Scene<T> {
 			System.out.println(x + "," + z + ":" + i * 200);
 		}*/
 		scene = new SceneTesselator();
+		scene.setSceneTesselatorDown(sceneDown);
 		scene.addTesselator(player.getTesselator());
+	}
+	
+	public void setSceneDown(float y) {
+		scene.setSceneTesselatorDown(y);
+	}
+	
+	public float getSceneDown() {
+		return scene.getSceneTesselatorDown();
+	}
+	
+	public float getSceneDownDefault() {
+		return sceneDown;
 	}
 	
 	public boolean isFogEnabled() {
@@ -385,7 +399,8 @@ public class Scene<T> {
 		camDist = v;
 	}
 	
-	private float camDist = -625;
+	public static float camDist = -1300;
+	public static final float regCamDist = -1300;
 	
 	public void makeLightning() {
 		lightn = 1;
@@ -412,9 +427,9 @@ public class Scene<T> {
 			return true;
 		if (getFogStart() == 0 && getFogEnd() == 0)
 			return true;
-		if (d.getInstanceLoc().z > playerZ || d.getInstanceLoc().z + -getFogEnd() < playerZ)
+		if (d.getInstanceLoc().z > playerZ || d.getInstanceLoc().z + -getFogEnd() + 50 < playerZ)
 			return false;
-		if (d.getInstanceLoc().x - 1700 > playerX || d.getInstanceLoc().x + 1700 < playerX)
+		if (d.getInstanceLoc().x - 2000 > playerX || d.getInstanceLoc().x + 2000 < playerX)
 			return false;
 		return true;
 	}

@@ -49,6 +49,10 @@ public class MainMenu extends Screen {
 			clouds[i] = (float) (getMain().getWidth() * 1.2f * Math.random())
 					- (getMain().getWidth() * 0.2f);
 		}
+		
+		width = getMain().getWidth() / 32;
+		heightCoefficent = getMain().getWidth() / 10.8f;
+		
 		scene.addTesselator(terrain);
 		terrain.setSize(getCompatabilityBuffer(), getMain().getWidth(),
 				getMain().getHeight());
@@ -163,7 +167,7 @@ public class MainMenu extends Screen {
 		}
 	}
 
-	float heightCoefficent = 20;
+	float heightCoefficent = 40;
 	int width = 16;
 	float delta = 0.0f;
 	float theta = 0.0f;
@@ -198,13 +202,17 @@ public class MainMenu extends Screen {
 		terrain.setSkipCullCheck(true);
 		terrain.setBackgroundColor(g.getColor());
 		// terrain.rotate(0, delta, 0);
-		terrain.rotate(0, 3.1415926535f, 0);
-		float spacing = 24;
+		terrain.rotate(0.2f, 3.1415926535f, 0);
+		float spacing = getMain().getWidth() / 21;
 		float xs = 1.6f;
 		theta += 0.01f + (Math.random() * 0.01f);
-		float terrainOffset = (float) (Math.sin(theta) * 10);
-		terrain.translate(0, 0, 100, true);
-		terrain.translate(270 + terrainOffset, -100, (-width * spacing) + 720,
+		
+		normalizerMax = -(getMain().getHeight() / 3.84f * 1.5f);
+		normalizerMin = -normalizerMax;
+		
+		float terrainOffset = (float) (Math.sin(theta) * (getMain().getWidth() / 51.0f));
+		terrain.translate(0, 0, normalizerMin, true);
+		terrain.translate((width * spacing * 0.75f) + terrainOffset, normalizerMax, (-width * spacing) + (4.65969f * getMain().getHeight() - 1078.64f),//720
 				false);
 		for (int x = 0; x < width; x++) {
 			for (int z = 0; z < width; z++) {
@@ -246,8 +254,9 @@ public class MainMenu extends Screen {
 			else
 				g.fillRect(sx, sy, s, s);
 		}
-		// scene.fog(new Color(230,230,230), 200,-50);
-		// scene.setReverseFogEquation(true);
+		scene.fog(new Color(44, 57, 99), 200,-50);
+		scene.setReverseFogEquation(true);
+		scene.setFogNoClearBuffer(true);
 		scene.draw(g);
 		for (int i = 0; i < parts.length; i++) {
 			Flake flake = parts[i];
@@ -274,7 +283,7 @@ public class MainMenu extends Screen {
 				g.drawLine((int) flake.x, (int) flake.y, (int) flake.x,
 						(int) flake.y);
 			else
-				g.drawOval((int) flake.x, (int) flake.y, flake.size, flake.size);
+				g.drawOval((int) flake.x, (int) flake.y, (int)flake.size, (int)flake.size);
 		}
 	}
 
@@ -394,19 +403,23 @@ public class MainMenu extends Screen {
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		inButton = 0;
+		
+		int startLeft = (int)(0.244140625 * getMain().getWidth());
+		int width = (int)(0.48828125 * getMain().getWidth());
+		
 		if (GameState.instance == null || GameState.instance.playerStage == 0) {
-			drawButton(g, "Create new game", 125, 120, 250, 40);
+			drawButton(g, "Create new game", startLeft, 120, width, 40);
 		} else if (getMain().getNumScreens() > 1){
-			drawButton(g, "Resume", 125, 120,
-					250, 40);
+			drawButton(g, "Resume", startLeft, 120,
+					width, 40);
 		} else {
-			drawButton(g, "Play as " + GameState.instance.playerGUID, 125, 120,
-					250, 40);
+			drawButton(g, "Play as " + GameState.instance.playerGUID, startLeft, 120,
+					width, 40);
 		}
 		// g.setXORMode(Color.red);
-		drawButton(g, "Multiplayer", 125, 180, 250, 40);
+		drawButton(g, "Multiplayer", startLeft, 180, width, 40);
 		// g.setPaintMode();
-		drawButton(g, "Quit", 125, 240, 250, 40);
+		drawButton(g, "Quit", startLeft, 240, width, 40);
 
 		g.setFont(new Font("Arial", 0, 12));
 		g.setColor(Color.white);
@@ -419,7 +432,8 @@ public class MainMenu extends Screen {
 				0, getMain().getHeight() - 30);
 
 		g.setFont(new Font("Levenim MT", 0, 48));
-		g.drawString("Aeda Adventure", 50, 70);
+		int aaw = g.getFontMetrics().stringWidth("Aeda Adventure");
+		g.drawString("Aeda Adventure", getMain().getWidth() / 2 - aaw / 2, 70);
 		displayMsg(g);
 		if (isFullscreen()) {
 			drawCursor(g);
@@ -482,9 +496,9 @@ public class MainMenu extends Screen {
 			// fade += 2.0f;
 			if (GameState.instance == null
 					|| GameState.instance.playerStage == 0) {
-				fade += 2.3f;
+				fade += 3.3f;
 			} else {
-				fade += 9.0f;
+				fade += 11.0f;
 			}
 		}
 	}

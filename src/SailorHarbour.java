@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.Timer;
+
 public class SailorHarbour extends Level implements IWaterLevel {
 	private static final int waterStart = 35;
 	private static final float indicator = (waterStart-3) * 10000.0f / 55.0f;
@@ -22,7 +24,15 @@ public class SailorHarbour extends Level implements IWaterLevel {
 		}
 		else {
 			// A very evil way to ensure we are indeed not in deep water.
-			Thread thread = new Thread(new Runnable() {
+			Timer ticker = new Timer(300, new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					if (inDeepWater() && !raftMode) {
+						startRaftMode();
+					}
+				}
+			});
+			ticker.start();
+			/*(Thread thread = new Thread(new Runnable() {
 				public void run() {
 					long s = System.currentTimeMillis();
 					while (System.currentTimeMillis() - s < 300) {
@@ -34,13 +44,13 @@ public class SailorHarbour extends Level implements IWaterLevel {
 				}		
 			});
 			thread.setName("DeepWaterEvilChecker");
-			thread.start();
+			thread.start();*/
 		}
 	}
 	
 	public void init() {
 		Tree[] trees = new Tree[20];// 20
-		Grass[] grass = new Grass[20];
+		Grass[] grass = new Grass[150];
 		scene = new Scene<Drawable>(this, getRand()) {
 			public void movePlayer(boolean v) {
 				if (raftMode && v) {
@@ -280,23 +290,28 @@ public class SailorHarbour extends Level implements IWaterLevel {
 		if (isGameHalted())
 			return;
 		
-		if (getScene().getPlayerX() > 9000 && getScene().getPlayerZ() < 1100
+		float space = getScene().getGamePlane().getSpacing();
+		if (getScene().getPlayerX() > 24 * space && getScene().getPlayerZ() < 1100
 				&& getScene().getPlayerZ() > -600 && getScene().canPortalize()) {
-			startTransition(getMain().getScreen("vbm"), new P3D(-9200, 0, getScene().getPlayerZ()),
+			startTransition(getMain().getScreen("vbm"), new P3D(-24.533333f * space, 0, getScene().getPlayerZ()),
 					getScene().getPlayerDelta());
 			getScene().deportal();
+			Scene.camDist = Scene.regCamDist;
 			GameState.instance.playerLevel = 1;
 			return;
 		}
-		if (getScene().getPlayerX() < -8000 && getScene().canPortalize()) {
-			startTransition(getMain().getScreen("lilo"), new P3D(6000, 0, getScene().getPlayerZ()), getScene().getPlayerDelta());
+		if (getScene().getPlayerX() < -21.3333333 * space && getScene().canPortalize()) {
+			startTransition(getMain().getScreen("lilo"), new P3D(16 * space, 0, getScene().getPlayerZ()), getScene().getPlayerDelta());
 			getScene().deportal();
+			Scene.camDist = Scene.regCamDist;
 			GameState.instance.playerLevel = 3;
 			return;
 		}
-		if (getScene().getPlayerX() < 8900 || getScene().getPlayerZ() > 700
-				|| getScene().getPlayerZ() < -700)
+		if (getScene().getPlayerX() < 23.73333333f * space || getScene().getPlayerZ() > 700
+				|| getScene().getPlayerZ() < -700) {
+			Scene.camDist = Scene.regCamDist;
 			getScene().reportal();
+		}
 	}
 
 	public String getName() {

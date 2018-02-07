@@ -98,14 +98,17 @@ public class CadenSea extends Level implements IWaterLevel {
 		if (isGameHalted())
 			return;
 		
-		if (getScene().getPlayerX() > 8000 && getScene().canPortalize()) {
-			startTransition(getMain().getScreen("yLENIN"), new P3D(-7000, 0, getScene().getPlayerZ()), getScene().getPlayerDelta());
+		float space = getScene().getGamePlane().getSpacing();
+		if (getScene().getPlayerX() > 21.33333 * space && getScene().canPortalize()) {
+			startTransition(getMain().getScreen("yLENIN"), new P3D(-18.6666666f * space, 0, getScene().getPlayerZ()), getScene().getPlayerDelta());
 			getScene().deportal();
 			GameState.instance.playerLevel = 2;
 			return;
 		}
-		if (getScene().getPlayerX() < 8900)
+		if (getScene().getPlayerX() < 23.733333333333f * space) {
+			Scene.camDist = Scene.regCamDist;
 			getScene().reportal();
+		}
 	}
 
 	public String getName() {

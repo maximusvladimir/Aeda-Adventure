@@ -44,9 +44,9 @@ public class BossLevel extends Level {
 		for (int x = 0; x < ssz; x++) {
 			for (int z = 0; z < ssz; z++) {
 				double dist = Math.sqrt(Math.pow(x-(ssz*0.5),2)+Math.pow(z-(ssz*0.5),2));
-				if (dist < ssz * 0.2)
+				if (dist < ssz * 0.26)
 					plane.setHeightPoint(x, z, plane.getHeightPoint(x, z) / 3);
-				else if (dist < ssz * 0.25)
+				else if (dist < ssz * 0.27)
 					plane.setHeightPoint(x,z,MathCalculator.lerp(plane.getHeightPoint(x, z) / 3, depth, (float)Rand.random() * 0.4f));
 				else
 					plane.setHeightPoint(x,z,depth);
@@ -81,7 +81,7 @@ public class BossLevel extends Level {
 		
 		if (Rand.random() < 0.0004)
 			getScene().makeLightning();
-		/*
+		
 		if (SoundManager.soundEnabled && (laugh == null || laugh.isFinished()) && (laughRand.nextFloat() < 0.007 || playLaugh)) {
 			boolean cont = true;
 			playLaugh = false;
@@ -104,7 +104,7 @@ public class BossLevel extends Level {
 			}
 			if (laugh != null)
 				laugh.play();
-		}*/
+		}
 
 		// System.out.println(getScene().getPlayerZ());
 
@@ -112,17 +112,26 @@ public class BossLevel extends Level {
 		
 		if (isGameHalted())
 			return;
-		if (getScene().getPlayerY() < -250) {
+		if (getScene().getPlayerY() < -499) {
 			if (SoundManager.soundEnabled) {
 				new Sound("hurt").play();
 				new DelayedThread(new Runnable() {
 					public void run() {
 						new Sound("laugh2").play();
+						new DelayedThread(new Runnable() {
+							public void run() {
+								new Sound("laugh2").play();
+							}
+						}, 1000).start();
 					}
 				},1000).start();
+				GameState.instance.health -= 3;
+				getScene().setPlayerX(200);
+				getScene().setPlayerZ(1400);
+				getScene().setPlayerY(300);
 			}
-			startTransition(getMain().getScreen("vbm"), new P3D(0,400,0), 0);
-			GameState.instance.health = 10;
+			//startTransition(getMain().getScreen("vbm"), new P3D(0,400,0), 0);
+			//GameState.instance.health = 10;
 		}
 		
 		for (int x = 0; x < ssz; x++) {
@@ -145,6 +154,11 @@ public class BossLevel extends Level {
 		getScene().getPlayer().setMouthExpression(FacialExpression.MOUTH_FROWN);
 		if (isGameHalted())
 			return;
+		
+		if (GameState.instance.health <= 0.001f) {
+			startTransition(getMain().getScreen("vbm"), new P3D(0,400,0), 0);
+			GameState.instance.health = 10;
+		}
 	}
 	private float planex, planez;
 

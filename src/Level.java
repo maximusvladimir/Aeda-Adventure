@@ -74,6 +74,8 @@ public abstract class Level extends Screen {
 	}
 
 	private boolean stTickLoad = false;
+	private float playerDeltaZ = 0, playerDeltaX = 0, lastPlayerX = -1000000, lastPlayerZ = -1000000;
+	
 	public void silentTick() {
 		if (messages != null && activeMessageIndex != -1) {
 			messages.get(activeMessageIndex).physicalTick();
@@ -112,6 +114,13 @@ public abstract class Level extends Screen {
 		}
 
 		getScene().getPlayer().tick();
+		
+		if (lastPlayerX > -1000000) {
+			playerDeltaX = lastPlayerX - getScene().getPlayerX();
+			playerDeltaZ = lastPlayerZ - getScene().getPlayerZ();
+		}
+		lastPlayerX = getScene().getPlayerX();
+		lastPlayerZ = getScene().getPlayerZ();
 
 		for (int i = 0; i < scene.getSceneSize(); i++) {
 			try {
@@ -150,7 +159,7 @@ public abstract class Level extends Screen {
 		scene.getPlayer().setIndividualDarkness(darkBuilder+scene.getPlayer().getPlayerIndividualDarkness());
 		
 		if (showFlakes)
-			flakes.tick();
+			flakes.tick(playerDeltaX, playerDeltaZ);
 	}
 	private float decrement = 0.001f;
 	public void postSilentTick() {
@@ -233,7 +242,7 @@ public abstract class Level extends Screen {
 		if (isFullscreen())
 			hideCursor();
 		rand = new Rand(4);
-		flakes = new Flakes(getMain(), rand, 25);
+		flakes = new Flakes(getMain(), rand, (int)(Math.sqrt(getMain().getWidth() + getMain().getHeight()) / 1.5));
 		playerDelta = GameState.instance.playerDelta;
 	}
 

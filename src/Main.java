@@ -147,7 +147,9 @@ public class Main extends JFrame implements IMain {
 		if (GameState.DEBUGMODE)
 			new ThreadDebugger();
 		Utility.startInterfaceLookup();
-		setSize(512, 384);
+		//setSize(512, 384);
+		setSize(1024, 768);
+		//setSize(1280, 960);
 		int w = Toolkit.getDefaultToolkit().getScreenSize().width;
 		int h = Toolkit.getDefaultToolkit().getScreenSize().height;
 		setLocation(w / 2 - getWidth() / 2, h / 2 - getHeight() / 2);
@@ -426,6 +428,21 @@ public class Main extends JFrame implements IMain {
 						internalGraphics3.fillRect(0, 0, getWidth(), getHeight());
 						int[] data = ((DataBufferInt) swapper.getRaster()
 								.getDataBuffer()).getData();
+						int[] dest = ((DataBufferInt) device.getRaster().getDataBuffer()).getData();
+						for (int y = 0; y < swapper.getHeight(); y++) {
+							int offset = (int) (Math.cos(waveTick + (y * 0.1f)) * doWave);
+							for (int x = 0; x < swapper.getWidth(); x++) {
+								int c = data[y * swapper.getWidth() + x];
+								int ind = (y * swapper.getWidth() + (x + offset));
+								if (ind >= dest.length || ind < 0)
+									continue;
+								dest[ind] = c;
+								//internalGraphics3.drawLine(x + offset, y, x
+									//	+ offset, y);
+								
+							}
+						}
+						/*
 						for (int y = 0; y < swapper.getHeight(); y++) {
 							int offset = (int) (Math.cos(waveTick + (y * 0.1f)) * doWave);
 							for (int x = 0; x < swapper.getWidth(); x++) {
@@ -434,7 +451,7 @@ public class Main extends JFrame implements IMain {
 								internalGraphics3.drawLine(x + offset, y, x
 										+ offset, y);
 							}
-						}
+						}*/
 					} else
 						internalGraphics3.drawImage(swapper, 0, 0, null);
 

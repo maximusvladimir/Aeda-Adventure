@@ -16,7 +16,7 @@ public class Raft extends Drawable {
 	public void draw(int darkness) {
 		float wveHeight = getScene().getGamePlane().getSparsalHeight()-160;
 		//System.out.println(wveHeight);
-		tesselator.translate(0, wveHeight, -700, false);
+		tesselator.translate(0, wveHeight, Scene.camDist - 100, false);
 		/*float curDelta = getScene().getPlayer().delta * MathCalculator.TWOPIINVERSE;
 		float amm = ((curDelta) - ((int)curDelta)) * MathCalculator.TWOPI;
 		//System.out.println(amm + "," + prevDelta);
@@ -35,7 +35,7 @@ public class Raft extends Drawable {
 		int num = 10;
 		for (int i = 0; i < 10; i++) {
 			Color bar = worker.variate(baseBar, 20);
-			drawBar((i-(num*0.5f)) * 60 + worker.nextInt(10, 20), -300,worker.nextInt(600,800)*0.5f,worker.nextInt(30,55),bar);
+			drawBar((i-(num*0.5f)) * 60 + worker.nextInt(10, 20), -300,worker.nextInt(800,1000)*0.5f,worker.nextInt(30,55),bar);
 		}
 		
 		float dist = -600;

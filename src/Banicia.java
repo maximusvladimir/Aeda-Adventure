@@ -38,7 +38,8 @@ public class Banicia extends Level {
 		}*/
 		plane.genWorld();
 		scene.setFog(-2000, -2600);
-		scene.setFogColor(new Color(75, 70, 54).darker());
+		//scene.setFogColor(new Color(75, 70, 54).darker());
+		scene.setFogColor(new Color(75, 70, 54).darker().darker().darker());
 		/*for (int i = 0; i < signs.length; i++) {
 			signs[i] = new Sign(scene);
 		}*/
@@ -68,7 +69,7 @@ public class Banicia extends Level {
 		scene.add(barrel);
 		// roughness, color variance, resolution
 		SimplePlane roof = new SimplePlane(scene, new Color(135,111,52), 250, 30, 50, plane.getWorldSize());
-		roof.setInstanceLoc(0,230,0);
+		roof.setInstanceLoc(0,650,0);
 		scene.add(roof);
 		scene.add(new GameWalls(scene));
 		Lamppost notfs = new Lamppost(scene);
@@ -93,18 +94,19 @@ public class Banicia extends Level {
 		
 		scene.setSceneDarkness(100- ((int)(getScene().getPlayer().flameSize * 40)));
 		
-		if (getScene().getPlayerX() < -9500 && getScene().getPlayerZ() > -600
+		float space = getScene().getGamePlane().getSpacing();
+		if (getScene().getPlayerX() < -25.3333 * space && getScene().getPlayerZ() > -600
 				&& getScene().getPlayerZ() < 1100 && getScene().canPortalize()) {
-			startTransition(getMain().getScreen("vbm"), new P3D(8500, 0,
+			startTransition(getMain().getScreen("vbm"), new P3D(22.6666666666f * space, 0,
 					getScene().getPlayerZ()), getScene().getPlayerDelta());
 			getScene().deportal();
 			GameState.instance.playerLevel = 1;
 			return;
 		}
-		if ((getScene().getPlayerZ() < 9400 || getScene().getPlayerX() > 700 || getScene()
+		if ((getScene().getPlayerZ() < 25.0666666 * space || getScene().getPlayerX() > 700 || getScene()
 				.getPlayerZ() < -700)
 				&& (getScene().getPlayerZ() > 700
-						|| getScene().getPlayerX() > 9400 || getScene()
+						|| getScene().getPlayerX() > 25.0666666 * space || getScene()
 						.getPlayerZ() < -700))
 			getScene().reportal();
 	}

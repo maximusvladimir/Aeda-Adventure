@@ -57,7 +57,7 @@ public class GameState {
 	public static int TOTAL3DOBJECTS = 0;
 	public static int DTIME = 0;
 	public static String appletInstance = null;
-	public static final boolean DEBUGMODE = false;//true;
+	public static final boolean DEBUGMODE = true;
 	public static void save() {
 		if (instance == null || Network.RUNNING)
 			return;
