@@ -65,6 +65,7 @@ public class Main extends JFrame implements IMain {
 	private boolean paused = false;
 	private static float[] cel;
 	private static long frames;
+	private boolean reissueBuffers = false;
 
 	public static boolean screenRecorder = false;
 	public static String screenRecorderPath = "tmp"
@@ -310,6 +311,13 @@ public class Main extends JFrame implements IMain {
 			}
 		});
 		keyFire.start();
+		
+		Timer flushBuffer = new Timer(2000, new ActionListener() {
+			public void actionPerformed(ActionEvent arg2){
+				reissueBuffers = true;
+			}
+		});
+		flushBuffer.start();
 		/*
 		 * Thread tickThread = new Thread(new Runnable() { public void run() {
 		 * while (true) { while (!tickSync) {
@@ -350,7 +358,7 @@ public class Main extends JFrame implements IMain {
 		boolean firstCall = true;
 		while (running) {
 			if (vRAMBuffer == null || vRAMBuffer.contentsLost()
-					|| justEnteredFullscreen) {
+					|| justEnteredFullscreen || reissueBuffers) {
 				try {
 					vRAMBuffer = createVolatileImage(getWidth(), getHeight(),
 							new ImageCapabilities(true));
@@ -369,11 +377,10 @@ public class Main extends JFrame implements IMain {
 			BufferedImage device = new BufferedImage(getWidth(), getHeight(),
 					BufferedImage.TYPE_INT_RGB);
 			Graphics internalGraphics = swapper.getGraphics();
-			while (!vRAMBuffer.contentsLost() && !justEnteredFullscreen) {
+			while (!vRAMBuffer.contentsLost() && !justEnteredFullscreen && !reissueBuffers) {
 				long startOperation = System.currentTimeMillis();
 				while (painting) {
-					if (firstCall && System.currentTimeMillis() - startOperation > 100) {
-						firstCall = false;
+					if (System.currentTimeMillis() - startOperation > 10) {
 						painting = false;
 					}
 				}
@@ -436,22 +443,9 @@ public class Main extends JFrame implements IMain {
 								int ind = (y * swapper.getWidth() + (x + offset));
 								if (ind >= dest.length || ind < 0)
 									continue;
-								dest[ind] = c;
-								//internalGraphics3.drawLine(x + offset, y, x
-									//	+ offset, y);
-								
+								dest[ind] = c;							
 							}
 						}
-						/*
-						for (int y = 0; y < swapper.getHeight(); y++) {
-							int offset = (int) (Math.cos(waveTick + (y * 0.1f)) * doWave);
-							for (int x = 0; x < swapper.getWidth(); x++) {
-								internalGraphics3.setColor(new Color(data[y
-										* swapper.getWidth() + x]));
-								internalGraphics3.drawLine(x + offset, y, x
-										+ offset, y);
-							}
-						}*/
 					} else
 						internalGraphics3.drawImage(swapper, 0, 0, null);
 
@@ -514,7 +508,9 @@ public class Main extends JFrame implements IMain {
 					repaint();
 				}
 			}
-			System.err.println("Buffer lost! Attempting to reaquire.");
+			if (!reissueBuffers)
+				System.err.println("Buffer lost! Attempting to reaquire.");
+			reissueBuffers = false;
 		}
 	}
 

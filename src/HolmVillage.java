@@ -296,8 +296,8 @@ public class HolmVillage extends Level {
 		}
 
 		houses[2].setInstanceLoc(1500, -350, 1000);
-		houses[2].setHouseName(Strings.inst.HOLM_VILLAGE_CASSIUS_H);
-		houses[2].setOwnerName(Strings.inst.HOLM_VILLAGE_CASSIUS_O);
+		houses[2].setHouseName(Strings.inst.HOLM_VILLAGE_CHARLES_H);
+		houses[2].setOwnerName(Strings.inst.HOLM_VILLAGE_CHARLES_O);
 
 		houses[3].setInstanceLoc(-1500, -350, 1000);
 		houses[3].setHouseName(Strings.inst.HOLM_VILLAGE_RULF_H);
@@ -414,6 +414,8 @@ public class HolmVillage extends Level {
 		boolean setDisplayCam = false;
 		for (int i = 0; i < houses.length; i++) {
 			House h = houses[i];
+			float hminx = h.getInstanceLoc().x - 1100;
+			float hmaxx = h.getInstanceLoc().x + 1100;
 			float hz = h.getInstanceLoc().z - Scene.camDist - 200;
 			if (playerZ < hz && playerZ > hz - 1500 && playerX > hminx && playerX < hmaxx) {
 				setDisplayCam = true;

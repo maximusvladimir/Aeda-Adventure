@@ -11,7 +11,7 @@ public class Scene<T> {
 	private float playerX;
 	private float playerZ;
 	private int darkness;
-	private float walkSpeed = 30;
+	private float walkSpeed = 19;
 	private Rand rand;
 	private float playerDelta;
 	private Player player;

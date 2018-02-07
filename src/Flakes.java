@@ -38,8 +38,8 @@ public class Flakes {
 			//flake.size += playerDeltaZ * 0.005f;
 			if ((rand.nextDouble() < 0.01 && flake.size < 1.0001f) || flake.size > 8)
 				flake.size = 0;
-			if (flake.size <= 0 || flake.x > main.getWidth() + 15 || flake.x < - 15) {
-				flake.x = rand.nextDouble() > 0.5 ? main.getWidth() + 8 : -8;
+			if (flake.size <= 0 || flake.x > main.getWidth() + 100 || flake.x < - 100) {
+				flake.x = rand.nextDouble() > 0.5 ? main.getWidth() + (int)(rand.nextDouble() * 80) : (int)(rand.nextDouble() * -80);
 				flake.y = (int) (rand.nextDouble() * main.getHeight());
 				flake.size = (int) ((rand.nextDouble() * 3) + 4);
 			}
